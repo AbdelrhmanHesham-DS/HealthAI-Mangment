@@ -1,0 +1,62 @@
+<section>
+    <aside>
+        <div class="profile">
+            <h2>{{ auth.currentUser?.name }}</h2>
+            <p>Patient Portal</p>
+        </div>
+        <div class="line"></div>
+        <ul>
+            <li><a routerLink="my-appointments" routerLinkActive="active"><i class="fa fa-calendar"></i> My
+                    Appointments</a></li>
+            <li><a routerLink="book-appointment" routerLinkActive="active"><i class="fa fa-calendar-plus-o"></i> Book
+                    Appointment</a></li>
+            <li><a routerLink="medical-records" routerLinkActive="active"><i class="fa fa-file-text-o"></i> Medical
+                    Records</a></li>
+            <li><a routerLink="find-hospitals" routerLinkActive="active"><i class="fa fa-hospital-o"></i> Find
+                    Hospitals</a></li>
+            <li><a routerLink="notifications" routerLinkActive="active"><i class="fa fa-bell-o"></i> Notifications</a>
+            </li>
+            <li><a routerLink="my-profile" routerLinkActive="active"><i class="fa fa-user-o"></i> My Profile</a></li>
+        </ul>
+        <div class="sign-out">
+            <button (click)="signOut()"><i class="fa fa-sign-out"></i> Sign out</button>
+        </div>
+    </aside>
+
+    <nav>
+        <div class="profile">
+            <h2>{{ auth.currentUser?.name }}</h2>
+            <p>Patient Portal</p>
+        </div>
+        <button class="btn" (click)="toggleMenu()">
+            <i class="fa fa-bars"></i>
+        </button>
+
+        <div class="menu">
+            <button class="btn" (click)="toggleMenu()">
+                <i class="fa fa-bars"></i>
+            </button>
+            <ul>
+                <li><a routerLink="my-appointments" routerLinkActive="active" (click)="toggleMenu()"><i
+                            class="fa fa-calendar"></i> My Appointments</a></li>
+                <li><a routerLink="book-appointment" routerLinkActive="active" (click)="toggleMenu()"><i
+                            class="fa fa-calendar-plus-o"></i> Book Appointment</a></li>
+                <li><a routerLink="medical-records" routerLinkActive="active" (click)="toggleMenu()"><i
+                            class="fa fa-file-text-o"></i> Medical Records</a></li>
+                <li><a routerLink="find-hospitals" routerLinkActive="active" (click)="toggleMenu()"><i
+                            class="fa fa-hospital-o"></i> Find Hospitals</a></li>
+                <li><a routerLink="notifications" routerLinkActive="active" (click)="toggleMenu()"><i
+                            class="fa fa-bell-o"></i> Notifications</a></li>
+                <li><a routerLink="my-profile" routerLinkActive="active" (click)="toggleMenu()"><i
+                            class="fa fa-user-o"></i> My Profile</a></li>
+            </ul>
+            <div class="sign-out">
+                <button (click)="signOut()" class="btn"><i class="fa fa-sign-out"></i> Sign out</button>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <router-outlet></router-outlet>
+    </main>
+</section>

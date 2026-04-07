@@ -1,0 +1,230 @@
+<app-health-navbar></app-health-navbar>
+
+<div class="pd-page">
+  <div class="pd-container">
+
+    <!-- Welcome Header -->
+    <div class="pd-welcome">
+      <div class="pd-welcome-left">
+        <div class="pd-avatar">{{ auth.currentUser?.name?.[0] }}</div>
+        <div>
+          <h1 class="pd-welcome-title">Welcome back, <span class="pd-gradient">{{ auth.currentUser?.name?.split(' ')?.[0] ?? '' }}</span> 👋</h1>
+          <p class="pd-welcome-sub">Manage your health journey from one place</p>
+        </div>
+      </div>
+      <a routerLink="/health/doctors" class="pd-book-btn">
+        <i class="fa-solid fa-plus"></i> Book Appointment
+      </a>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="pd-quick-actions">
+      <a routerLink="/health/health-tracker" class="pd-quick-action">
+        <i class="fa-solid fa-heart-pulse" style="color:#ef4444"></i>
+        <span>Health Tracker</span>
+      </a>
+      <a routerLink="/health/symptom-checker" class="pd-quick-action">
+        <i class="fa-solid fa-robot" style="color:#6366f1"></i>
+        <span>MediAI</span>
+      </a>
+      <a routerLink="/health/hospitals" class="pd-quick-action">
+        <i class="fa-solid fa-hospital" style="color:#10b981"></i>
+        <span>Hospitals</span>
+      </a>
+      <a routerLink="/health/records" class="pd-quick-action">
+        <i class="fa-solid fa-file-medical" style="color:#f59e0b"></i>
+        <span>Records</span>
+      </a>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="pd-stats-row">
+      <div class="pd-stat-card">
+        <div class="pd-stat-icon" style="background:rgba(99,102,241,0.12);color:#6366f1"><i class="fa-solid fa-calendar-check"></i></div>
+        <div><div class="pd-stat-val">{{ upcomingApts().length }}</div><div class="pd-stat-lbl">Upcoming</div></div>
+      </div>
+      <div class="pd-stat-card">
+        <div class="pd-stat-icon" style="background:rgba(16,185,129,0.12);color:#10b981"><i class="fa-solid fa-circle-check"></i></div>
+        <div><div class="pd-stat-val">{{ completedApts().length }}</div><div class="pd-stat-lbl">Completed</div></div>
+      </div>
+      <div class="pd-stat-card">
+        <div class="pd-stat-icon" style="background:rgba(245,158,11,0.12);color:#f59e0b"><i class="fa-solid fa-file-medical"></i></div>
+        <div><div class="pd-stat-val">{{ records().length }}</div><div class="pd-stat-lbl">Records</div></div>
+      </div>
+      <div class="pd-stat-card">
+        <div class="pd-stat-icon" style="background:rgba(239,68,68,0.12);color:#ef4444"><i class="fa-solid fa-bell"></i></div>
+        <div><div class="pd-stat-val">{{ unreadNotifs().length }}</div><div class="pd-stat-lbl">Notifications</div></div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="pd-tabs">
+      <button class="pd-tab" [class.active]="activeTab()==='appointments'" (click)="activeTab.set('appointments')">
+        <i class="fa-solid fa-calendar"></i> Appointments
+      </button>
+      <button class="pd-tab" [class.active]="activeTab()==='records'" (click)="activeTab.set('records')">
+        <i class="fa-solid fa-file-medical"></i> Medical Records
+      </button>
+      <button class="pd-tab" [class.active]="activeTab()==='notifications'" (click)="activeTab.set('notifications')">
+        <i class="fa-solid fa-bell"></i> Notifications
+        @if (unreadNotifs().length > 0) { <span class="pd-tab-badge">{{ unreadNotifs().length }}</span> }
+      </button>
+      <button class="pd-tab" [class.active]="activeTab()==='cases'" (click)="activeTab.set('cases')">
+        <i class="fa-solid fa-folder-open"></i> My Cases
+        @if (cases().length > 0) { <span class="pd-tab-badge" style="background:rgba(16,185,129,0.2);color:#34d399">{{ cases().length }}</span> }
+      </button>
+    </div>
+
+    <!-- APPOINTMENTS -->
+    @if (activeTab() === 'appointments') {
+      @if (upcomingApts().length > 0) {
+        <h3 class="pd-section-title">Upcoming Appointments</h3>
+        <div class="pd-apt-list">
+          @for (apt of upcomingApts(); track apt.id) {
+            <div class="pd-apt-card pd-apt-upcoming">
+              <img [src]="apt.doctorPhoto" [alt]="apt.doctorName" class="pd-apt-photo"
+                (error)="$any($event.target).src='https://ui-avatars.com/api/?name='+apt.doctorName+'&background=6366f1&color=fff'" />
+              <div class="pd-apt-info">
+                <div class="pd-apt-doc-name">{{ apt.doctorName }}</div>
+                <div class="pd-apt-spec">{{ apt.doctorSpecialty }}</div>
+                <div class="pd-apt-meta">
+                  <span><i class="fa-regular fa-calendar"></i> {{ apt.date }}</span>
+                  <span><i class="fa-regular fa-clock"></i> {{ apt.time }}</span>
+                  <span [style.color]="apt.type==='video'?'#6366f1':apt.type==='chat'?'#10b981':'#f59e0b'">
+                    <i class="fa-solid" [class]="'fa-solid ' + typeIcon(apt.type)"></i> {{ apt.type | titlecase }}
+                  </span>
+                </div>
+                <div class="pd-apt-reason">{{ apt.reason }}</div>
+              </div>
+              <div class="pd-apt-right">
+                <span class="pd-apt-fee">EGP {{ apt.fee }}</span>
+                <span class="pd-apt-status pd-status-upcoming">Upcoming</span>
+                @if (apt.type === 'video') {
+                  <button class="pd-join-btn"><i class="fa-solid fa-video"></i> Join</button>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      }
+
+      @if (completedApts().length > 0) {
+        <h3 class="pd-section-title" style="margin-top:2rem">Past Appointments</h3>
+        <div class="pd-apt-list">
+          @for (apt of completedApts(); track apt.id) {
+            <div class="pd-apt-card pd-apt-completed">
+              <img [src]="apt.doctorPhoto" [alt]="apt.doctorName" class="pd-apt-photo"
+                (error)="$any($event.target).src='https://ui-avatars.com/api/?name='+apt.doctorName+'&background=6366f1&color=fff'" />
+              <div class="pd-apt-info">
+                <div class="pd-apt-doc-name">{{ apt.doctorName }}</div>
+                <div class="pd-apt-spec">{{ apt.doctorSpecialty }}</div>
+                <div class="pd-apt-meta">
+                  <span><i class="fa-regular fa-calendar"></i> {{ apt.date }}</span>
+                  <span><i class="fa-regular fa-clock"></i> {{ apt.time }}</span>
+                </div>
+                @if (apt.notes) { <div class="pd-apt-notes"><i class="fa-solid fa-note-sticky"></i> {{ apt.notes }}</div> }
+              </div>
+              <div class="pd-apt-right">
+                <span class="pd-apt-fee">EGP {{ apt.fee }}</span>
+                <span class="pd-apt-status pd-status-completed">Completed</span>
+                @if (!apt.reviewed) {
+                  <a [routerLink]="['/health/doctor', getDoctorId(apt)]" [queryParams]="{tab:'reviews'}" class="pd-review-btn">
+                    <i class="fa-solid fa-star"></i> Review
+                  </a>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      }
+
+      @if (upcomingApts().length === 0 && completedApts().length === 0) {
+        <div class="pd-empty">
+          <i class="fa-solid fa-calendar-xmark"></i>
+          <h3>No appointments yet</h3>
+          <p>Book your first appointment with a verified doctor</p>
+          <a routerLink="/health/doctors" class="pd-book-btn">Find a Doctor</a>
+        </div>
+      }
+    }
+
+    <!-- RECORDS -->
+    @if (activeTab() === 'records') {
+      <div class="pd-records-list">
+        @for (rec of records(); track rec.id) {
+          <div class="pd-record-card">
+            <div class="pd-rec-icon" [style.background]="'rgba(99,102,241,0.12)'" [style.color]="'#6366f1'">
+              <i class="fa-solid fa-file-medical"></i>
+            </div>
+            <div class="pd-rec-info">
+              <div class="pd-rec-title">{{ rec.title }}</div>
+              <div class="pd-rec-meta">
+                <span><i class="fa-solid fa-user-doctor"></i> {{ rec.doctor }}</span>
+                <span><i class="fa-regular fa-calendar"></i> {{ rec.date }}</span>
+                <span class="pd-rec-type">{{ rec.type | titlecase }}</span>
+              </div>
+              <div class="pd-rec-desc">{{ rec.description }}</div>
+            </div>
+            <button class="pd-download-btn"><i class="fa-solid fa-download"></i></button>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- NOTIFICATIONS -->
+    @if (activeTab() === 'notifications') {
+      <div class="pd-notif-list">
+        @for (n of notifications(); track n.id) {
+          <div class="pd-notif-card" [class.unread]="!n.read" (click)="markRead(n.id)">
+            <div class="pd-notif-icon" [style.background]="notifColor(n.type)+'18'" [style.color]="notifColor(n.type)">
+              <i class="fa-solid" [class]="'fa-solid ' + notifIcon(n.type)"></i>
+            </div>
+            <div class="pd-notif-content">
+              <div class="pd-notif-title">{{ n.title }}</div>
+              <div class="pd-notif-msg">{{ n.message }}</div>
+              <div class="pd-notif-time">{{ n.createdAt | date:'short' }}</div>
+            </div>
+            @if (!n.read) { <div class="pd-notif-dot"></div> }
+          </div>
+        }
+      </div>
+    }
+
+    <!-- CASES -->
+    @if (activeTab() === 'cases') {
+      <div class="pd-records-list">
+        @if (cases().length === 0) {
+          <div class="pd-empty">
+            <i class="fa-solid fa-folder-open"></i>
+            <h3>No saved cases</h3>
+            <p>Use MediAI to analyze your symptoms, then save the case for future reference.</p>
+            <a routerLink="/health/symptom-checker" class="pd-book-btn">Open MediAI</a>
+          </div>
+        }
+        @for (c of cases(); track c.id) {
+          <div class="pd-record-card">
+            <div class="pd-rec-icon"
+              [style.background]="urgencyColor(c.result?.urgency) + '18'"
+              [style.color]="urgencyColor(c.result?.urgency)">
+              <i class="fa-solid fa-notes-medical"></i>
+            </div>
+            <div class="pd-rec-info">
+              <div class="pd-rec-title">{{ c.title }}</div>
+              <div class="pd-rec-meta">
+                <span [style.color]="urgencyColor(c.result?.urgency)">{{ urgencyLabel(c.result?.urgency) }}</span>
+                <span *ngIf="c.result?.specialty"><i class="fa-solid fa-user-doctor"></i> {{ c.result.specialty }}</span>
+                <span><i class="fa-regular fa-calendar"></i> {{ c.createdAt | date:'mediumDate' }}</span>
+                <span class="pd-rec-type">{{ c.mode | titlecase }}</span>
+              </div>
+              <div class="pd-rec-desc" *ngIf="c.result?.recommendation">{{ c.result.recommendation }}</div>
+            </div>
+            <button class="pd-download-btn" style="color:#ef4444" (click)="deleteCase(c.id)" title="Delete case">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </div>
+        }
+      </div>
+    }
+
+  </div>
+</div>

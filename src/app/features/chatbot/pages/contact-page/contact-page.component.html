@@ -1,0 +1,120 @@
+<app-chat-navbar></app-chat-navbar>
+<app-toast></app-toast>
+
+<div class="contact-page">
+  <!-- Hero -->
+  <div class="contact-hero">
+    <div class="contact-hero-bg"></div>
+    <div class="contact-hero-content">
+      <span class="contact-badge"><i class="fa-solid fa-envelope"></i> Contact Us</span>
+      <h1>Get in <span class="cb-gradient-text">Touch</span></h1>
+      <p>Have a question or need help? We'd love to hear from you.</p>
+    </div>
+  </div>
+
+  <div class="contact-container">
+    <div class="contact-grid">
+      <!-- Left: Info -->
+      <div class="contact-info-col">
+        <h2>Let's start a conversation</h2>
+        <p class="contact-intro">Whether you have a question about features, pricing, or anything else — our team is ready to answer all your questions.</p>
+
+        <div class="contact-info-list">
+          @for (info of contactInfo; track info.label) {
+            <div class="contact-info-item">
+              <div class="contact-info-icon" [style.background]="info.color + '18'" [style.color]="info.color">
+                <i class="fa-solid" [class]="'fa-solid ' + info.icon"></i>
+              </div>
+              <div>
+                <div class="contact-info-label">{{ info.label }}</div>
+                <div class="contact-info-value">{{ info.value }}</div>
+              </div>
+            </div>
+          }
+        </div>
+
+        <div class="contact-social">
+          <div class="social-label">Follow us</div>
+          <div class="social-row">
+            @for (s of socialLinks; track s.label) {
+              <a [href]="s.url" class="social-link" [style.--hover-color]="s.color" [title]="s.label">
+                <i [class]="s.icon"></i>
+              </a>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Form -->
+      <div class="contact-form-col">
+        @if (isSubmitted()) {
+          <div class="success-state">
+            <div class="success-icon"><i class="fa-solid fa-check"></i></div>
+            <h3>Message Sent!</h3>
+            <p>Thank you for reaching out. We'll get back to you within 24 hours.</p>
+            <button class="cb-btn-primary-sm" (click)="isSubmitted.set(false)">Send Another</button>
+          </div>
+        } @else {
+          <form [formGroup]="contactForm" (ngSubmit)="onSubmit()" class="contact-form">
+            <h3 class="form-title">Send us a message</h3>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Full Name</label>
+                <div class="input-wrapper" [class.error]="hasError('name','required') || hasError('name','minlength')">
+                  <i class="fa-solid fa-user input-icon"></i>
+                  <input type="text" formControlName="name" placeholder="Your name" />
+                </div>
+                @if (hasError('name','required')) { <span class="err-msg">Name is required</span> }
+                @if (hasError('name','minlength')) { <span class="err-msg">At least 2 characters</span> }
+              </div>
+
+              <div class="form-group">
+                <label>Email Address</label>
+                <div class="input-wrapper" [class.error]="hasError('email','required') || hasError('email','email')">
+                  <i class="fa-solid fa-envelope input-icon"></i>
+                  <input type="email" formControlName="email" placeholder="your@email.com" />
+                </div>
+                @if (hasError('email','required')) { <span class="err-msg">Email is required</span> }
+                @if (hasError('email','email')) { <span class="err-msg">Invalid email address</span> }
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Subject</label>
+              <div class="input-wrapper" [class.error]="hasError('subject','required')">
+                <i class="fa-solid fa-tag input-icon"></i>
+                <select formControlName="subject">
+                  <option value="">Select a subject</option>
+                  <option value="general">General Inquiry</option>
+                  <option value="technical">Technical Support</option>
+                  <option value="billing">Billing</option>
+                  <option value="partnership">Partnership</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              @if (hasError('subject','required')) { <span class="err-msg">Please select a subject</span> }
+            </div>
+
+            <div class="form-group">
+              <label>Message</label>
+              <div class="input-wrapper textarea-wrapper" [class.error]="hasError('message','required') || hasError('message','minlength')">
+                <textarea formControlName="message" placeholder="Tell us how we can help..." rows="5"></textarea>
+              </div>
+              @if (hasError('message','required')) { <span class="err-msg">Message is required</span> }
+              @if (hasError('message','minlength')) { <span class="err-msg">At least 10 characters</span> }
+            </div>
+
+            <button type="submit" class="submit-btn" [disabled]="isSubmitting()">
+              @if (isSubmitting()) {
+                <i class="fa-solid fa-spinner fa-spin"></i> Sending...
+              } @else {
+                <i class="fa-solid fa-paper-plane"></i> Send Message
+              }
+            </button>
+          </form>
+        }
+      </div>
+    </div>
+  </div>
+</div>

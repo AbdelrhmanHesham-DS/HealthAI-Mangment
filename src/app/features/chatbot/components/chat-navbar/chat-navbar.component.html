@@ -1,0 +1,70 @@
+<nav class="cb-navbar" [class.scrolled]="isScrolled()">
+  <div class="cb-nav-container">
+    <!-- Logo -->
+    <a routerLink="/chatbot" class="cb-logo">
+      <div class="cb-logo-icon">
+        <i class="fa-solid fa-robot"></i>
+      </div>
+      <span class="cb-logo-text">NexusAI</span>
+    </a>
+
+    <!-- Desktop Links -->
+    <ul class="cb-nav-links">
+      @for (link of navLinks; track link.path) {
+        <li>
+          <a [routerLink]="link.path" routerLinkActive="active" [routerLinkActiveOptions]="{exact: link.path === '/chatbot'}" class="cb-nav-link">
+            {{ link.label }}
+          </a>
+        </li>
+      }
+    </ul>
+
+    <!-- Actions -->
+    <div class="cb-nav-actions">
+      <button class="cb-theme-btn" (click)="theme.toggle()" [title]="theme.isDark() ? 'Switch to Light' : 'Switch to Dark'">
+        <i class="fa-solid" [class.fa-sun]="theme.isDark()" [class.fa-moon]="!theme.isDark()"></i>
+      </button>
+      @if (auth.isAuthenticated()) {
+        <div class="cb-user-info">
+          <div class="cb-user-avatar">{{ userInitials }}</div>
+          <span class="cb-user-name">{{ auth.currentUser?.name }}</span>
+        </div>
+        <button class="cb-logout-btn" (click)="auth.logout()" title="Sign Out">
+          <i class="fa-solid fa-right-from-bracket"></i>
+        </button>
+      } @else {
+        <a routerLink="/login" class="cb-btn-primary">
+          <i class="fa-solid fa-right-to-bracket"></i> Sign In
+        </a>
+      }
+    </div>
+
+    <!-- Hamburger -->
+    <button class="cb-hamburger" (click)="toggleMobile()" [class.open]="isMobileOpen()">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+
+  <!-- Mobile Menu -->
+  <div class="cb-mobile-menu" [class.open]="isMobileOpen()">
+    @for (link of navLinks; track link.path) {
+      <a [routerLink]="link.path" routerLinkActive="active" class="cb-mobile-link" (click)="isMobileOpen.set(false)">
+        {{ link.label }}
+      </a>
+    }
+    <div class="cb-mobile-divider"></div>
+    @if (auth.isAuthenticated()) {
+      <div class="cb-mobile-user">
+        <div class="cb-user-avatar">{{ userInitials }}</div>
+        <span>{{ auth.currentUser?.name }}</span>
+      </div>
+      <button class="cb-mobile-logout" (click)="auth.logout()">
+        <i class="fa-solid fa-right-from-bracket"></i> Sign Out
+      </button>
+    } @else {
+      <a routerLink="/login" class="cb-btn-primary mt-2" (click)="isMobileOpen.set(false)">
+        <i class="fa-solid fa-right-to-bracket"></i> Sign In
+      </a>
+    }
+  </div>
+</nav>

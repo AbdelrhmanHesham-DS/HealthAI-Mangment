@@ -1,0 +1,188 @@
+<app-health-navbar></app-health-navbar>
+
+<div class="ap-page">
+  <div class="ap-hero">
+    <div class="ap-hero-bg"></div>
+    <div class="ap-hero-content">
+      <span class="ap-badge"><i class="fa-solid fa-calendar-check"></i> My Appointments</span>
+      <h1>Your <span class="hl-gradient">Appointments</span></h1>
+      <p>Manage and track all your medical appointments</p>
+    </div>
+    <a routerLink="/health/doctors" class="ap-book-btn">
+      <i class="fa-solid fa-plus"></i> Book New Appointment
+    </a>
+  </div>
+
+  <div class="ap-container">
+    <!-- Tabs -->
+    <div class="ap-tabs">
+      @for (tab of ['upcoming','completed','cancelled']; track tab) {
+        <button class="ap-tab" [class.active]="activeTab() === tab" (click)="activeTab.set($any(tab))">
+          {{ tab | titlecase }}
+          <span class="ap-tab-count">{{ dataService.appointments() | apCount:tab }}</span>
+        </button>
+      }
+    </div>
+
+    <!-- Cards -->
+    @if (filtered().length === 0) {
+      <div class="ap-empty">
+        <i class="fa-solid fa-calendar-xmark"></i>
+        <h3>No {{ activeTab() }} appointments</h3>
+        <p>{{ activeTab() === 'upcoming' ? 'Book an appointment with a doctor to get started.' : 'Your ' + activeTab() + ' appointments will appear here.' }}</p>
+        @if (activeTab() === 'upcoming') {
+          <a routerLink="/health/doctors" class="ap-book-btn">Find a Doctor</a>
+        }
+      </div>
+    }
+
+    <div class="ap-list">
+      @for (apt of filtered(); track apt.id) {
+        <div class="ap-card" [class]="'ap-card-' + apt.status">
+          <div class="ap-card-left">
+            @if (apt.doctorAvatar) {
+              <img [src]="'http://localhost:3000' + apt.doctorAvatar" alt="Doctor" class="ap-doc-avatar" />
+            } @else {
+              <div class="ap-doc-avatar-placeholder">{{ apt.doctorName?.[0] ?? 'D' }}</div>
+            }
+            <div class="ap-card-info">
+              <div class="ap-doc-name">{{ apt.doctorName }}</div>
+              <div class="ap-doc-spec">{{ apt.doctorSpecialty }}</div>
+              <div class="ap-card-meta">
+                <span><i class="fa-regular fa-calendar"></i> {{ apt.date }}</span>
+                <span><i class="fa-regular fa-clock"></i> {{ apt.time }}</span>
+                <span [style.color]="typeColor(apt.type)">
+                  <i class="fa-solid" [class]="'fa-solid ' + typeIcon(apt.type)"></i> {{ apt.type | titlecase }}
+                </span>
+              </div>
+              <div class="ap-reason">{{ apt.reason }}</div>
+            </div>
+          </div>
+          <div class="ap-card-right">
+            <div class="ap-fee">${{ apt.fee }}</div>
+            <span class="ap-status" [class]="'ap-status-' + apt.status">{{ apt.status | titlecase }}</span>
+            @if (apt.status === 'upcoming') {
+              <div class="ap-actions">
+                @if (apt.type === 'video') {
+                  <button class="ap-join-btn" (click)="joinCall(apt)">
+                    <i class="fa-solid fa-video"></i> Join Call
+                  </button>
+                }
+                <button class="ap-cancel-btn" (click)="cancel(apt.id)">Cancel</button>
+              </div>
+            }
+            @if (apt.status === 'completed') {
+              <div class="ap-actions">
+                @if (!apt.reviewed) {
+                  <button class="ap-review-btn" (click)="openReviewModal(apt)">
+                    <i class="fa-solid fa-star"></i> Write Review
+                  </button>
+                } @else {
+                  <span class="ap-reviewed-badge"><i class="fa-solid fa-check-circle"></i> Reviewed</span>
+                }
+              </div>
+              @if (apt.notes) {
+                <div class="ap-notes"><i class="fa-solid fa-note-sticky"></i> {{ apt.notes }}</div>
+              }
+            }
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</div>
+
+<!-- ── VIDEO CALL MODAL ── -->
+@if (activeCall()) {
+  <div class="ap-call-overlay">
+    <div class="ap-call-modal">
+      <div class="ap-call-header">
+        <div class="ap-call-info">
+          @if (activeCall()!.apt.doctorAvatar) {
+            <img [src]="'http://localhost:3000' + activeCall()!.apt.doctorAvatar" alt="Doctor" class="ap-call-avatar" />
+          } @else {
+            <div class="ap-call-avatar-placeholder">{{ activeCall()!.apt.doctorName?.[0] ?? 'D' }}</div>
+          }
+          <div>
+            <div class="ap-call-name">{{ activeCall()!.apt.doctorName }}</div>
+            <div class="ap-call-spec">{{ activeCall()!.apt.doctorSpecialty }}</div>
+          </div>
+          <div class="ap-call-live"><span class="ap-live-dot"></span> Live</div>
+        </div>
+        <button class="ap-call-end" (click)="endCall()">
+          <i class="fa-solid fa-phone-slash"></i> End Call
+        </button>
+      </div>
+      <iframe
+        [src]="activeCall()!.url"
+        class="ap-call-frame"
+        allow="camera; microphone; fullscreen; display-capture; autoplay"
+        allowfullscreen>
+      </iframe>
+    </div>
+  </div>
+}
+
+
+<!-- ── REVIEW MODAL ── -->
+@if (reviewModalApt()) {
+  <div class="ap-review-overlay" (click)="closeReviewModal()">
+    <div class="ap-review-modal" (click)="$event.stopPropagation()">
+      <div class="ap-review-header">
+        <h3>Write a Review</h3>
+        <button class="ap-modal-close" (click)="closeReviewModal()">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      
+      <div class="ap-review-doctor">
+        @if (reviewModalApt()!.doctorAvatar) {
+          <img [src]="'http://localhost:3000' + reviewModalApt()!.doctorAvatar" alt="Doctor" class="ap-review-avatar" />
+        } @else {
+          <div class="ap-review-avatar-placeholder">{{ reviewModalApt()!.doctorName?.[0] ?? 'D' }}</div>
+        }
+        <div>
+          <div class="ap-review-doc-name">{{ reviewModalApt()!.doctorName }}</div>
+          <div class="ap-review-doc-spec">{{ reviewModalApt()!.doctorSpecialty }}</div>
+        </div>
+      </div>
+
+      <div class="ap-review-form">
+        <div class="ap-form-group">
+          <label>Your Rating</label>
+          <div class="ap-star-picker">
+            @for (i of [1,2,3,4,5]; track i) {
+              <button class="ap-star-btn"
+                (mouseenter)="hoverRating.set(i)"
+                (mouseleave)="hoverRating.set(0)"
+                (click)="reviewRating.set(i)">
+                <i class="fa-solid fa-star" [class.active]="i <= (hoverRating() || reviewRating())"></i>
+              </button>
+            }
+            <span class="ap-rating-text">{{ reviewRating() }}/5</span>
+          </div>
+        </div>
+
+        <div class="ap-form-group">
+          <label>Your Review</label>
+          <textarea 
+            class="ap-review-textarea" 
+            [(ngModel)]="reviewComment" 
+            placeholder="Share your experience with this doctor..." 
+            rows="5"></textarea>
+        </div>
+
+        <div class="ap-review-actions">
+          <button class="ap-cancel-review-btn" (click)="closeReviewModal()">Cancel</button>
+          <button class="ap-submit-review-btn" (click)="submitReview()" [disabled]="!reviewComment.trim() || isSubmittingReview()">
+            @if (isSubmittingReview()) {
+              <i class="fa-solid fa-spinner fa-spin"></i> Submitting...
+            } @else {
+              <i class="fa-solid fa-paper-plane"></i> Submit Review
+            }
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+}

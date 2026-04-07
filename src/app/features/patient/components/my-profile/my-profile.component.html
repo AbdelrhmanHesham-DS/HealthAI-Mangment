@@ -1,0 +1,95 @@
+<div class="profile-page">
+
+  <div class="profile-header">
+    <div>
+      <h1 class="profile-title">My Profile</h1>
+      <p class="profile-sub">Your personal health information</p>
+    </div>
+    <button class="profile-btn" [class]="isEditing ? 'profile-btn-danger' : 'profile-btn-outline'" (click)="toggleEdit()">
+      <i class="fa-solid" [class]="isEditing ? 'fa-xmark' : 'fa-pen'"></i>
+      {{ isEditing ? 'Cancel' : 'Edit Profile' }}
+    </button>
+  </div>
+
+  @if (saved) {
+    <div class="profile-alert"><i class="fa-solid fa-circle-check"></i> Profile updated successfully</div>
+  }
+
+  <div class="profile-card">
+    <!-- Avatar & name -->
+    <div class="profile-top">
+      <div class="profile-avatar-container">
+        @if (patient.avatar) {
+          <img [src]="'http://localhost:3000' + patient.avatar" alt="Profile" class="profile-avatar-img" />
+        } @else {
+          <div class="profile-avatar">{{ patient.name?.[0] ?? 'P' }}</div>
+        }
+        @if (isEditing) {
+          <div class="profile-avatar-upload">
+            <input type="file" #fileInput (change)="onFileSelected($event)" accept="image/*" style="display:none" />
+            <button class="profile-avatar-btn" (click)="fileInput.click()" type="button">
+              <i class="fa-solid fa-camera"></i>
+            </button>
+          </div>
+        }
+      </div>
+      <div class="profile-info">
+        <h2 class="profile-name">{{ patient.name }}</h2>
+        <div class="profile-role">Patient</div>
+        <div class="profile-meta">
+          <span><i class="fa-solid fa-envelope"></i> {{ patient.email }}</span>
+          @if (patient.phone) {
+            <span class="profile-private">
+              <i class="fa-solid fa-lock"></i>
+              <i class="fa-solid fa-phone"></i> {{ patient.phone }}
+              <span class="profile-private-label">Private</span>
+            </span>
+          }
+          @if (patient.gender) { <span><i class="fa-solid fa-venus-mars"></i> {{ patient.gender | titlecase }}</span> }
+        </div>
+      </div>
+    </div>
+
+    @if (previewUrl && isEditing) {
+      <div class="profile-upload-preview">
+        <img [src]="previewUrl" alt="Preview" />
+        <button class="profile-btn profile-btn-primary" (click)="uploadAvatar()" [disabled]="uploadingAvatar">
+          @if (uploadingAvatar) { <i class="fa-solid fa-spinner fa-spin"></i> Uploading... }
+          @else { <i class="fa-solid fa-upload"></i> Upload Photo }
+        </button>
+      </div>
+    }
+
+    <div class="profile-divider"></div>
+
+    @if (!isEditing) {
+      <div class="profile-grid">
+        <div class="profile-field"><span class="profile-lbl">Date of Birth</span><span class="profile-val">{{ patient.dateOfBirth ? (patient.dateOfBirth | date:'mediumDate') : '—' }}</span></div>
+        <div class="profile-field"><span class="profile-lbl">Gender</span><span class="profile-val">{{ patient.gender || '—' }}</span></div>
+        <div class="profile-field"><span class="profile-lbl">Phone</span><span class="profile-val">{{ patient.phone || '—' }}</span></div>
+        <div class="profile-field"><span class="profile-lbl">Address</span><span class="profile-val">{{ patient.address || '—' }}</span></div>
+      </div>
+    } @else {
+      <div class="profile-form-grid">
+        <div class="profile-form-group"><label>Full Name</label><input [(ngModel)]="edited.name" /></div>
+        <div class="profile-form-group"><label>Phone (Private)</label><input [(ngModel)]="edited.phone" placeholder="+1-555-0123" /></div>
+        <div class="profile-form-group"><label>Gender</label>
+          <select [(ngModel)]="edited.gender">
+            <option value="">Select</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="profile-form-group"><label>Date of Birth</label><input type="date" [(ngModel)]="edited.dateOfBirth" /></div>
+        <div class="profile-form-group profile-form-group-full"><label>Address</label><input [(ngModel)]="edited.address" /></div>
+      </div>
+      <div style="display:flex;justify-content:flex-end;margin-top:16px">
+        <button class="profile-btn profile-btn-primary" (click)="save()" [disabled]="isSaving">
+          @if (isSaving) { <i class="fa-solid fa-spinner fa-spin"></i> Saving... }
+          @else { <i class="fa-solid fa-floppy-disk"></i> Save Changes }
+        </button>
+      </div>
+    }
+  </div>
+</div>

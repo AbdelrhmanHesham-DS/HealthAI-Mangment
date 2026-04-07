@@ -1,0 +1,38 @@
+<section class="not-section">
+    <div class="not-contaier">
+        <div class="not-header">
+            <i class="fa-regular fa-bell"></i>
+            <h2>Notifications</h2>
+            <span class="not-num">{{ dataService.notifications().length }}</span>
+            <button *ngIf="dataService.notifications().length > 0" class="read-not" style="margin-left:auto" (click)="markAllRead()">
+                Mark all read
+            </button>
+        </div>
+
+        <div *ngIf="isLoading()" style="text-align:center;padding:2rem">
+            <i class="fa-solid fa-spinner fa-spin"></i> Loading...
+        </div>
+
+        <div *ngIf="!isLoading()" class="nots-list">
+            <div *ngIf="dataService.notifications().length === 0" style="padding:2rem;text-align:center;opacity:.6">
+                No notifications yet.
+            </div>
+            <div class="not" *ngFor="let not of dataService.notifications()">
+                <i [class]="notifIcon(not.type)"></i>
+                <div class="not-info">
+                    <div class="not-head">
+                        <h3>{{ not.title }}</h3>
+                        <div class="not-left">
+                            <span>{{ not.createdAt | date:'short' }}</span>
+                        </div>
+                    </div>
+                    <p>{{ not.message }}</p>
+                    <button class="read-not" *ngIf="!not.read" (click)="markRead(not.id)">
+                        Mark as read
+                    </button>
+                    <span *ngIf="not.read" class="read-status"><i class="fa-solid fa-check-double"></i> Read</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

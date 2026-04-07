@@ -1,0 +1,79 @@
+<section>
+    <div>
+        <h2>My Appointments</h2>
+        <p>View and manage your healthcare appointments</p>
+    </div>
+
+    <div *ngIf="isLoading()" style="text-align:center;padding:2rem">
+        <i class="fa-solid fa-spinner fa-spin"></i> Loading appointments...
+    </div>
+
+    <div *ngIf="!isLoading()">
+        <div class="upcoming">
+            <h3>Upcoming Appointments</h3>
+            <div *ngIf="upcoming().length > 0" class="cards">
+                <article *ngFor="let appointment of upcoming()" class="card">
+                    <div class="card-fist-row">
+                        <div class="left-group">
+                            <i class="fa fa-user-md"></i>
+                            <div class="name-date-time">
+                                <h4>{{ appointment.doctorName }}</h4>
+                                <div class="date-time">
+                                    <i class="fa fa-calendar"></i>
+                                    <span>{{ appointment.date }}</span>
+                                    <i class="fa fa-clock-o"></i>
+                                    <span>{{ appointment.time }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <span class="status">{{ appointment.status }}</span>
+                    </div>
+                    <div class="card-second-row">
+                        <div class="reason">
+                            <h4>Reason for visit</h4>
+                            <p>{{ appointment.reason }}</p>
+                        </div>
+                        <div class="card-buttons">
+                            <button class="btn btn-secondary cancel" (click)="cancel(appointment.id)">Cancel</button>
+                        </div>
+                    </div>
+                </article>
+            </div>
+            <div *ngIf="upcoming().length === 0" class="card">
+                <p>You have no upcoming appointments.</p>
+            </div>
+        </div>
+
+        <div class="past">
+            <h3>Past Appointments</h3>
+            <div *ngIf="past().length > 0" class="cards">
+                <article *ngFor="let appointment of past()" class="card">
+                    <div class="card-fist-row">
+                        <div class="left-group">
+                            <i class="fa fa-user-md"></i>
+                            <div class="name-date-time">
+                                <h4>{{ appointment.doctorName }}</h4>
+                                <div class="date-time">
+                                    <i class="fa fa-calendar"></i>
+                                    <span>{{ appointment.date }}</span>
+                                    <i class="fa fa-clock-o"></i>
+                                    <span>{{ appointment.time }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <span class="status">{{ appointment.status }}</span>
+                    </div>
+                    <div class="card-second-row">
+                        <div class="reason">
+                            <h4>Reason for visit</h4>
+                            <p>{{ appointment.reason }}</p>
+                        </div>
+                    </div>
+                </article>
+            </div>
+            <div *ngIf="past().length === 0" class="card">
+                <p>You have no past appointments.</p>
+            </div>
+        </div>
+    </div>
+</section>

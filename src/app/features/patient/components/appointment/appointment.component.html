@@ -1,0 +1,46 @@
+<section>
+    <header>
+        <a routerLink="/health/appointments">
+            <i class="fa fa-arrow-left"></i>
+            Back to appointments
+        </a>
+        <h2>Appointment Details</h2>
+    </header>
+
+    <div *ngIf="isLoading()" style="text-align:center;padding:2rem">
+        <i class="fa-solid fa-spinner fa-spin"></i> Loading...
+    </div>
+
+    <article *ngIf="!isLoading() && appointment() != null" class="card">
+        <div class="card-fist-row">
+            <div class="left-group">
+                <i class="fa fa-user-md"></i>
+                <div class="name-date-time">
+                    <h4>{{ appointment()!.doctorName }}</h4>
+                    <p style="opacity:.7;font-size:.9rem">{{ appointment()!.doctorSpecialty }}</p>
+                    <div class="date-time">
+                        <i class="fa fa-calendar"></i>
+                        <span>{{ appointment()!.date }}</span>
+                        <i class="fa fa-clock-o"></i>
+                        <span>{{ appointment()!.time }}</span>
+                    </div>
+                </div>
+            </div>
+            <span class="status">{{ appointment()!.status }}</span>
+        </div>
+        <div class="card-second-row">
+            <div class="reason">
+                <h4>Reason for visit</h4>
+                <p>{{ appointment()!.reason }}</p>
+            </div>
+            <div class="card-buttons" *ngIf="appointment()!.status === 'upcoming'">
+                <button class="btn btn-secondary cancel" (click)="cancel()">Cancel</button>
+            </div>
+        </div>
+    </article>
+
+    <div *ngIf="!isLoading() && appointment() == null" class="card">
+        <p>Appointment not found.</p>
+        <a routerLink="/health/appointments">Back to appointments</a>
+    </div>
+</section>

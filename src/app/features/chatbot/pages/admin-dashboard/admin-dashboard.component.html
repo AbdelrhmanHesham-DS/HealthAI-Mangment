@@ -1,0 +1,274 @@
+<app-chat-navbar></app-chat-navbar>
+<app-toast></app-toast>
+
+<div class="dash-layout">
+  <!-- Sidebar -->
+  <aside class="dash-sidebar" [class.collapsed]="!isSidebarOpen()">
+    <div class="dash-sidebar-header">
+      @if (isSidebarOpen()) {
+        <div class="dash-brand">
+          <div class="dash-brand-icon"><i class="fa-solid fa-robot"></i></div>
+          <span>NexusAI</span>
+        </div>
+      }
+      <button class="sidebar-toggle-btn" (click)="isSidebarOpen.set(!isSidebarOpen())">
+        <i class="fa-solid" [class.fa-chevron-left]="isSidebarOpen()" [class.fa-chevron-right]="!isSidebarOpen()"></i>
+      </button>
+    </div>
+
+    <nav class="dash-nav">
+      @for (item of navItems; track item.id) {
+        <button class="dash-nav-item" [class.active]="activeNav() === item.id" (click)="setNav(item.id)">
+          <i class="fa-solid" [class]="'fa-solid ' + item.icon"></i>
+          @if (isSidebarOpen()) { <span>{{ item.label }}</span> }
+        </button>
+      }
+    </nav>
+
+    @if (isSidebarOpen()) {
+      <div class="dash-sidebar-footer">
+        <div class="dash-admin-info">
+          <div class="dash-admin-avatar">A</div>
+          <div>
+            <div class="dash-admin-name">Admin User</div>
+            <div class="dash-admin-role">Super Admin</div>
+          </div>
+        </div>
+      </div>
+    }
+  </aside>
+
+  <!-- Main -->
+  <main class="dash-main">
+    <!-- Top Bar -->
+    <div class="dash-topbar">
+      <div class="dash-page-title">
+        <h2>{{ activeNavLabel() }}</h2>
+        <span class="dash-breadcrumb">Dashboard / {{ activeNavLabel() }}</span>
+      </div>
+      <div class="dash-topbar-actions">
+        <div class="dash-search">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" placeholder="Search..." [value]="searchQuery()" (input)="searchQuery.set($any($event.target).value)" />
+        </div>
+        <button class="dash-notif-btn">
+          <i class="fa-solid fa-bell"></i>
+          <span class="notif-badge">3</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="dash-content">
+
+      <!-- OVERVIEW -->
+      @if (activeNav() === 'overview') {
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon" style="background:rgba(239,68,68,0.12);color:#ef4444"><i class="fa-solid fa-comments"></i></div>
+            <div class="stat-info">
+              <div class="stat-value">{{ analytics()?.totalChats | number }}</div>
+              <div class="stat-label">Total Chats</div>
+              <div class="stat-change positive"><i class="fa-solid fa-arrow-trend-up"></i> +12.5% this month</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background:rgba(16,185,129,0.12);color:#10b981"><i class="fa-solid fa-users"></i></div>
+            <div class="stat-info">
+              <div class="stat-value">{{ analytics()?.activeUsers | number }}</div>
+              <div class="stat-label">Active Users</div>
+              <div class="stat-change positive"><i class="fa-solid fa-arrow-trend-up"></i> +8.2% this month</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background:rgba(139,92,246,0.12);color:#8b5cf6"><i class="fa-solid fa-bolt"></i></div>
+            <div class="stat-info">
+              <div class="stat-value">{{ analytics()?.avgResponseTime }}</div>
+              <div class="stat-label">Avg Response Time</div>
+              <div class="stat-change positive"><i class="fa-solid fa-arrow-trend-down"></i> -0.3s improved</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background:rgba(245,158,11,0.12);color:#f59e0b"><i class="fa-solid fa-star"></i></div>
+            <div class="stat-info">
+              <div class="stat-value">{{ analytics()?.satisfaction }}%</div>
+              <div class="stat-label">Satisfaction Rate</div>
+              <div class="stat-change positive"><i class="fa-solid fa-arrow-trend-up"></i> +2.1% this month</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Chats Table -->
+        <div class="dash-card">
+          <div class="dash-card-header">
+            <h3>Recent Conversations</h3>
+            <button class="dash-card-action" (click)="setNav('chats')">View All</button>
+          </div>
+          <div class="table-wrapper">
+            <table class="dash-table">
+              <thead>
+                <tr>
+                  <th>User</th>
+                  <th>Last Message</th>
+                  <th>Language</th>
+                  <th>Time</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (chat of recentChats; track chat.user) {
+                  <tr>
+                    <td><div class="table-user"><div class="table-avatar">{{ chat.user[0] }}</div>{{ chat.user }}</div></td>
+                    <td class="table-message">{{ chat.message }}</td>
+                    <td>{{ chat.lang }}</td>
+                    <td class="table-time">{{ chat.time }}</td>
+                    <td><span class="status-badge" [class]="'status-' + chat.status">{{ chat.status }}</span></td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Language Distribution -->
+        <div class="dash-card">
+          <div class="dash-card-header"><h3>Language Distribution</h3></div>
+          <div class="lang-dist">
+            @if (analytics()?.languages && analytics()!.languages!.length > 0) {
+              @for (lang of analytics()!.languages!; track lang.name) {
+                <div class="lang-dist-item">
+                  <div class="lang-dist-info">
+                    <span class="lang-dist-name">{{ lang.name }}</span>
+                    <span class="lang-dist-count">{{ lang.count | number }}</span>
+                  </div>
+                  <div class="lang-dist-bar">
+                    <div class="lang-dist-fill" [style.width.%]="(lang.count / (analytics()?.totalChats || 1)) * 100"></div>
+                  </div>
+                </div>
+              }
+            } @else {
+              <p style="opacity:.5;padding:1rem">No language data yet.</p>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- USERS -->
+      @if (activeNav() === 'users') {
+        <div class="dash-card">
+          <div class="dash-card-header">
+            <h3>All Users <span class="count-badge">{{ filteredUsers.length }}</span></h3>
+            <button class="dash-btn-primary"><i class="fa-solid fa-plus"></i> Add User</button>
+          </div>
+          <div class="table-wrapper">
+            <table class="dash-table">
+              <thead>
+                <tr>
+                  <th>User</th>
+                  <th>Email</th>
+                  <th>Conversations</th>
+                  <th>Last Active</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (user of filteredUsers; track user.id) {
+                  <tr>
+                    <td><div class="table-user"><div class="table-avatar">{{ user.name[0] }}</div>{{ user.name }}</div></td>
+                    <td class="table-email">{{ user.email }}</td>
+                    <td>{{ user.conversations }}</td>
+                    <td class="table-time">{{ user.lastActive | date:'MMM d, y' }}</td>
+                    <td><span class="status-badge" [class]="'status-' + user.status">{{ user.status }}</span></td>
+                    <td>
+                      <div class="table-actions">
+                        <button class="tbl-btn edit"><i class="fa-solid fa-pen"></i></button>
+                        <button class="tbl-btn delete" (click)="deleteUser(user.id)"><i class="fa-solid fa-trash"></i></button>
+                      </div>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      }
+
+      <!-- CHATS -->
+      @if (activeNav() === 'chats') {
+        <div class="dash-card">
+          <div class="dash-card-header">
+            <h3>All Conversations</h3>
+            <a routerLink="/chatbot/chat" class="dash-btn-primary"><i class="fa-solid fa-plus"></i> New Chat</a>
+          </div>
+          <div class="table-wrapper">
+            <table class="dash-table">
+              <thead>
+                <tr><th>User</th><th>Last Message</th><th>Language</th><th>Time</th><th>Status</th><th>Actions</th></tr>
+              </thead>
+              <tbody>
+                @for (chat of recentChats; track chat.user) {
+                  <tr>
+                    <td><div class="table-user"><div class="table-avatar">{{ chat.user[0] }}</div>{{ chat.user }}</div></td>
+                    <td class="table-message">{{ chat.message }}</td>
+                    <td>{{ chat.lang }}</td>
+                    <td class="table-time">{{ chat.time }}</td>
+                    <td><span class="status-badge" [class]="'status-' + chat.status">{{ chat.status }}</span></td>
+                    <td><div class="table-actions"><button class="tbl-btn edit"><i class="fa-solid fa-eye"></i></button></div></td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      }
+
+      <!-- ANALYTICS -->
+      @if (activeNav() === 'analytics') {
+        <div class="dash-card chart-card">
+          <div class="dash-card-header"><h3>Daily Chat Volume (Last 14 Days)</h3></div>
+          <div class="chart-container">
+            <canvas #chartCanvas></canvas>
+          </div>
+        </div>
+        <div class="analytics-grid">
+          @if (analytics()?.languages) {
+            @for (lang of analytics()!.languages!; track lang.name) {
+              <div class="analytics-mini-card">
+                <div class="analytics-mini-value">{{ lang.count | number }}</div>
+                <div class="analytics-mini-label">{{ lang.name }}</div>
+              </div>
+            }
+          }
+        </div>
+      }
+
+      <!-- SETTINGS -->
+      @if (activeNav() === 'settings') {
+        <div class="dash-card settings-card">
+          <h3 class="settings-title">Platform Settings</h3>
+          <div class="settings-list">
+            @for (setting of [
+              {label:'Enable AI Responses', desc:'Allow the AI to respond automatically', enabled: true},
+              {label:'Multilingual Mode', desc:'Auto-detect and respond in user language', enabled: true},
+              {label:'Chat History', desc:'Save conversation history for users', enabled: true},
+              {label:'Analytics Tracking', desc:'Collect usage analytics data', enabled: false},
+              {label:'Email Notifications', desc:'Send email alerts for new conversations', enabled: true}
+            ]; track setting.label) {
+              <div class="setting-item">
+                <div class="setting-info">
+                  <div class="setting-label">{{ setting.label }}</div>
+                  <div class="setting-desc">{{ setting.desc }}</div>
+                </div>
+                <div class="toggle-switch" [class.on]="setting.enabled" (click)="setting.enabled = !setting.enabled">
+                  <div class="toggle-thumb"></div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      }
+
+    </div>
+  </main>
+</div>

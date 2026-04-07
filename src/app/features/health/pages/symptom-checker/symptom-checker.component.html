@@ -1,0 +1,449 @@
+<app-health-navbar></app-health-navbar>
+
+<div class="sc-layout">
+
+  <!-- ── Sidebar ─────────────────────────────────────────────────────────── -->
+  <aside class="sc-sidebar">
+    <div class="sc-sidebar-header">
+      <div class="sc-ai-avatar"><i class="fa-solid fa-robot"></i></div>
+      <div>
+        <div class="sc-ai-name">MediAI</div>
+        <div class="sc-ai-status"><span class="sc-dot"></span> AI-Powered</div>
+      </div>
+    </div>
+
+    <!-- Mode Toggle -->
+    <div class="sc-mode-toggle">
+      <button class="sc-mode-btn" [class.active]="mode()==='chat'" (click)="switchMode('chat')">
+        <i class="fa-solid fa-comment-medical"></i> Free Chat
+      </button>
+      <button class="sc-mode-btn" [class.active]="mode()==='flow'" (click)="switchMode('flow')">
+        <i class="fa-solid fa-list-check"></i> Guided
+      </button>
+    </div>
+
+    @if (mode() === 'chat') {
+      <button class="sc-new-chat-btn" (click)="clearChat()">
+        <i class="fa-solid fa-plus"></i> New Consultation
+      </button>
+      <div class="sc-sidebar-section">
+        <div class="sc-sidebar-label">Quick Symptoms</div>
+        @for (s of quickSymptoms; track s) {
+          <button class="sc-quick-btn" (click)="send(s)">{{ s }}</button>
+        }
+      </div>
+    } @else {
+      <button class="sc-new-chat-btn" (click)="restartFlow()">
+        <i class="fa-solid fa-rotate-left"></i> Restart Triage
+      </button>
+    }
+
+    <!-- Saved Cases -->
+    @if (auth.isAuthenticated()) {
+      <div class="sc-sidebar-section">
+        <div class="sc-sidebar-label" style="cursor:pointer" (click)="showCases.set(!showCases()); loadCases()">
+          <i class="fa-solid fa-folder-open"></i> My Cases
+          <span class="sc-cases-count">{{ savedCases().length }}</span>
+        </div>
+        @if (showCases()) {
+          @if (savedCases().length === 0) {
+            <div style="font-size:.75rem;opacity:.5;padding:4px 0">No saved cases yet.</div>
+          }
+          @for (c of savedCases(); track c.id) {
+            <div class="sc-case-item">
+              <div class="sc-case-info">
+                <div class="sc-case-title">{{ c.title }}</div>
+                <div class="sc-case-date">{{ formatDate(c.createdAt) }}</div>
+              </div>
+              <button class="sc-case-del" (click)="deleteCase(c.id)" title="Delete">
+                <i class="fa-solid fa-trash"></i>
+              </button>
+            </div>
+          }
+        }
+      </div>
+    }
+
+    <div class="sc-sidebar-section sc-sidebar-tips">
+      <div class="sc-sidebar-label">Tips</div>
+      <div class="sc-tip"><i class="fa-solid fa-circle-dot"></i> Describe duration (e.g. "for 3 days")</div>
+      <div class="sc-tip"><i class="fa-solid fa-circle-dot"></i> Mention severity (mild / severe)</div>
+      <div class="sc-tip"><i class="fa-solid fa-circle-dot"></i> Include related symptoms</div>
+    </div>
+
+    <div class="sc-disclaimer">
+      <i class="fa-solid fa-triangle-exclamation"></i>
+      For informational purposes only. Not a substitute for professional medical advice.
+    </div>
+  </aside>
+
+  <!-- ── Main ───────────────────────────────────────────────────────────── -->
+  <main class="sc-main">
+
+    <!-- Medical Disclaimer Banner -->
+    <div class="sc-disclaimer-banner">
+      <i class="fa-solid fa-triangle-exclamation"></i>
+      <span>
+        <strong>Medical Disclaimer:</strong> This AI assistant is for informational purposes only.
+        It is <strong>not</strong> a substitute for professional medical advice, diagnosis, or treatment.
+        Always consult a qualified healthcare provider for medical concerns.
+      </span>
+    </div>
+
+    <!-- Top bar -->
+    <div class="sc-topbar">
+      <div class="sc-topbar-left">
+        <div class="sc-topbar-avatar"><i class="fa-solid fa-stethoscope"></i></div>
+        <div>
+          <div class="sc-topbar-title">
+            {{ mode() === 'flow' ? 'Guided Triage — Step-by-Step' : 'MediAI — Symptom Checker' }}
+          </div>
+          <div class="sc-topbar-sub">
+            @if (isTyping() || flowLoading()) { <span class="sc-typing-status"><span class="sc-dot-sm"></span> Analyzing...</span> }
+            @else { Medical AI · {{ mode() === 'flow' ? 'Answer each question for a precise assessment' : 'Ask anything about your health' }} }
+          </div>
+        </div>
+      </div>
+      <button class="sc-topbar-btn" (click)="mode()==='chat' ? clearChat() : restartFlow()" title="Reset">
+        <i class="fa-solid fa-rotate-left"></i>
+      </button>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════════════ -->
+    <!-- CHAT MODE                                                          -->
+    <!-- ══════════════════════════════════════════════════════════════════ -->
+    @if (mode() === 'chat') {
+      <div class="sc-messages">
+        @for (msg of messages(); track msg.id) {
+          @if (msg.role === 'user') {
+            <div class="sc-row sc-row-user">
+              <div class="sc-bubble sc-bubble-user">
+                <div class="sc-text">{{ msg.text }}</div>
+                <div class="sc-time">{{ formatTime(msg.timestamp) }}</div>
+              </div>
+              <div class="sc-avatar sc-avatar-user"><i class="fa-solid fa-user"></i></div>
+            </div>
+          }
+          @if (msg.role === 'bot') {
+            <div class="sc-row sc-row-bot">
+              <div class="sc-avatar sc-avatar-bot">
+                @if (msg.streaming) { <i class="fa-solid fa-spinner fa-spin"></i> }
+                @else { <i class="fa-solid fa-robot"></i> }
+              </div>
+              <div class="sc-bubble sc-bubble-bot">
+                @if (msg.urgency && !msg.streaming) {
+                  <div class="sc-urgency-badge"
+                    [style.background]="urgencyColor(msg.urgency) + '18'"
+                    [style.color]="urgencyColor(msg.urgency)"
+                    [style.border-color]="urgencyColor(msg.urgency) + '40'">
+                    {{ urgencyLabel(msg.urgency) }}
+                  </div>
+                }
+                <div class="sc-text" [innerHTML]="renderMarkdown(msg.text)"></div>
+                @if (msg.streaming) { <span class="sc-cursor">▋</span> }
+
+                <!-- Confidence + Source -->
+                @if (!msg.streaming && msg.confidence && msg.source) {
+                  <div class="sc-confidence">
+                    <span class="sc-conf-bar-wrap">
+                      <span class="sc-conf-bar" [style.width.%]="msg.confidence"
+                        [style.background]="msg.confidence >= 75 ? '#10b981' : msg.confidence >= 50 ? '#f59e0b' : '#ef4444'">
+                      </span>
+                    </span>
+                    <span class="sc-conf-label">Confidence: <strong>{{ msg.confidence }}%</strong></span>
+                    <span class="sc-conf-sep">·</span>
+                    <span class="sc-conf-source"><i class="fa-solid fa-book-medical"></i> {{ msg.source }}</span>
+                  </div>
+                }
+
+                <!-- Explainability: Why this result -->
+                @if (!msg.streaming && msg.reasons && msg.reasons.length > 0) {
+                  <div class="sc-reasons">
+                    <div class="sc-reasons-title"><i class="fa-solid fa-magnifying-glass"></i> Why this result:</div>
+                    @for (r of msg.reasons; track r) {
+                      <div class="sc-reason-item">• {{ r }}</div>
+                    }
+                  </div>
+                }
+
+                <!-- Doctor cards -->
+                @if (!msg.streaming && msg.doctors && msg.doctors.length > 0) {
+                  <div class="sc-doctors-section">
+                    <div class="sc-doctors-label"><i class="fa-solid fa-user-doctor"></i> Recommended Specialists</div>
+                    <div class="sc-doctor-cards">
+                      @for (doc of msg.doctors; track doc.id) {
+                        <div class="sc-doc-card">
+                          <div class="sc-doc-avatar" [class.online]="doc.online">{{ doc.avatar }}</div>
+                          <div class="sc-doc-info">
+                            <div class="sc-doc-name">{{ doc.name }}</div>
+                            <div class="sc-doc-spec">{{ doc.specialty }}</div>
+                            <div class="sc-doc-meta">
+                              <span><i class="fa-solid fa-star"></i> {{ doc.rating }}</span>
+                              <span>EGP {{ doc.consultationFee }}</span>
+                              @if (doc.online) { <span class="sc-online-tag">Online</span> }
+                            </div>
+                          </div>
+                          <a [routerLink]="['/health/book', doc.id]" class="sc-book-btn">
+                            <i class="fa-solid fa-calendar-plus"></i> Book
+                          </a>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                }
+
+                <!-- Suggestion chips -->
+                @if (!msg.streaming && msg.suggestions && msg.suggestions.length > 0) {
+                  <div class="sc-chips">
+                    @for (s of msg.suggestions; track s) {
+                      <button class="sc-chip" (click)="send(s)">{{ s }}</button>
+                    }
+                  </div>
+                }
+
+                <!-- Save case button -->
+                @if (!msg.streaming && msg.urgency && auth.isAuthenticated()) {
+                  <div class="sc-action-row">
+                    <button class="sc-save-btn" (click)="saveChatCase()" [disabled]="caseSaved()">
+                      <i class="fa-solid" [class.fa-floppy-disk]="!caseSaved()" [class.fa-check]="caseSaved()"></i>
+                      {{ caseSaved() ? 'Saved!' : 'Save Case' }}
+                    </button>
+                    <button class="sc-download-btn" (click)="downloadChatReport()" [disabled]="isDownloading()">
+                      <i class="fa-solid" [class.fa-file-pdf]="!isDownloading()" [class.fa-spinner]="isDownloading()" [class.fa-spin]="isDownloading()"></i>
+                      {{ isDownloading() ? 'Generating...' : 'Download Report' }}
+                    </button>
+                  </div>
+                }
+
+                @if (!msg.streaming) {
+                  <div class="sc-time">{{ formatTime(msg.timestamp) }}</div>
+                }
+              </div>
+            </div>
+          }
+        }
+
+        @if (isTyping() && lastMessageRole !== 'bot') {
+          <div class="sc-row sc-row-bot">
+            <div class="sc-avatar sc-avatar-bot"><i class="fa-solid fa-spinner fa-spin"></i></div>
+            <div class="sc-bubble sc-bubble-bot sc-typing-bubble">
+              <div class="sc-dots"><span></span><span></span><span></span></div>
+              <span class="sc-typing-lbl">Analyzing your symptoms...</span>
+            </div>
+          </div>
+        }
+        <div #msgEnd></div>
+      </div>
+
+      <!-- Chat Input -->
+      <div class="sc-input-area">
+        <div class="sc-input-wrap" [class.focused]="inputText().length > 0">
+          <textarea #inputRef class="sc-input"
+            placeholder="Describe your symptoms... (e.g. I have a severe headache and feel nauseous for 2 days)"
+            [value]="inputText()" (input)="onInput($event)" (keydown)="onKey($event)" rows="1">
+          </textarea>
+          <div class="sc-input-footer">
+            <span class="sc-char-count" [class.warn]="charCount() > 400">{{ charCount() }}/500</span>
+            <div style="display:flex;gap:6px">
+              <button class="sc-voice-btn" (click)="toggleVoice()" [class.listening]="isListening()" title="Voice input">
+                <i class="fa-solid" [class.fa-microphone]="!isListening()" [class.fa-microphone-slash]="isListening()"></i>
+              </button>
+              <button class="sc-send-btn" (click)="send()" [disabled]="!inputText().trim() || isTyping()">
+                @if (isTyping()) { <i class="fa-solid fa-spinner fa-spin"></i> }
+                @else { <i class="fa-solid fa-paper-plane"></i> }
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="sc-input-hint">
+          <i class="fa-solid fa-shield-halved"></i> AI-powered · Not a medical diagnosis · Press Enter to send
+        </div>
+      </div>
+    }
+
+    <!-- ══════════════════════════════════════════════════════════════════ -->
+    <!-- GUIDED FLOW MODE                                                   -->
+    <!-- ══════════════════════════════════════════════════════════════════ -->
+    @if (mode() === 'flow') {
+      <div class="sc-flow-container">
+
+        @if (!flowDone()) {
+          <!-- Progress bar -->
+          <div class="sc-flow-progress-wrap">
+            <div class="sc-flow-progress-header">
+              <span>Step {{ flowStep() + 1 }} of {{ flowTotal() }}</span>
+              <span>{{ flowProgress }}% complete</span>
+            </div>
+            <div class="sc-flow-progress-bar">
+              <div class="sc-flow-progress-fill" [style.width.%]="flowProgress"></div>
+            </div>
+          </div>
+
+          <!-- Previous answers summary -->
+          @if (flowStep() > 0) {
+            <div class="sc-flow-answers-summary">
+              @for (entry of flowAnswers() | keyvalue; track entry.key) {
+                <div class="sc-flow-answer-chip">
+                  <span class="sc-flow-answer-key">{{ entry.key }}:</span>
+                  <span class="sc-flow-answer-val">{{ entry.value }}</span>
+                </div>
+              }
+            </div>
+          }
+
+          <!-- Current question -->
+          <div class="sc-flow-question-card">
+            <div class="sc-flow-q-icon"><i class="fa-solid fa-circle-question"></i></div>
+            <div class="sc-flow-q-text">{{ flowQuestion() }}</div>
+          </div>
+
+          <!-- Answer input -->
+          <div class="sc-flow-input-wrap">
+            <input class="sc-flow-input" type="text"
+              [placeholder]="'Your answer...'"
+              [(ngModel)]="flowAnswer"
+              (keydown)="onFlowKey($event)"
+              [disabled]="flowLoading()" />
+            <button class="sc-flow-next-btn" (click)="nextFlowStep()"
+              [disabled]="!flowAnswer().trim() || flowLoading()">
+              @if (flowLoading()) { <i class="fa-solid fa-spinner fa-spin"></i> }
+              @else {
+                {{ flowStep() + 1 < flowTotal() ? 'Next' : 'Analyze' }}
+                <i class="fa-solid fa-arrow-right"></i>
+              }
+            </button>
+          </div>
+
+          <!-- Quick answer chips for yes/no questions -->
+          @if (flowKey() === 'fever' || flowKey() === 'breathing') {
+            <div class="sc-chips" style="margin-top:12px">
+              <button class="sc-chip" (click)="flowAnswer.set('Yes'); nextFlowStep()">Yes</button>
+              <button class="sc-chip" (click)="flowAnswer.set('No'); nextFlowStep()">No</button>
+            </div>
+          }
+          @if (flowKey() === 'severity') {
+            <div class="sc-chips" style="margin-top:12px">
+              <button class="sc-chip" (click)="flowAnswer.set('Mild'); nextFlowStep()">Mild</button>
+              <button class="sc-chip" (click)="flowAnswer.set('Moderate'); nextFlowStep()">Moderate</button>
+              <button class="sc-chip" (click)="flowAnswer.set('Severe'); nextFlowStep()">Severe</button>
+            </div>
+          }
+        }
+
+        <!-- ── RESULT ── -->
+        @if (flowDone() && flowResult()) {
+          <div class="sc-flow-result">
+
+            <!-- Emergency -->
+            @if (flowResult().urgency === 'emergency') {
+              <div class="sc-flow-emergency">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <h2>🚨 EMERGENCY</h2>
+                <p>{{ flowResult().recommendation }}</p>
+                <a href="tel:123" class="sc-emergency-call-btn">
+                  <i class="fa-solid fa-phone"></i> Call 123 Now
+                </a>
+              </div>
+            } @else {
+              <!-- Normal result -->
+              <div class="sc-flow-result-header">
+                <div class="sc-flow-result-urgency"
+                  [style.background]="urgencyColor(flowResult().urgency) + '18'"
+                  [style.color]="urgencyColor(flowResult().urgency)"
+                  [style.border-color]="urgencyColor(flowResult().urgency) + '40'">
+                  {{ urgencyLabel(flowResult().urgency) }}
+                </div>
+                <h2 class="sc-flow-result-condition">{{ flowResult().condition }}</h2>
+                <p class="sc-flow-result-specialty">
+                  <i class="fa-solid fa-user-doctor"></i> Recommended: <strong>{{ flowResult().specialty }}</strong>
+                </p>
+              </div>
+
+              <div class="sc-flow-result-body">
+                <p class="sc-flow-result-rec">{{ flowResult().recommendation }}</p>
+
+                <!-- Confidence + Source -->
+                @if (flowResult().confidence) {
+                  <div class="sc-confidence" style="margin-top:12px">
+                    <span class="sc-conf-bar-wrap">
+                      <span class="sc-conf-bar" [style.width.%]="flowResult().confidence"
+                        [style.background]="flowResult().confidence >= 75 ? '#10b981' : flowResult().confidence >= 50 ? '#f59e0b' : '#ef4444'">
+                      </span>
+                    </span>
+                    <span class="sc-conf-label">Confidence: <strong>{{ flowResult().confidence }}%</strong></span>
+                    <span class="sc-conf-sep">·</span>
+                    <span class="sc-conf-source"><i class="fa-solid fa-book-medical"></i> {{ flowResult().source }}</span>
+                  </div>
+                }
+
+                <!-- Explainability -->
+                @if (flowResult().reasons && flowResult().reasons.length > 0) {
+                  <div class="sc-reasons" style="margin-top:12px">
+                    <div class="sc-reasons-title"><i class="fa-solid fa-magnifying-glass"></i> Why this result:</div>
+                    @for (r of flowResult().reasons; track r) {
+                      <div class="sc-reason-item">• {{ r }}</div>
+                    }
+                  </div>
+                }
+
+                <!-- Doctor cards -->
+                @if (flowResult().doctors && flowResult().doctors.length > 0) {
+                  <div class="sc-doctors-section" style="margin-top:16px">
+                    <div class="sc-doctors-label"><i class="fa-solid fa-user-doctor"></i> Recommended Specialists</div>
+                    <div class="sc-doctor-cards">
+                      @for (doc of flowResult().doctors; track doc.id) {
+                        <div class="sc-doc-card">
+                          <div class="sc-doc-avatar" [class.online]="doc.online">{{ doc.avatar }}</div>
+                          <div class="sc-doc-info">
+                            <div class="sc-doc-name">{{ doc.name }}</div>
+                            <div class="sc-doc-spec">{{ doc.specialty }}</div>
+                            <div class="sc-doc-meta">
+                              <span><i class="fa-solid fa-star"></i> {{ doc.rating }}</span>
+                              <span>EGP {{ doc.consultationFee }}</span>
+                            </div>
+                          </div>
+                          <a [routerLink]="['/health/book', doc.id]" class="sc-book-btn">
+                            <i class="fa-solid fa-calendar-plus"></i> Book
+                          </a>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                }
+              </div>
+
+              <!-- Actions -->
+              <div class="sc-flow-result-actions">
+                @if (auth.isAuthenticated()) {
+                  <button class="sc-save-btn" (click)="saveCurrentCase()" [disabled]="caseSaved()">
+                    <i class="fa-solid" [class.fa-floppy-disk]="!caseSaved()" [class.fa-check]="caseSaved()"></i>
+                    {{ caseSaved() ? 'Case Saved!' : 'Save This Case' }}
+                  </button>
+                  <button class="sc-download-btn" (click)="downloadReport(flowResult(), flowAnswers())" [disabled]="isDownloading()">
+                    <i class="fa-solid" [class.fa-file-pdf]="!isDownloading()" [class.fa-spinner]="isDownloading()" [class.fa-spin]="isDownloading()"></i>
+                    {{ isDownloading() ? 'Generating...' : 'Download PDF Report' }}
+                  </button>
+                }
+                <button class="sc-new-chat-btn" style="margin-top:0" (click)="restartFlow()">
+                  <i class="fa-solid fa-rotate-left"></i> New Triage
+                </button>
+                <button class="sc-new-chat-btn" style="margin-top:0;background:rgba(99,102,241,0.15);color:#818cf8" (click)="switchMode('chat')">
+                  <i class="fa-solid fa-comment-medical"></i> Ask Follow-up
+                </button>
+              </div>
+            }
+          </div>
+        }
+
+        @if (flowLoading() && !flowDone()) {
+          <div class="sc-flow-loading">
+            <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
+            <p>Analyzing your answers...</p>
+          </div>
+        }
+
+      </div>
+    }
+
+  </main>
+</div>

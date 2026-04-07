@@ -1,0 +1,132 @@
+<section>
+    <header>
+        <h2>Find Healthcare Facilities</h2>
+        <p>Locate nearby hospitals and emergency services</p>
+    </header>
+    <div class="hos-eme">
+        <button id="hosid" (click)="showSection('Hospital')" [ngClass]="{'activeh' : activeSection ==='Hospital'}"><i class="fa-solid fa-hospital"></i>Hospitals & Clinics</button>
+        <button id="emeid" (click)="showSection('Emergency')" [ngClass]="{'activee' : activeSection ==='Emergency'}"><i class="fa-solid fa-triangle-exclamation"></i> Emergency services</button>
+    </div>
+
+    <!-- hospitals & Clinics -->
+    <div class="hos" *ngIf="activeSection === 'Hospital'">
+        <div class="hos-map">
+            <div class="map-head">
+                <h2>Interactive Hospital Map</h2>
+                <p>Find hosiptals near you and get directions</p>
+            </div>
+            <div class="controls">
+                <input type="text" id="locationInput" placeholder="Search by hospital name, location, or department" />
+                <button (click)="searchLocation()">Search</button>
+            </div>
+            <div class="hos" [class.hidden]="activeSection !== 'Hospital'">
+                <div class="map">
+                    <iframe id="mapFrame"
+                        title="Interactive hospiltal map"
+                        aria-label="Interactive hospital map"
+                        loading="lazy"
+                        allowfullscreen>
+                    </iframe>
+                </div>
+            </div>
+
+        </div>
+        <div class="hos-list">
+            <h3>Nearby Hospitals</h3>
+            <ul id="hospitalList">
+                <li>
+                    <div class="hos-head">
+                        <h4><i class="fa-solid fa-hospital"></i>City Hospital</h4>
+                        <span>open</span>
+                    </div>
+                    <p><i class="fa-solid fa-location-dot"></i> 123 Main St, Anytown, USA</p>
+                    <p><i class="fa-solid fa-phone"></i> Distance: 2.5 miles</p>
+                    <p> Departments: Emergency, Cardiology, Pediatrics</p>
+                    <a href="tel:+1234567890">Call: (123) 456-7890</a>
+                </li>
+                <li>
+                    <div class="hos-head">
+                        <h4><i class="fa-solid fa-hospital"></i>General Health Clinic</h4>
+                        <span>closed</span>
+                    </div>
+                    <p><i class="fa-solid fa-location-dot"></i> 456 Elm St, Othertown, USA</p>
+                    <p><i class="fa-solid fa-phone"></i> Distance: 4.2 miles</p>
+                    <p> Departments: General Medicine, Dermatology</p>
+                    <a href="tel:+1987654321">Call: (987) 654-3210</a>
+                </li>
+                <li>
+                    <div class="hos-head">
+                        <h4><i class="fa-solid fa-hospital"></i>Sunrise Medical Center</h4>
+                        <span>open</span>
+                    </div>
+                    <p><i class="fa-solid fa-location-dot"></i> 789 Oak St, Sometown, USA</p>
+                    <p><i class="fa-solid fa-phone"></i> Distance: 5.8 miles</p>
+                    <p> Departments: Orthopedics, Neurology, Maternity</p>
+                    <a href="tel:+1123456789">Call: (112) 345-6789</a>
+                </li>
+                <li>
+                    <div class="hos-head">
+                        <h4><i class="fa-solid fa-hospital"></i>River Valley Hospital</h4>
+                        <span>open</span>
+                    </div>
+                    <p><i class="fa-solid fa-location-dot"></i> 321 Pine St, Newcity, USA</p>
+                    <p><i class="fa-solid fa-phone"></i> Distance: 3.6 miles</p>
+                    <p> Departments: Emergency, Surgery, Radiology</p>
+                    <a href="tel:+1098765432">Call: (109) 876-5432</a>
+                </li>
+                <li>
+                    <div class="hos-head">
+                        <h4><i class="fa-solid fa-hospital"></i>Mountainview Health Center</h4>
+                        <span>closed</span>
+                    </div>
+                    <p><i class="fa-solid fa-location-dot"></i> 654 Cedar St, Oldtown, USA</p>
+                    <p><i class="fa-solid fa-phone"></i> Distance: 6.1 miles</p>
+                    <p> Departments: Pediatrics, Gynecology, ENT</p>
+                    <a href="tel:+1230984567">Call: (123) 098-4567</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- emergency services -->
+     <div class="eme" *ngIf="activeSection === 'Emergency'">
+        <header>
+            <h2><i class="fa-solid fa-triangle-exclamation"></i> Emergency Services</h2>
+            <p>For life-threatening emergencies, Contact emergency services quickly and easily</p>
+            <a href="tel:+911"><i class="fa-solid fa-phone"></i> Call 911 Now</a>
+        </header>
+        <div class="eme-ser">
+            <h3>Nearest Emergency Services</h3>
+            <ul class="eme-list">
+                <li>
+                    <div class="eme-head">
+                        <h4><i class="fa-solid fa-ambulance"></i> Ambulance Service A</h4>
+                        <span>Available</span>
+                    </div>
+                    <p><i class="fa-solid fa-location-dot"></i> 100 First St, Anytown, USA</p>
+                    <p><i class="fa-solid fa-phone"></i> Distance: 1.2 miles</p>
+                    <a href="tel:+1234509876">Call: (123) 450-9876</a>
+                </li>
+                <li>
+                    <div class="eme-head">
+                        <h4><i class="fa-solid fa-fire-extinguisher"></i> Fire Department B</h4>
+                        <span>Available</span>
+                    </div>
+                    <p><i class="fa-solid fa-location-dot"></i> 200 Second St, Othertown, USA</p>
+                    <p><i class="fa-solid fa-phone"></i> Distance: 2.8 miles</p>
+                    <a href="tel:+1987601234">Call: (198) 760-1234</a>
+                </li>
+                <li>
+                    <div class="eme-head">
+                        <h4><i class="fa-solid fa-shield-halved"></i> Police Station C</h4>
+                        <span>Available</span>
+                    </div>
+                    <p><i class="fa-solid fa-location-dot"></i> 300 Third St, Sometown, USA</p>
+                    <p><i class="fa-solid fa-phone"></i> Distance: 3.5 miles</p>
+                    <a href="tel:+1123405678">Call: (112) 340-5678</a>
+                </li>
+            </ul>
+        </div>
+     </div>
+</section>
+

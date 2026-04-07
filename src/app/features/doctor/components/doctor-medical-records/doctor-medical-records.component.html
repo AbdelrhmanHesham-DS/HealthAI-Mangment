@@ -1,0 +1,116 @@
+<div class="doc-page">
+
+  <div class="doc-page-header">
+    <div>
+      <h1 class="doc-page-title">Medical Records</h1>
+      <p class="doc-page-sub">Manage patient medical records and history</p>
+    </div>
+    <button class="doc-btn doc-btn-primary" (click)="showAddForm = !showAddForm">
+      <i class="fa-solid fa-plus"></i> Add Record
+    </button>
+  </div>
+
+  <!-- Add record form -->
+  @if (showAddForm) {
+    <div class="doc-add-record-card">
+      <h3 class="doc-section-title"><i class="fa-solid fa-plus"></i> New Medical Record</h3>
+      <form (ngSubmit)="addRecord()">
+        <div class="doc-form-grid">
+          <div class="doc-form-group">
+            <label>Title *</label>
+            <input [(ngModel)]="newRecord.title" name="title" placeholder="e.g. Blood Test Results" required />
+          </div>
+          <div class="doc-form-group">
+            <label>Type *</label>
+            <select [(ngModel)]="newRecord.type" name="type">
+              <option *ngFor="let t of recordTypes" [value]="t">{{ t | titlecase }}</option>
+            </select>
+          </div>
+          <div class="doc-form-group">
+            <label>Doctor *</label>
+            <input [(ngModel)]="newRecord.doctor" name="doctor" placeholder="Doctor name" required />
+          </div>
+          <div class="doc-form-group">
+            <label>Date *</label>
+            <input [(ngModel)]="newRecord.date" name="date" type="date" required />
+          </div>
+        </div>
+        <div class="doc-form-group" style="margin-top:12px">
+          <label>Description</label>
+          <textarea [(ngModel)]="newRecord.description" name="description" placeholder="Record details..."></textarea>
+        </div>
+        <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
+          <button type="submit" class="doc-btn doc-btn-primary"><i class="fa-solid fa-plus"></i> Add</button>
+          <button type="button" class="doc-btn doc-btn-outline" (click)="showAddForm = false">Cancel</button>
+        </div>
+      </form>
+    </div>
+  }
+
+  <!-- Search -->
+  <div class="doc-search-bar">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="text" placeholder="Search by title, doctor, or type..." [(ngModel)]="searchTerm" />
+  </div>
+
+  <!-- Loading -->
+  @if (isLoading()) {
+    <div style="text-align:center;padding:3rem;opacity:.6">
+      <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
+      <p>Loading records...</p>
+    </div>
+  }
+
+  <!-- Records list -->
+  @if (!isLoading()) {
+    @if (filteredRecords.length > 0) {
+      <div class="doc-records-list">
+        @for (rec of filteredRecords; track rec.id; let i = $index) {
+          <div class="doc-record-card">
+            @if (editedRecordIndex !== i) {
+              <div class="doc-record-top">
+                <div class="doc-record-icon"><i class="fa-solid fa-file-medical"></i></div>
+                <div class="doc-record-info">
+                  <div class="doc-apt-name">{{ rec.title }}</div>
+                  <div class="doc-apt-id">{{ rec.doctor }} · {{ rec.date }}</div>
+                </div>
+                <span class="doc-badge doc-badge-pending">{{ rec.type }}</span>
+                <div class="doc-record-actions">
+                  <button class="doc-btn doc-btn-outline" (click)="editRecord(i)"><i class="fa-solid fa-pen"></i></button>
+                  <button class="doc-btn doc-btn-danger" (click)="deleteRecord(i)"><i class="fa-solid fa-trash"></i></button>
+                </div>
+              </div>
+              <div class="doc-record-details" *ngIf="rec.description">{{ rec.description }}</div>
+            } @else {
+              <div class="doc-form-grid">
+                <div class="doc-form-group"><label>Title</label><input [(ngModel)]="editedRecord.title" /></div>
+                <div class="doc-form-group">
+                  <label>Type</label>
+                  <select [(ngModel)]="editedRecord.type">
+                    <option *ngFor="let t of recordTypes" [value]="t">{{ t | titlecase }}</option>
+                  </select>
+                </div>
+                <div class="doc-form-group"><label>Doctor</label><input [(ngModel)]="editedRecord.doctor" /></div>
+                <div class="doc-form-group"><label>Date</label><input [(ngModel)]="editedRecord.date" type="date" /></div>
+              </div>
+              <div class="doc-form-group" style="margin-top:12px">
+                <label>Description</label>
+                <textarea [(ngModel)]="editedRecord.description"></textarea>
+              </div>
+              <div style="display:flex;gap:8px;margin-top:12px;justify-content:flex-end">
+                <button class="doc-btn doc-btn-success" (click)="saveRecord(i)"><i class="fa-solid fa-floppy-disk"></i> Save</button>
+                <button class="doc-btn doc-btn-outline" (click)="cancelEdit()">Cancel</button>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="doc-empty">
+        <i class="fa-solid fa-file-circle-xmark"></i>
+        <h3>No records found</h3>
+        <p>{{ searchTerm ? 'Try a different search.' : 'Add the first medical record above.' }}</p>
+      </div>
+    }
+  }
+</div>

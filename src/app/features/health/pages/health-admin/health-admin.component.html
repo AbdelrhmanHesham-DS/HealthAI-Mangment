@@ -1,0 +1,245 @@
+<app-health-navbar></app-health-navbar>
+<div class="ha-layout">
+  <!-- Sidebar -->
+  <aside class="ha-sidebar" [class.collapsed]="!isSidebarOpen()">
+    <div class="ha-sidebar-header">
+      @if (isSidebarOpen()) {
+        <div class="ha-brand"><div class="ha-brand-icon"><i class="fa-solid fa-heart-pulse"></i></div><span>HealthAI Admin</span></div>
+      }
+      <button class="ha-toggle-btn" (click)="isSidebarOpen.set(!isSidebarOpen())">
+        <i class="fa-solid" [class.fa-chevron-left]="isSidebarOpen()" [class.fa-chevron-right]="!isSidebarOpen()"></i>
+      </button>
+    </div>
+    <nav class="ha-nav">
+      @for (item of navItems; track item.id) {
+        <button class="ha-nav-item" [class.active]="activeNav() === item.id" (click)="setNav(item.id)">
+          <i class="fa-solid" [class]="'fa-solid ' + item.icon"></i>
+          @if (isSidebarOpen()) { <span>{{ item.label }}</span> }
+        </button>
+      }
+    </nav>
+    @if (isSidebarOpen()) {
+      <div class="ha-sidebar-footer">
+        <div class="ha-admin-info">
+          <div class="ha-admin-avatar">{{ auth.currentUser?.name?.[0] }}</div>
+          <div>
+            <div class="ha-admin-name">{{ auth.currentUser?.name }}</div>
+            <div class="ha-admin-role">{{ auth.currentUser?.role | titlecase }}</div>
+          </div>
+        </div>
+        <button class="ha-logout-btn" (click)="auth.logout()" title="Sign Out">
+          <i class="fa-solid fa-right-from-bracket"></i>
+        </button>
+      </div>
+    }
+  </aside>
+
+  <!-- Main -->
+  <main class="ha-main">
+    <div class="ha-topbar">
+      <div><h2 class="ha-page-title">{{ activeLabel() }}</h2><span class="ha-breadcrumb">Admin / {{ activeLabel() }}</span></div>
+      <div class="ha-topbar-right">
+        <a routerLink="/health" class="ha-back-link"><i class="fa-solid fa-arrow-left"></i> Back to Platform</a>
+      </div>
+    </div>
+
+    <div class="ha-content">
+
+      <!-- OVERVIEW -->
+      @if (activeNav() === 'overview') {
+        <div class="ha-stats-grid">
+          <div class="ha-stat-card">
+            <div class="ha-stat-icon" style="background:rgba(99,102,241,0.12);color:#6366f1"><i class="fa-solid fa-users"></i></div>
+            <div><div class="ha-stat-val">{{ stats()?.totalPatients | number }}</div><div class="ha-stat-lbl">Total Patients</div><div class="ha-stat-change">+8.2% this month</div></div>
+          </div>
+          <div class="ha-stat-card">
+            <div class="ha-stat-icon" style="background:rgba(16,185,129,0.12);color:#10b981"><i class="fa-solid fa-user-doctor"></i></div>
+            <div><div class="ha-stat-val">{{ stats()?.totalDoctors }}</div><div class="ha-stat-lbl">Active Doctors</div><div class="ha-stat-change">+3 this month</div></div>
+          </div>
+          <div class="ha-stat-card">
+            <div class="ha-stat-icon" style="background:rgba(245,158,11,0.12);color:#f59e0b"><i class="fa-solid fa-calendar-check"></i></div>
+            <div><div class="ha-stat-val">{{ stats()?.totalAppointments | number }}</div><div class="ha-stat-lbl">Total Appointments</div><div class="ha-stat-change">+12.5% this month</div></div>
+          </div>
+          <div class="ha-stat-card">
+            <div class="ha-stat-icon" style="background:rgba(6,182,212,0.12);color:#06b6d4"><i class="fa-solid fa-star"></i></div>
+            <div><div class="ha-stat-val">{{ stats()?.satisfaction }}%</div><div class="ha-stat-lbl">Satisfaction Rate</div><div class="ha-stat-change">+2.1% this month</div></div>
+          </div>
+        </div>
+
+        <!-- Recent Appointments -->
+        <div class="ha-card">
+          <div class="ha-card-header"><h3>Recent Appointments</h3><button class="ha-card-action" (click)="setNav('appointments')">View All</button></div>
+          <div class="ha-table-wrap">
+            <table class="ha-table">
+              <thead><tr><th>Patient</th><th>Doctor</th><th>Date</th><th>Type</th><th>Status</th></tr></thead>
+              <tbody>
+                @for (apt of dataService.appointments(); track apt.id) {
+                  <tr>
+                    <td>{{ apt.patientName }}</td>
+                    <td>
+                      <div class="ha-doc-cell">
+                        @if (apt.doctorAvatar) {
+                          <img [src]="'http://localhost:3000' + apt.doctorAvatar" alt="Doctor" class="ha-mini-avatar" />
+                        } @else {
+                          <div class="ha-mini-avatar-placeholder">{{ apt.doctorName?.[0] ?? 'D' }}</div>
+                        }
+                        {{ apt.doctorName }}
+                      </div>
+                    </td>
+                    <td class="ha-muted">{{ apt.date }}</td>
+                    <td class="ha-muted">{{ apt.type | titlecase }}</td>
+                    <td><span class="ha-status" [class]="'ha-status-' + apt.status">{{ apt.status | titlecase }}</span></td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      }
+
+      <!-- PATIENTS -->
+      @if (activeNav() === 'patients') {
+        <div class="ha-card">
+          <div class="ha-card-header"><h3>All Patients <span class="ha-count-badge">{{ patients().length }}</span></h3></div>
+          <div class="ha-table-wrap">
+            <table class="ha-table">
+              <thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Joined</th><th>Actions</th></tr></thead>
+              <tbody>
+                @for (p of patients(); track p.id) {
+                  <tr>
+                    <td class="ha-bold">{{ p.name }}</td>
+                    <td class="ha-muted">{{ p.email }}</td>
+                    <td class="ha-muted">{{ p.phone || '—' }}</td>
+                    <td class="ha-muted">{{ p.createdAt | date:'mediumDate' }}</td>
+                    <td>
+                      <button class="ha-action-btn ha-action-danger" (click)="deleteUser(p.id)" title="Delete">
+                        <i class="fa-solid fa-trash"></i>
+                      </button>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      }
+
+      <!-- DOCTORS -->
+      @if (activeNav() === 'doctors') {
+        <div class="ha-card">
+          <div class="ha-card-header"><h3>All Doctors <span class="ha-count-badge">{{ doctors().length }}</span></h3></div>
+          <div class="ha-table-wrap">
+            <table class="ha-table">
+              <thead><tr><th>Doctor</th><th>Specialty</th><th>Rating</th><th>Experience</th><th>Status</th></tr></thead>
+              <tbody>
+                @for (doc of doctors(); track doc.id) {
+                  <tr>
+                    <td><div class="ha-doc-cell"><div class="ha-mini-avatar">{{ doc.avatar }}</div>{{ doc.name }}</div></td>
+                    <td class="ha-muted">{{ doc.specialty }}</td>
+                    <td><span class="ha-rating"><i class="fa-solid fa-star"></i> {{ doc.rating }}</span></td>
+                    <td class="ha-muted">{{ doc.experience }} yrs</td>
+                    <td><span class="ha-status" [class]="doc.online ? 'ha-status-active' : 'ha-status-inactive'">{{ doc.online ? 'Online' : 'Offline' }}</span></td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      }
+
+      <!-- PENDING DOCTORS -->
+      @if (activeNav() === 'pending') {
+        <div class="ha-card">
+          <div class="ha-card-header">
+            <h3>Pending Doctor Applications <span class="ha-count-badge" style="background:rgba(245,158,11,0.15);color:#f59e0b">{{ pendingDoctors().length }}</span></h3>
+          </div>
+          @if (pendingDoctors().length === 0) {
+            <div style="padding:40px;text-align:center;color:#64748b">
+              <i class="fa-solid fa-check-circle" style="font-size:2rem;margin-bottom:12px;color:#10b981"></i>
+              <p>No pending applications</p>
+            </div>
+          } @else {
+            <div class="ha-table-wrap">
+              <table class="ha-table">
+                <thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Specialty</th><th>Certificate</th><th>Applied</th><th>Actions</th></tr></thead>
+                <tbody>
+                  @for (doc of pendingDoctors(); track doc.id) {
+                    <tr>
+                      <td class="ha-bold">{{ doc.name }}</td>
+                      <td class="ha-muted">{{ doc.email }}</td>
+                      <td class="ha-muted">{{ doc.phone || '—' }}</td>
+                      <td class="ha-muted">{{ doc.specialty || '—' }}</td>
+                      <td>
+                        @if (doc.certificateUrl) {
+                          <a [href]="doc.certificateUrl" target="_blank" class="ha-cert-link"><i class="fa-solid fa-file-certificate"></i> View</a>
+                        } @else { <span class="ha-muted">Not provided</span> }
+                      </td>
+                      <td class="ha-muted">{{ doc.createdAt | date:'mediumDate' }}</td>
+                      <td style="display:flex;gap:8px">
+                        <button class="ha-action-btn ha-action-success" (click)="approve(doc.id)" title="Approve">
+                          <i class="fa-solid fa-check"></i> Approve
+                        </button>
+                        <button class="ha-action-btn ha-action-danger" (click)="reject(doc.id)" title="Reject">
+                          <i class="fa-solid fa-xmark"></i> Reject
+                        </button>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- APPOINTMENTS -->
+      @if (activeNav() === 'appointments') {
+        <div class="ha-card">
+          <div class="ha-card-header"><h3>All Appointments</h3></div>
+          <div class="ha-table-wrap">
+            <table class="ha-table">
+              <thead><tr><th>Patient</th><th>Doctor</th><th>Date</th><th>Time</th><th>Type</th><th>Fee</th><th>Status</th></tr></thead>
+              <tbody>
+                @for (apt of dataService.appointments(); track apt.id) {
+                  <tr>
+                    <td class="ha-bold">{{ apt.patientName }}</td>
+                    <td>
+                      <div class="ha-doc-cell">
+                        @if (apt.doctorAvatar) {
+                          <img [src]="'http://localhost:3000' + apt.doctorAvatar" alt="Doctor" class="ha-mini-avatar" />
+                        } @else {
+                          <div class="ha-mini-avatar-placeholder">{{ apt.doctorName?.[0] ?? 'D' }}</div>
+                        }
+                        {{ apt.doctorName }}
+                      </div>
+                    </td>
+                    <td class="ha-muted">{{ apt.date }}</td>
+                    <td class="ha-muted">{{ apt.time }}</td>
+                    <td class="ha-muted">{{ apt.type | titlecase }}</td>
+                    <td class="ha-fee">${{ apt.fee }}</td>
+                    <td><span class="ha-status" [class]="'ha-status-' + apt.status">{{ apt.status | titlecase }}</span></td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      }
+
+      <!-- ANALYTICS -->
+      @if (activeNav() === 'analytics') {
+        <div class="ha-card ha-chart-card">
+          <div class="ha-card-header"><h3>Appointment Volume (Last 14 Days)</h3></div>
+          <div class="ha-chart-container"><canvas #chartCanvas></canvas></div>
+        </div>
+        <div class="ha-analytics-grid">
+          <div class="ha-analytics-card"><div class="ha-analytics-val">${{ stats()?.revenue | number }}</div><div class="ha-analytics-lbl">Total Revenue</div></div>
+          <div class="ha-analytics-card"><div class="ha-analytics-val">{{ stats()?.todayAppointments }}</div><div class="ha-analytics-lbl">Today's Appointments</div></div>
+          <div class="ha-analytics-card"><div class="ha-analytics-val">{{ stats()?.satisfaction }}%</div><div class="ha-analytics-lbl">Patient Satisfaction</div></div>
+          <div class="ha-analytics-card"><div class="ha-analytics-val">{{ stats()?.totalDoctors }}</div><div class="ha-analytics-lbl">Active Doctors</div></div>
+        </div>
+      }
+
+    </div>
+  </main>
+</div>

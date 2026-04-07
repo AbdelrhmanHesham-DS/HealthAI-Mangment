@@ -1,0 +1,209 @@
+<app-chat-navbar></app-chat-navbar>
+
+<!-- HERO -->
+<section class="cb-hero">
+  <div class="cb-hero-bg">
+    <div class="cb-orb cb-orb-1"></div>
+    <div class="cb-orb cb-orb-2"></div>
+    <div class="cb-grid-overlay"></div>
+  </div>
+  <div class="cb-hero-content">
+    <div class="cb-hero-badge">
+      <i class="fa-solid fa-sparkles"></i>
+      <span>Powered by Advanced AI</span>
+    </div>
+    <h1 class="cb-hero-title">
+      The Future of<br>
+      <span class="cb-gradient-text">{{ typedText() }}<span class="cb-cursor">|</span></span>
+    </h1>
+    <p class="cb-hero-desc">
+      Deploy an intelligent, multilingual AI assistant that understands your users,
+      speaks their language, and delivers instant, accurate support — 24/7.
+    </p>
+    <div class="cb-hero-actions">
+      <a routerLink="/chatbot/chat" class="cb-btn-primary-lg">
+        <i class="fa-solid fa-comment-dots"></i>
+        Start Chatting Free
+      </a>
+      <a routerLink="/chatbot/help" class="cb-btn-outline-lg">
+        <i class="fa-solid fa-play"></i>
+        Learn More
+      </a>
+    </div>
+    <div class="cb-hero-stats">
+      @for (stat of stats; track stat.label) {
+        <div class="cb-stat">
+          <span class="cb-stat-value">{{ stat.value }}</span>
+          <span class="cb-stat-label">{{ stat.label }}</span>
+        </div>
+      }
+    </div>
+  </div>
+  <!-- Floating Chat Preview -->
+  <div class="cb-hero-preview">
+    <div class="cb-preview-card">
+      <div class="cb-preview-header">
+        <div class="cb-preview-avatar"><i class="fa-solid fa-robot"></i></div>
+        <div>
+          <div class="cb-preview-name">NexusAI</div>
+          <div class="cb-preview-status"><span class="cb-dot"></span> Online</div>
+        </div>
+      </div>
+      <div class="cb-preview-messages">
+        <div class="cb-preview-msg bot">Hello! How can I assist you today? 👋</div>
+        <div class="cb-preview-msg user">What languages do you support?</div>
+        <div class="cb-preview-msg bot">I support 50+ languages including Arabic, English, French, Spanish and more!</div>
+        <div class="cb-preview-typing">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="cb-section" id="features">
+  <div class="cb-container">
+    <div class="cb-section-header animate-on-scroll">
+      <span class="cb-section-badge">Features</span>
+      <h2 class="cb-section-title">Everything you need to<br><span class="cb-gradient-text">power your support</span></h2>
+      <p class="cb-section-desc">A complete AI platform built for modern businesses that demand reliability, speed, and intelligence.</p>
+    </div>
+    <div class="cb-features-grid">
+      @for (f of features; track f.title) {
+        <div class="cb-feature-card animate-on-scroll">
+          <div class="cb-feature-icon" [style.background]="f.color + '20'" [style.color]="f.color">
+            <i class="fa-solid" [class]="'fa-solid ' + f.icon"></i>
+          </div>
+          <h3 class="cb-feature-title">{{ f.title }}</h3>
+          <p class="cb-feature-desc">{{ f.desc }}</p>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="cb-section cb-section-dark">
+  <div class="cb-container">
+    <div class="cb-section-header animate-on-scroll">
+      <span class="cb-section-badge">How It Works</span>
+      <h2 class="cb-section-title">Up and running in<br><span class="cb-gradient-text">3 simple steps</span></h2>
+    </div>
+    <div class="cb-steps">
+      <div class="cb-step animate-on-scroll">
+        <div class="cb-step-num">01</div>
+        <div class="cb-step-icon"><i class="fa-solid fa-user-plus"></i></div>
+        <h3>Create Account</h3>
+        <p>Sign up for free in seconds. No credit card required to get started.</p>
+      </div>
+      <div class="cb-step-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+      <div class="cb-step animate-on-scroll">
+        <div class="cb-step-num">02</div>
+        <div class="cb-step-icon"><i class="fa-solid fa-sliders"></i></div>
+        <h3>Configure AI</h3>
+        <p>Customize your chatbot's personality, language, and knowledge base.</p>
+      </div>
+      <div class="cb-step-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+      <div class="cb-step animate-on-scroll">
+        <div class="cb-step-num">03</div>
+        <div class="cb-step-icon"><i class="fa-solid fa-rocket"></i></div>
+        <h3>Deploy & Scale</h3>
+        <p>Embed on your site or use our API. Scale to millions of users instantly.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="cb-section">
+  <div class="cb-container">
+    <div class="cb-section-header animate-on-scroll">
+      <span class="cb-section-badge">Testimonials</span>
+      <h2 class="cb-section-title">Trusted by <span class="cb-gradient-text">thousands</span></h2>
+    </div>
+    <div class="cb-testimonials-grid">
+      @for (t of testimonials; track t.name) {
+        <div class="cb-testimonial-card animate-on-scroll">
+          <div class="cb-stars">
+            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+          </div>
+          <p class="cb-testimonial-text">"{{ t.text }}"</p>
+          <div class="cb-testimonial-author">
+            <div class="cb-author-avatar">{{ t.avatar }}</div>
+            <div>
+              <div class="cb-author-name">{{ t.name }}</div>
+              <div class="cb-author-role">{{ t.role }}</div>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cb-cta-section">
+  <div class="cb-container">
+    <div class="cb-cta-card animate-on-scroll">
+      <div class="cb-cta-orb"></div>
+      <h2>Ready to transform your<br><span class="cb-gradient-text">customer experience?</span></h2>
+      <p>Join thousands of businesses already using NexusAI to deliver exceptional support.</p>
+      <div class="cb-cta-actions">
+        <a routerLink="/chatbot/chat" class="cb-btn-primary-lg">
+          <i class="fa-solid fa-comment-dots"></i> Start Free Trial
+        </a>
+        <a routerLink="/chatbot/contact" class="cb-btn-outline-lg">
+          <i class="fa-solid fa-envelope"></i> Contact Sales
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="cb-footer">
+  <div class="cb-container">
+    <div class="cb-footer-grid">
+      <div class="cb-footer-brand">
+        <div class="cb-logo">
+          <div class="cb-logo-icon"><i class="fa-solid fa-robot"></i></div>
+          <span class="cb-logo-text">NexusAI</span>
+        </div>
+        <p>The most advanced multilingual AI chatbot platform for modern businesses.</p>
+        <div class="cb-social-links">
+          <a href="#"><i class="fa-brands fa-twitter"></i></a>
+          <a href="#"><i class="fa-brands fa-linkedin"></i></a>
+          <a href="#"><i class="fa-brands fa-github"></i></a>
+          <a href="#"><i class="fa-brands fa-discord"></i></a>
+        </div>
+      </div>
+      <div class="cb-footer-col">
+        <h4>Product</h4>
+        <a routerLink="/chatbot/chat">Chat</a>
+        <a routerLink="/chatbot/help">Help Center</a>
+        <a routerLink="/chatbot/dashboard">Dashboard</a>
+        <a href="#">API Docs</a>
+      </div>
+      <div class="cb-footer-col">
+        <h4>Company</h4>
+        <a href="#">About Us</a>
+        <a routerLink="/chatbot/contact">Contact</a>
+        <a href="#">Blog</a>
+        <a href="#">Careers</a>
+      </div>
+      <div class="cb-footer-col">
+        <h4>Legal</h4>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Cookie Policy</a>
+        <a href="#">GDPR</a>
+      </div>
+    </div>
+    <div class="cb-footer-bottom">
+      <span>© 2026 NexusAI. All rights reserved.</span>
+      <span>Built with <i class="fa-solid fa-heart" style="color:#ef4444"></i> for the future</span>
+    </div>
+  </div>
+</footer>

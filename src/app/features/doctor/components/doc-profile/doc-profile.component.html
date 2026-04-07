@@ -1,0 +1,147 @@
+<div class="doc-page">
+  <div class="doc-page-header">
+    <div>
+      <h1 class="doc-page-title">My Profile</h1>
+      <p class="doc-page-sub">Your public profile visible to patients</p>
+    </div>
+    <div class="doc-header-actions">
+      <button class="doc-icon-btn" (click)="theme.toggle()" [title]="theme.isDark() ? 'Light mode' : 'Dark mode'">
+        <i class="fa-solid" [class.fa-sun]="theme.isDark()" [class.fa-moon]="!theme.isDark()"></i>
+      </button>
+      <button class="doc-btn" [class]="isEditing ? 'doc-btn-danger' : 'doc-btn-outline'" (click)="toggleEdit()">
+        <i class="fa-solid" [class]="isEditing ? 'fa-xmark' : 'fa-pen'"></i>
+        {{ isEditing ? 'Cancel' : 'Edit Profile' }}
+      </button>
+    </div>
+  </div>
+
+  @if (saved) {
+    <div class="doc-alert doc-alert-success"><i class="fa-solid fa-circle-check"></i> Profile updated successfully</div>
+  }
+
+  <div class="doc-profile-card">
+    <div class="doc-profile-top">
+      <div class="doc-avatar-container">
+        @if (doctor.avatar) {
+          <img [src]="'http://localhost:3000' + doctor.avatar" alt="Profile" class="doc-avatar-img" />
+        } @else {
+          <div class="doc-profile-avatar">{{ doctor.name?.[0] ?? 'D' }}</div>
+        }
+        @if (isEditing) {
+          <div class="doc-avatar-upload">
+            <input type="file" #avatarInput (change)="onAvatarSelected($event)" accept="image/*" style="display:none" />
+            <button class="doc-avatar-btn" (click)="avatarInput.click()" type="button">
+              <i class="fa-solid fa-camera"></i>
+            </button>
+          </div>
+        }
+      </div>
+      <div class="doc-profile-info">
+        <h2 class="doc-profile-name">{{ doctor.name }}</h2>
+        <div class="doc-profile-spec">{{ doctor.specialty || 'Doctor' }}</div>
+        @if (doctor.experience) {
+          <div class="doc-experience"><i class="fa-solid fa-briefcase-medical"></i> {{ doctor.experience }} years experience</div>
+        }
+        <div class="doc-profile-meta">
+          <span><i class="fa-solid fa-envelope"></i> {{ doctor.email }}</span>
+          @if (doctor.phone) {
+            <span><i class="fa-solid fa-phone"></i> {{ doctor.phone }}</span>
+          }
+          @if (doctor.address) {
+            <span><i class="fa-solid fa-location-dot"></i> {{ doctor.address }}</span>
+          }
+        </div>
+        <div class="doc-approval-badge" [class]="'doc-approval-' + (doctor.approvalStatus || 'pending')">
+          <i class="fa-solid" [class]="doctor.approvalStatus==='approved' ? 'fa-circle-check' : doctor.approvalStatus==='rejected' ? 'fa-circle-xmark' : 'fa-clock'"></i>
+          {{ doctor.approvalStatus === 'approved' ? 'Verified Doctor' : doctor.approvalStatus === 'rejected' ? 'Application Rejected' : 'Pending Approval' }}
+        </div>
+      </div>
+    </div>
+
+    @if (avatarPreviewUrl && isEditing) {
+      <div class="doc-upload-preview">
+        <img [src]="avatarPreviewUrl" alt="Preview" />
+        <button class="doc-btn doc-btn-primary" (click)="uploadAvatar()" [disabled]="uploadingAvatar">
+          @if (uploadingAvatar) { <i class="fa-solid fa-spinner fa-spin"></i> Uploading... }
+          @else { <i class="fa-solid fa-upload"></i> Upload Photo }
+        </button>
+      </div>
+    }
+
+    <div class="doc-profile-divider"></div>
+
+    <!-- Phone Number Edit (Only editable field) -->
+    @if (isEditing) {
+      <div class="doc-profile-section">
+        <div class="doc-section-title"><i class="fa-solid fa-phone"></i> Contact Information</div>
+        <div class="doc-form-group">
+          <label>Phone Number (visible to patients)</label>
+          <input [(ngModel)]="editedDoctor.phone" placeholder="+1-555-0123" class="doc-phone-input" />
+        </div>
+      </div>
+      <div class="doc-profile-divider"></div>
+    }
+
+    <!-- Bio (Read-only) -->
+    @if (doctor.bio) {
+      <div class="doc-profile-section">
+        <div class="doc-section-title"><i class="fa-solid fa-user-doctor"></i> About</div>
+        <p class="doc-bio">{{ doctor.bio }}</p>
+      </div>
+    }
+
+    <!-- Education (Read-only) -->
+    @if (doctor.education && doctor.education.length > 0) {
+      <div class="doc-profile-section">
+        <div class="doc-section-title"><i class="fa-solid fa-graduation-cap"></i> Education</div>
+        <ul class="doc-list">
+          @for (edu of doctor.education; track $index) {
+            <li>{{ edu }}</li>
+          }
+        </ul>
+      </div>
+    }
+
+    <!-- Languages (Read-only) -->
+    @if (doctor.languages && doctor.languages.length > 0) {
+      <div class="doc-profile-section">
+        <div class="doc-section-title"><i class="fa-solid fa-language"></i> Languages</div>
+        <div class="doc-tags">
+          @for (lang of doctor.languages; track $index) {
+            <span class="doc-tag">{{ lang }}</span>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- ID Document (Read-only) -->
+    @if (doctor.idDocument) {
+      <div class="doc-profile-section">
+        <div class="doc-section-title"><i class="fa-solid fa-id-card"></i> ID Document</div>
+        <a [href]="'http://localhost:3000' + doctor.idDocument" target="_blank" class="doc-cert-link">
+          <i class="fa-solid fa-file-pdf"></i> View ID Document
+        </a>
+      </div>
+    }
+
+    <!-- Certificate (Read-only) -->
+    @if (doctor.certificateUrl) {
+      <div class="doc-profile-section">
+        <div class="doc-section-title"><i class="fa-solid fa-certificate"></i> Certificate</div>
+        <a [href]="doctor.certificateUrl" target="_blank" class="doc-cert-link">
+          <i class="fa-solid fa-file-certificate"></i> View Certificate
+        </a>
+      </div>
+    }
+
+    <!-- Save Button (Only in edit mode) -->
+    @if (isEditing) {
+      <div style="display:flex;justify-content:flex-end;margin-top:16px">
+        <button class="doc-btn doc-btn-primary" (click)="saveChanges()" [disabled]="isSaving">
+          @if (isSaving) { <i class="fa-solid fa-spinner fa-spin"></i> Saving... }
+          @else { <i class="fa-solid fa-floppy-disk"></i> Save Changes }
+        </button>
+      </div>
+    }
+  </div>
+</div>

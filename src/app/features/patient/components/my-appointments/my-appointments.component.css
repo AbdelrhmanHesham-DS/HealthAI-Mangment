@@ -1,0 +1,239 @@
+section {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    margin: 2rem 0;
+}
+
+.cards {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.card {
+    border: 1px solid var(--color-border-card);
+    border-radius: 8px;
+    padding: 1rem;
+    background-color: var(--color-bg-section);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.card-fist-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: bold;
+    justify-content: space-between;
+}
+
+.date-time {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--color-text-secondary);
+}
+
+i {
+    font-size: 2rem;
+    color: var(--color-text-main);
+    padding: 10px;
+    border: var(--color-border-light) 1px solid;
+    border-radius: 100%;
+    background-color: var(--color-bg-icon);
+}
+
+.date-time i {
+    font-size: 1rem;
+    padding: 0;
+    border: none;
+    background-color: transparent;
+    color: var(--color-text-secondary);
+}
+
+.left-group {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+}
+
+.card-buttons {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+button {
+    border: none;
+}
+
+.view {
+    background-color: var(--color-primary);
+}
+
+.cancel {
+    background-color: var(--color-bg-card);
+    border: var(--color-text-main) 1px solid;
+    color: #dc3545;
+}
+
+.status {
+    font-size: 0.9rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    justify-self: flex-end;
+    background-color: var(--color-primary);
+    color: var(--color-text-white);
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    section {
+        margin: 1rem 0;
+        gap: 1.5rem;
+    }
+    
+    .card {
+        padding: 1rem;
+    }
+    
+    .card-fist-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .left-group {
+        width: 100%;
+    }
+    
+    .status {
+        align-self: flex-start;
+    }
+    
+    .card-buttons {
+        flex-direction: column;
+        gap: 0.75rem;
+        width: 100%;
+    }
+    
+    .card-buttons button {
+        width: 100%;
+        padding: 0.75rem;
+    }
+    
+    .date-time {
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+    
+    h2 {
+        font-size: 1.5rem;
+    }
+    
+    h3 {
+        font-size: 1.25rem;
+    }
+    
+    h4 {
+        font-size: 1.1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    section {
+        margin: 0.5rem 0;
+        gap: 1rem;
+    }
+    
+    .card {
+        padding: 0.75rem;
+    }
+    
+    .left-group {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+    
+    i {
+        font-size: 1.5rem;
+        padding: 8px;
+    }
+    
+    .date-time {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .date-time span {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    h2 {
+        font-size: 1.25rem;
+    }
+    
+    h3 {
+        font-size: 1.1rem;
+    }
+    
+    h4 {
+        font-size: 1rem;
+    }
+    
+    .card-buttons button {
+        font-size: 0.9rem;
+    }
+    
+    .status {
+        font-size: 0.85rem;
+        padding: 0.3rem 0.6rem;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .card-buttons {
+        gap: 0.75rem;
+    }
+    
+    .card-buttons button {
+        padding: 0.65rem 1.25rem;
+    }
+}
+
+@media (min-width: 1025px) {
+    section {
+        max-width: 1200px;
+    }
+    
+    .card {
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    .card-buttons button {
+        padding: 0.5rem 1.5rem;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    
+    .card-buttons button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+}

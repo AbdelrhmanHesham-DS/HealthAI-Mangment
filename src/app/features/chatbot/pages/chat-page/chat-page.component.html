@@ -1,0 +1,149 @@
+<app-chat-navbar></app-chat-navbar>
+<app-toast></app-toast>
+
+<div class="chat-layout">
+  <!-- Sidebar -->
+  <aside class="chat-sidebar" [class.open]="isSidebarOpen()">
+    <div class="sidebar-header">
+      <button class="new-chat-btn" (click)="clearChat()">
+        <i class="fa-solid fa-plus"></i>
+        New Chat
+      </button>
+    </div>
+
+    <!-- Language Selector -->
+    <div class="sidebar-section">
+      <div class="sidebar-label">Language</div>
+      <div class="lang-options">
+        @for (lang of languages; track lang.code) {
+          <button class="lang-btn" [class.active]="selectedLang() === lang.code" (click)="setLang(lang.code)">
+            <span>{{ lang.flag }}</span>
+            <span>{{ lang.label }}</span>
+          </button>
+        }
+      </div>
+    </div>
+
+    <!-- History -->
+    <div class="sidebar-section">
+      <div class="sidebar-label">Recent Chats</div>
+      @for (conv of conversationHistory; track conv.title) {
+        <div class="history-item">
+          <i class="fa-regular fa-comment"></i>
+          <div class="history-info">
+            <span class="history-title">{{ conv.title }}</span>
+            <span class="history-time">{{ conv.time }}</span>
+          </div>
+        </div>
+      }
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="user-avatar">{{ chatService.getUserInitials() }}</div>
+        <div>
+          <div class="user-name">{{ chatService.getUserName() }}</div>
+          <div class="user-plan">HealthAI Member</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Chat Area -->
+  <main class="chat-main">
+    <!-- Chat Header -->
+    <div class="chat-header">
+      <button class="sidebar-toggle" (click)="isSidebarOpen.set(!isSidebarOpen())">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+      <div class="chat-header-info">
+        <div class="chat-bot-avatar"><i class="fa-solid fa-robot"></i></div>
+        <div>
+          <div class="chat-bot-name">NexusAI Assistant</div>
+          <div class="chat-bot-status"><span class="status-dot"></span> Online · Responds instantly</div>
+        </div>
+      </div>
+      <div class="chat-header-actions">
+        <button class="header-action-btn" (click)="clearChat()" title="Clear chat">
+          <i class="fa-solid fa-trash-can"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Messages -->
+    <div class="messages-container">
+      @if (messages().length === 0) {
+        <div class="empty-state">
+          <div class="empty-icon"><i class="fa-solid fa-robot"></i></div>
+          <h3>How can I help you?</h3>
+          <p>Ask me anything — I'm here to assist you in multiple languages.</p>
+        </div>
+      }
+
+      @for (msg of messages(); track msg.id) {
+        <div class="message-wrapper" [class.user-wrapper]="msg.role === 'user'">
+          @if (msg.role === 'bot') {
+            <div class="msg-avatar bot-avatar"><i class="fa-solid fa-robot"></i></div>
+          }
+          <div class="message-bubble" [class.user-bubble]="msg.role === 'user'" [class.bot-bubble]="msg.role === 'bot'">
+            <div class="msg-content">{{ msg.content }}</div>
+            <div class="msg-footer">
+              <span class="msg-time">{{ formatTime(msg.timestamp) }}</span>
+              @if (msg.role === 'bot') {
+                <button class="msg-copy-btn" (click)="copyMessage(msg.content)" title="Copy">
+                  <i class="fa-regular fa-copy"></i>
+                </button>
+              }
+            </div>
+          </div>
+          @if (msg.role === 'user') {
+            <div class="msg-avatar user-avatar-icon">U</div>
+          }
+        </div>
+      }
+
+      <!-- Typing Indicator -->
+      @if (isTyping()) {
+        <div class="message-wrapper">
+          <div class="msg-avatar bot-avatar"><i class="fa-solid fa-robot"></i></div>
+          <div class="message-bubble bot-bubble typing-bubble">
+            <div class="typing-dots">
+              <span></span><span></span><span></span>
+            </div>
+            <span class="typing-label">NexusAI is thinking...</span>
+          </div>
+        </div>
+      }
+
+      <div #messagesEnd></div>
+    </div>
+
+    <!-- Suggestions -->
+    @if (messages().length <= 1) {
+      <div class="suggestions-bar">
+        @for (s of suggestions; track s) {
+          <button class="suggestion-chip" (click)="sendMessage(s)">{{ s }}</button>
+        }
+      </div>
+    }
+
+    <!-- Input Area -->
+    <div class="input-area">
+      <div class="input-wrapper">
+        <textarea
+          #inputRef
+          class="chat-input"
+          [value]="inputText()"
+          (input)="inputText.set($any($event.target).value)"
+          (keydown)="onKeyDown($event)"
+          placeholder="Message NexusAI... (Enter to send, Shift+Enter for new line)"
+          rows="1"
+        ></textarea>
+        <button class="send-btn" (click)="sendMessage()" [attr.disabled]="(!inputText().trim() || isTyping()) ? true : null">
+          <i class="fa-solid" [class.fa-paper-plane]="!isTyping()" [class.fa-spinner]="isTyping()" [class.fa-spin]="isTyping()"></i>
+        </button>
+      </div>
+      <div class="input-hint">NexusAI can make mistakes. Consider checking important information.</div>
+    </div>
+  </main>
+</div>

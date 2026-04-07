@@ -1,0 +1,125 @@
+/* ── Host ─────────────────────────────────────────────────────────────────── */
+:host {
+  display: block;
+  min-height: 100vh;
+  background: var(--bg-base, #0f172a);
+  color: var(--text-primary, #f1f5f9);
+}
+
+.nh-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 88px 20px 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ── Hero ─────────────────────────────────────────────────────────────────── */
+.nh-hero { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.nh-hero-icon { width: 52px; height: 52px; border-radius: 14px; background: linear-gradient(135deg,#6366f1,#8b5cf6); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 22px; flex-shrink: 0; }
+.nh-hero-title { font-size: 1.6rem; font-weight: 700; color: var(--text-primary,#f1f5f9); margin: 0 0 4px; }
+.nh-hero-sub { font-size: 0.875rem; color: var(--text-muted,rgba(255,255,255,0.45)); margin: 0; }
+.nh-locate-btn { margin-left: auto; display: flex; align-items: center; gap: 8px; padding: 10px 18px; background: rgba(99,102,241,0.12); border: 1px solid rgba(99,102,241,0.3); color: #6366f1; border-radius: 10px; font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+.nh-locate-btn:hover:not(:disabled) { background: rgba(99,102,241,0.2); }
+.nh-locate-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ── Emergency banner ─────────────────────────────────────────────────────── */
+.nh-emergency-banner { display: flex; align-items: center; gap: 12px; padding: 12px 18px; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.25); border-radius: 12px; color: #ef4444; font-size: 0.875rem; }
+.nh-emergency-banner i { flex-shrink: 0; }
+
+/* ── Filters ──────────────────────────────────────────────────────────────── */
+.nh-filters { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+.nh-search-box {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--bg-surface, rgba(30,41,59,0.7));
+  border: 1px solid var(--border-subtle, rgba(255,255,255,0.06));
+  border-radius: 12px; padding: 0 14px; flex: 1; min-width: 240px;
+}
+.nh-search-box i { color: var(--text-muted,rgba(255,255,255,0.45)); }
+.nh-search-box input { flex: 1; background: none; border: none; outline: none; padding: 12px 0; color: var(--text-primary,#f1f5f9); font-size: 0.875rem; font-family: inherit; }
+.nh-search-box input::placeholder { color: var(--text-faint,rgba(255,255,255,0.25)); }
+.nh-select {
+  background: var(--bg-surface, rgba(30,41,59,0.7));
+  border: 1px solid var(--border-subtle, rgba(255,255,255,0.06));
+  border-radius: 12px; padding: 12px 14px;
+  color: var(--text-primary,#f1f5f9); font-size: 0.875rem;
+  outline: none; cursor: pointer; font-family: inherit;
+}
+.nh-select option { background: #1e293b; color: #f1f5f9; }
+.nh-type-tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+.nh-type-tab {
+  display: flex; align-items: center; gap: 6px; padding: 8px 14px;
+  background: var(--bg-surface, rgba(30,41,59,0.7));
+  border: 1px solid var(--border-subtle, rgba(255,255,255,0.06));
+  border-radius: 20px; color: var(--text-muted,rgba(255,255,255,0.45));
+  font-size: 0.8rem; cursor: pointer; transition: all 0.2s; font-family: inherit;
+}
+.nh-type-tab:hover { border-color: rgba(99,102,241,0.3); color: #6366f1; }
+.nh-type-tab.active { background: rgba(99,102,241,0.12); border-color: #6366f1; color: #6366f1; font-weight: 600; }
+
+/* ── Count ────────────────────────────────────────────────────────────────── */
+.nh-count { font-size: 0.875rem; color: var(--text-muted,rgba(255,255,255,0.45)); display: flex; align-items: center; gap: 12px; }
+.nh-count strong { color: var(--text-primary,#f1f5f9); }
+.nh-located { display: flex; align-items: center; gap: 5px; color: #10b981; font-size: 0.8rem; }
+
+/* ── Cards ────────────────────────────────────────────────────────────────── */
+.nh-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 16px; }
+.nh-card {
+  background: var(--bg-surface, rgba(30,41,59,0.7));
+  border: 1px solid var(--border-subtle, rgba(255,255,255,0.06));
+  border-radius: 16px; padding: 20px;
+  display: flex; flex-direction: column; gap: 14px; transition: border-color 0.2s;
+}
+.nh-card:hover { border-color: rgba(99,102,241,0.3); }
+
+.nh-card-top { display: flex; align-items: flex-start; gap: 12px; }
+.nh-card-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+.nh-card-info { flex: 1; }
+.nh-card-name { font-size: 0.95rem; font-weight: 700; color: var(--text-primary,#f1f5f9); margin-bottom: 4px; }
+.nh-card-address { font-size: 0.78rem; color: var(--text-muted,rgba(255,255,255,0.45)); display: flex; align-items: center; gap: 5px; }
+.nh-card-badges { display: flex; flex-direction: column; gap: 4px; flex-shrink: 0; }
+.nh-badge { padding: 3px 8px; border-radius: 6px; font-size: 0.68rem; font-weight: 700; }
+.nh-badge-emergency { background: rgba(239,68,68,0.15); color: #ef4444; }
+.nh-badge-open { background: rgba(16,185,129,0.15); color: #10b981; }
+
+.nh-card-meta { display: flex; gap: 14px; flex-wrap: wrap; font-size: 0.78rem; color: var(--text-muted,rgba(255,255,255,0.45)); }
+.nh-card-meta i { margin-right: 4px; color: #6366f1; }
+
+.nh-card-rating { display: flex; align-items: center; gap: 4px; font-size: 0.8rem; color: var(--text-muted,rgba(255,255,255,0.45)); }
+.nh-card-rating .fa-star { font-size: 0.7rem; color: var(--border-medium,rgba(255,255,255,0.12)); }
+.nh-card-rating .fa-star.filled { color: #f59e0b; }
+
+.nh-specialties { display: flex; flex-wrap: wrap; gap: 6px; }
+.nh-spec-tag { padding: 3px 10px; background: rgba(99,102,241,0.08); border: 1px solid rgba(99,102,241,0.15); border-radius: 20px; font-size: 0.72rem; color: #a5b4fc; }
+
+.nh-card-actions { display: flex; gap: 8px; }
+.nh-map-btn { flex: 1; display: flex; align-items: center; justify-content: center; gap: 7px; padding: 9px; background: rgba(99,102,241,0.1); border: 1px solid rgba(99,102,241,0.25); border-radius: 10px; color: #6366f1; font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+.nh-map-btn:hover { background: rgba(99,102,241,0.2); }
+.nh-call-btn { display: flex; align-items: center; justify-content: center; gap: 7px; padding: 9px 16px; background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.25); border-radius: 10px; color: #10b981; font-size: 0.82rem; font-weight: 600; text-decoration: none; transition: all 0.2s; }
+.nh-call-btn:hover { background: rgba(16,185,129,0.2); }
+
+/* ── Empty ────────────────────────────────────────────────────────────────── */
+.nh-empty { text-align: center; padding: 60px 20px; color: var(--text-muted,rgba(255,255,255,0.45)); }
+.nh-empty i { font-size: 3rem; opacity: 0.3; margin-bottom: 16px; display: block; }
+.nh-empty h3 { color: var(--text-primary,#f1f5f9); margin-bottom: 8px; }
+
+/* ── Responsive ───────────────────────────────────────────────────────────── */
+@media (max-width: 768px) { .nh-grid { grid-template-columns: 1fr; } .nh-locate-btn { margin-left: 0; width: 100%; justify-content: center; } }
+
+/* ── Light theme ─────────────────────────────────────────────────────────── */
+html.light-theme :host { background: #f1f5f9; color: #0f172a; }
+html.light-theme .nh-search-box { background: #fff; border-color: #e2e8f0; }
+html.light-theme .nh-search-box input { color: #0f172a; }
+html.light-theme .nh-search-box input::placeholder { color: #94a3b8; }
+html.light-theme .nh-search-box i { color: #94a3b8; }
+html.light-theme .nh-select { background: #fff; border-color: #e2e8f0; color: #0f172a; }
+html.light-theme .nh-select option { background: #fff; color: #0f172a; }
+html.light-theme .nh-type-tab { background: #fff; border-color: #e2e8f0; color: #64748b; }
+html.light-theme .nh-type-tab.active { background: rgba(99,102,241,0.08); border-color: #6366f1; color: #6366f1; }
+html.light-theme .nh-card { background: #fff; border-color: rgba(15,23,42,0.08); box-shadow: 0 2px 8px rgba(15,23,42,0.05); }
+html.light-theme .nh-card-name { color: #0f172a; }
+html.light-theme .nh-card-address, html.light-theme .nh-card-meta, html.light-theme .nh-card-rating, html.light-theme .nh-count { color: #64748b; }
+html.light-theme .nh-card-rating .fa-star { color: rgba(15,23,42,0.15); }
+html.light-theme .nh-count strong, html.light-theme .nh-empty h3 { color: #0f172a; }
+html.light-theme .nh-empty { color: #64748b; }

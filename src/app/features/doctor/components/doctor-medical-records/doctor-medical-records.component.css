@@ -1,0 +1,17 @@
+@import '../doc-myappointment/doc-myappointment.component.css';
+
+.doc-add-record-card { background: var(--color-bg-card,#1e293b); border: 1px solid var(--color-border-light,rgba(255,255,255,0.06)); border-radius: 16px; padding: 24px; }
+.doc-section-title { font-size: 1rem; font-weight: 600; color: var(--color-text-main,#f1f5f9); margin: 0 0 16px; display: flex; align-items: center; gap: 8px; }
+.doc-section-title i { color: #6366f1; }
+.doc-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+.doc-records-list { display: flex; flex-direction: column; gap: 12px; }
+.doc-record-card { background: var(--color-bg-card,#1e293b); border: 1px solid var(--color-border-light,rgba(255,255,255,0.06)); border-radius: 14px; padding: 18px; transition: border-color 0.2s; }
+.doc-record-card:hover { border-color: rgba(99,102,241,0.3); }
+.doc-record-top { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.doc-record-icon { width: 40px; height: 40px; border-radius: 10px; background: rgba(99,102,241,0.12); display: flex; align-items: center; justify-content: center; color: #6366f1; font-size: 16px; flex-shrink: 0; }
+.doc-record-info { flex: 1; }
+.doc-record-actions { display: flex; gap: 8px; margin-left: auto; }
+.doc-record-details { margin-top: 12px; font-size: 0.85rem; color: var(--color-text-secondary,#94a3b8); padding-left: 54px; line-height: 1.6; }
+
+@media (max-width:600px) { .doc-form-grid { grid-template-columns: 1fr; } .doc-record-details { padding-left: 0; } }

@@ -1,0 +1,99 @@
+<section>
+    <header>
+        <h3>Book an Appointment</h3>
+        <p>Schedule a consultation with our healthcare professionals</p>
+    </header>
+
+    <div *ngIf="isLoading()" style="text-align:center;padding:2rem">
+        <i class="fa-solid fa-spinner fa-spin"></i> Loading doctors...
+    </div>
+
+    <div *ngIf="!isLoading()" class="details">
+        <header>
+            <i class="fa fa-calendar"></i>
+            <h4>Appointment Details</h4>
+        </header>
+
+        <!-- Doctor select -->
+        <div class="select-doctor">
+            <h5>Select Doctor</h5>
+            <select [(ngModel)]="selectedDoctorId" class="form-control">
+                <option value="">Choose a doctor</option>
+                <option *ngFor="let doc of doctors()" [value]="doc.id">
+                    {{ doc.name }} — {{ doc.specialty }} ({{ doc.consultationFee }} EGP)
+                </option>
+            </select>
+            <div *ngIf="errors['doctor']" class="error-message">{{ errors['doctor'] }}</div>
+        </div>
+
+        <!-- Visit type -->
+        <div class="preferred-date" style="margin-top:1rem">
+            <h5>Visit Type</h5>
+            <select [(ngModel)]="visitType" class="form-control" style="width:auto">
+                <option value="in-person">In-Person</option>
+                <option value="video">Video Call</option>
+                <option value="chat">Chat</option>
+            </select>
+        </div>
+
+        <!-- Date -->
+        <div class="preferred-date" style="margin-top:1rem">
+            <h5>Preferred Date</h5>
+            <input type="date" class="form-control" style="width:auto" [(ngModel)]="appointmentDate" />
+            <div *ngIf="errors['date']" class="error-message">{{ errors['date'] }}</div>
+        </div>
+
+        <!-- Time -->
+        <div class="preferred-time" style="margin-top:1rem">
+            <h5>Preferred Time</h5>
+            <select [(ngModel)]="selectedTimeSlot" class="form-control" style="width:auto">
+                <option value="">Choose time slot</option>
+                <option *ngFor="let t of timeSlots" [value]="t">{{ t }}</option>
+            </select>
+            <div *ngIf="errors['time']" class="error-message">{{ errors['time'] }}</div>
+        </div>
+
+        <!-- Symptoms -->
+        <div class="symptoms" style="margin-top:1rem">
+            <h5>Describe Your Symptoms</h5>
+            <textarea class="form-control" rows="4" [(ngModel)]="symptoms" placeholder="Please describe your symptoms"></textarea>
+            <div *ngIf="errors['symptoms']" class="error-message">{{ errors['symptoms'] }}</div>
+        </div>
+
+        <div *ngIf="errors['submit']" class="error-message" style="margin-top:.5rem">{{ errors['submit'] }}</div>
+
+        <button class="btn btn-primary" style="margin-top:1rem" (click)="submit()" [disabled]="isSubmitting()">
+            <i *ngIf="isSubmitting()" class="fa-solid fa-spinner fa-spin"></i>
+            {{ isSubmitting() ? 'Booking...' : 'Book Appointment' }}
+        </button>
+    </div>
+
+    <!-- Doctor cards -->
+    <div *ngIf="!isLoading()" class="doctors" style="margin-top:2rem">
+        <header>
+            <i class="fa fa-user-md"></i>
+            <h4>Available Doctors</h4>
+        </header>
+        <div class="doctor" *ngFor="let doc of doctors()">
+            <i class="fa fa-user-circle"></i>
+            <div class="doctor-detials">
+                <h4>{{ doc.name }}</h4>
+                <h5>{{ doc.specialty }}</h5>
+                <p class="experience">{{ doc.experience }} years experience</p>
+                <p class="consulation">{{ doc.consultationFee }} EGP consultation fee</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="guidelines" style="margin-top:2rem">
+        <header>
+            <i class="fa fa-clock"></i>
+            <h4>Booking Guidelines</h4>
+        </header>
+        <ul>
+            <li>Appointments can be booked up to 30 days in advance</li>
+            <li>Please arrive 15 minutes before your scheduled time</li>
+            <li>Bring a valid ID and insurance card</li>
+        </ul>
+    </div>
+</section>

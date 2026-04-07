@@ -1,0 +1,292 @@
+header h2 {
+    font-size: 2rem;
+    color: var(--color-text-main);
+    margin: 0 0 0.5rem 0;
+}
+header p {
+    color: var(--color-text-muted);
+    margin: 10px;
+    padding-bottom: 10px;
+}
+.hos-eme {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    border-radius: 12px;
+    box-shadow: var(--shadow-medium);
+    border: 1px solid var(--color-border-card);
+    max-width: 100%;
+    margin: 0.5rem auto;
+}
+.hos-eme button {
+    background-color: var(--color-bg-section);
+    border: 1px solid var(--color-border-card);
+    border-radius: 12px;
+    padding: 0.75rem 1.5rem;
+    transition: all 0.3s;
+    display: flex;
+    width: 100%;
+}
+.hos-eme button i {
+    font-size: 20px;
+    color: var(--color-primary);
+    margin-right: 8px;
+    align-self: center;
+}
+#emeid {
+    color: #e6000b;
+}
+#emeid i {
+    color: #e82929;
+}
+.hos-eme button.activeh i {
+    color: white;
+}
+.hos-eme button:hover {
+    box-shadow: var(--shadow-medium);
+    transform: translateY(-4px);
+}
+.hos-eme .activeh {
+    background-color: var(--color-primary);
+    color: white;
+    border: none;
+}
+.hos-eme .activee {
+    background-color: #fef2f2;
+    color: white;
+    border: 2px solid #e6000b;
+}
+
+
+.hidden {
+  display: none !important;
+}
+.hos .hos-map {
+    width: 100%;
+    border-radius: 12px;
+    box-shadow: var(--shadow-medium);
+    border: 1px solid var(--color-border-card);
+    margin-top: 1rem;
+    background-color: var(--color-bg-section);
+}
+.hos .hos-map .controls {
+    padding: 10px;
+    display: flex;
+    gap: 10px;
+}
+.hos .hos-map .controls input {
+    padding: 8px;
+    border: 1px solid var(--color-border-card);
+    border-radius: 12px;
+    width: 400px;
+}
+.hos .hos-map .controls button {
+    padding: 8px 16px;
+    border: none;
+    background-color: var(--color-primary);
+    color: white;
+    cursor: pointer;
+    border-radius: 12px;
+    box-shadow: var(--shadow-medium);
+}
+.hos .hos-map .controls button:hover {
+    box-shadow: var(--shadow-large);
+    transform: translateY(-2px);
+}
+.hos .map-head {
+    padding: 10px;
+}
+.hos .map {
+    width: 100%;
+    height: 600px;
+    border-radius: 12px;
+    box-shadow: var(--shadow-medium);
+    border: 1px solid var(--color-border-card);
+    background-color: var(--color-primary-light);
+}
+.hos .map iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    border-radius: 12px;
+}
+
+.hos .hos-list {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    border: 1px solid var(--color-border-card);
+    border-radius: 12px;
+    padding: 10px;
+}
+.hos .hos-list h3 {
+    margin: 0;
+    color: var(--color-text-main);
+}
+.hos .hos-list #hospitalList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.hos .hos-list #hospitalList li {
+    padding: 10px;
+    border: 1px solid var(--color-border-card);
+    background-color: var(--color-bg-section);
+    border-radius: 12px;
+    margin-bottom: 10px;
+}
+.hos .hos-list #hospitalList li .hos-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.hos .hos-list #hospitalList li .hos-head h4 {
+    color: var(--color-text-main);
+}
+.hos .hos-list #hospitalList li .hos-head h4 i {
+    color: var(--color-primary);
+    margin-right: 8px;
+    padding: 6px 9px;
+    border-radius: 50%;
+}
+.hos .hos-list #hospitalList li .hos-head span {
+    padding: 0px 5px 2px 5px;
+    border: none;
+    color: green;
+    border: 2px solid green;
+    border-radius: 20px;
+}
+.hos .hos-list #hospitalList li p {
+    margin: 5px 0 0 0;
+    color: var(--color-text);
+}
+.hos .hos-list #hospitalList li p i {
+    color: var(--color-primary-dark);
+    margin-right: 8px;
+}
+.hos .hos-list #hospitalList a {
+    display: inline-block;
+    margin-top: 8px;
+    color: var(--color-primary-dark);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s;
+}
+.hos .hos-list #hospitalList a:hover {
+    color: var(--color-primary-dark);
+}
+
+
+.eme i {
+    color: #e6000b;
+    margin-right: 5px;
+    padding: 6px 9px;
+    border-radius: 50%;
+}
+.eme header {
+    margin: 0.5rem auto;
+    padding: 10px;
+    border: 1px solid #ffc9c9;
+    border-radius: 12px;
+    box-shadow: var(--shadow-medium);
+    background-color: #fef2f2;
+    color: #b91c1c;
+}
+.eme header h2 {
+    margin: 0 0 0.5rem 0;
+    color: #821818;
+}
+.eme header p {
+    margin: 0 0 0.5rem 0;
+    color: #b91c1c;
+    margin: 10px;
+    padding: 10px;
+}
+.eme header a {
+    display: inline-block;
+    padding: 8px 16px;
+    background-color: #e6000b;
+    color: white;
+    text-decoration: none;
+    border-radius: 12px;
+    box-shadow: var(--shadow-medium);
+    transition: background-color 0.3s;
+    margin: 10px 10px 0px;
+}
+.eme header a:hover {
+    background-color: #b91c1c;
+}
+.eme header a i {
+    color: white;
+}
+.eme .eme-ser {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    border: 1px solid #ffc9c9;
+    border-radius: 12px;
+    padding: 10px;
+}
+.eme .eme-ser h3 {
+    margin: 0;
+    color: var(--color-text-main);
+}
+.eme .eme-ser .eme-list .eme-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.eme .eme-ser .eme-list .eme-head h4 {
+    margin: 0;
+    color: #821818;
+}
+.eme .eme-ser .eme-list .eme-head h4 i {
+    color: #e6000b;
+    margin-right: 8px;
+    padding: 6px 9px;
+    border-radius: 50%;
+}
+.eme .eme-ser .eme-list .eme-head span {
+    padding: 0px 5px 2px 5px;
+    border: none;
+    color: green;
+    border: 2px solid green;
+    border-radius: 20px;
+}
+.eme .eme-ser ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.eme .eme-ser ul li {
+    padding: 10px;
+    border: 1px solid #ffc9c9;
+    background-color: #fef2f2;
+    border-radius: 12px;
+    margin-bottom: 10px;
+}
+.eme .eme-ser ul li p {
+    margin: 5px 0 0 0;
+    color: #b91c1c;
+}
+.eme .eme-ser ul li p i {
+    color: #e6000b;
+    margin-right: 8px;
+}
+.eme .eme-ser ul li a {
+    display: inline-block;
+    margin-top: 8px;
+    color: white;
+    background-color: #e6000b;
+    padding: 8px 16px;
+    text-decoration: none;
+    border-radius: 12px;
+    box-shadow: var(--shadow-medium);
+    transition: background-color 0.3s;
+}
+.eme .eme-ser ul li a:hover {
+    background-color: #b91c1c;
+}

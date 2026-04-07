@@ -1,0 +1,124 @@
+<nav class="hn-navbar" [class.scrolled]="isScrolled()">
+
+  <!-- Real-time notification toast -->
+  @if (toastMsg()) {
+    <div class="hn-rt-toast">
+      <i class="fa-solid fa-bell"></i>
+      <span>{{ toastMsg() }}</span>
+    </div>
+  }
+  <div class="hn-container">
+    <a routerLink="/health" class="hn-logo">
+      <div class="hn-logo-icon"><i class="fa-solid fa-heart-pulse"></i></div>
+      <div class="hn-logo-text">
+        <span class="hn-logo-main">HealthAI</span>
+        <span class="hn-logo-sub">Smart Health Platform</span>
+      </div>
+    </a>
+
+    <ul class="hn-links">
+      @for (link of navLinks; track link.path) {
+        <li>
+          <a [routerLink]="link.path" routerLinkActive="active"
+             [routerLinkActiveOptions]="{exact: link.path === '/health'}" class="hn-link">
+            {{ link.label }}
+          </a>
+        </li>
+      }
+    </ul>
+
+    <div class="hn-actions">
+      <!-- Theme toggle -->
+      <button class="hn-icon-btn" (click)="theme.toggle()" [title]="theme.isDark() ? 'Light mode' : 'Dark mode'">
+        <i class="fa-solid" [class.fa-sun]="theme.isDark()" [class.fa-moon]="!theme.isDark()"></i>
+      </button>
+
+      <!-- Notifications -->
+      <a routerLink="/health/notifications" class="hn-icon-btn hn-notif">
+        <i class="fa-solid fa-bell"></i>
+        @if (unreadCount > 0) { <span class="hn-badge">{{ unreadCount }}</span> }
+      </a>
+
+      <!-- Logged in: user menu -->
+      @if (auth.isAuthenticated()) {
+        <div class="hn-user-menu-wrap">
+          <button class="hn-user-btn" (click)="showUserMenu.set(!showUserMenu())">
+            <div class="hn-user-avatar">{{ userInitials }}</div>
+            <span class="hn-user-name">{{ auth.currentUser?.name }}</span>
+            <i class="fa-solid fa-chevron-down hn-chevron" [class.rotated]="showUserMenu()"></i>
+          </button>
+          @if (showUserMenu()) {
+            <div class="hn-dropdown">
+              <div class="hn-dropdown-header">
+                <div class="hn-dropdown-avatar">{{ userInitials }}</div>
+                <div>
+                  <div class="hn-dropdown-name">{{ auth.currentUser?.name }}</div>
+                  <div class="hn-dropdown-role">{{ auth.currentUser?.role | titlecase }}</div>
+                </div>
+              </div>
+              <div class="hn-dropdown-divider"></div>
+              @if (auth.hasRole('admin')) {
+                <a routerLink="/health/admin" class="hn-dropdown-item" (click)="showUserMenu.set(false)">
+                  <i class="fa-solid fa-chart-pie"></i> Admin Dashboard
+                </a>
+              }
+              @if (auth.hasRole('doctor')) {
+                <a routerLink="/doctor" class="hn-dropdown-item" (click)="showUserMenu.set(false)">
+                  <i class="fa-solid fa-user-doctor"></i> Doctor Dashboard
+                </a>
+              }
+              @if (auth.hasRole('patient')) {
+                <a routerLink="/health/dashboard" class="hn-dropdown-item" (click)="showUserMenu.set(false)">
+                  <i class="fa-solid fa-gauge"></i> My Dashboard
+                </a>
+                <a routerLink="/health/appointments" class="hn-dropdown-item" (click)="showUserMenu.set(false)">
+                  <i class="fa-solid fa-calendar-check"></i> My Appointments
+                </a>
+              }
+              <div class="hn-dropdown-divider"></div>
+              <button class="hn-dropdown-item hn-logout" (click)="auth.logout()">
+                <i class="fa-solid fa-right-from-bracket"></i> Sign Out
+              </button>
+            </div>
+          }
+        </div>
+      } @else {
+        <!-- Not logged in -->
+        <a routerLink="/login" class="hn-btn-outline-sm">Sign In</a>
+        <a routerLink="/health/symptom-checker" class="hn-btn-primary">
+          <i class="fa-solid fa-stethoscope"></i> MediAI
+        </a>
+      }
+    </div>
+
+    <button class="hn-hamburger" (click)="isMobileOpen.set(!isMobileOpen())" [class.open]="isMobileOpen()">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+
+  <!-- Mobile Menu -->
+  <div class="hn-mobile" [class.open]="isMobileOpen()">
+    @for (link of navLinks; track link.path) {
+      <a [routerLink]="link.path" routerLinkActive="active" class="hn-mobile-link" (click)="isMobileOpen.set(false)">
+        {{ link.label }}
+      </a>
+    }
+    <div class="hn-mobile-divider"></div>
+    @if (auth.isAuthenticated()) {
+      <div class="hn-mobile-user">
+        <div class="hn-user-avatar">{{ userInitials }}</div>
+        <div>
+          <div class="hn-mobile-user-name">{{ auth.currentUser?.name }}</div>
+          <div class="hn-mobile-user-role">{{ auth.currentUser?.role | titlecase }}</div>
+        </div>
+      </div>
+      <button class="hn-mobile-logout" (click)="auth.logout()">
+        <i class="fa-solid fa-right-from-bracket"></i> Sign Out
+      </button>
+    } @else {
+      <a routerLink="/login" class="hn-btn-primary" (click)="isMobileOpen.set(false)">
+        <i class="fa-solid fa-right-to-bracket"></i> Sign In
+      </a>
+    }
+  </div>
+</nav>

@@ -1,0 +1,91 @@
+<!-- Floating button -->
+<button class="aia-fab" (click)="toggle()" [class.open]="isOpen()" aria-label="AI Assistant">
+  @if (!isOpen()) {
+    <i class="fa-solid fa-robot"></i>
+    <span class="aia-fab-label">Help</span>
+  } @else {
+    <i class="fa-solid fa-xmark"></i>
+  }
+</button>
+
+<!-- Chat window -->
+@if (isOpen()) {
+  <div class="aia-window">
+
+    <!-- Header -->
+    <div class="aia-header">
+      <div class="aia-header-left">
+        <div class="aia-avatar"><i class="fa-solid fa-robot"></i></div>
+        <div>
+          <div class="aia-name">HealthAI Assistant</div>
+          <div class="aia-status"><span class="aia-dot"></span> Online</div>
+        </div>
+      </div>
+      <div class="aia-header-actions">
+        <button class="aia-icon-btn" (click)="clearChat()" title="Clear chat"><i class="fa-solid fa-rotate-left"></i></button>
+        <button class="aia-icon-btn" (click)="toggle()" title="Close"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+    </div>
+
+    <!-- Messages -->
+    <div class="aia-messages">
+      @for (msg of messages(); track $index) {
+        <div class="aia-msg-row" [class.user]="msg.role === 'user'">
+          @if (msg.role === 'bot') {
+            <div class="aia-msg-avatar"><i class="fa-solid fa-robot"></i></div>
+          }
+          <div class="aia-msg-bubble" [class.bot]="msg.role==='bot'" [class.user]="msg.role==='user'">
+            <div class="aia-msg-text" [innerHTML]="formatText(msg.text)"></div>
+            @if (msg.actions?.length) {
+              <div class="aia-actions">
+                @for (action of msg.actions!; track action.route) {
+                  <a [routerLink]="action.route" class="aia-action-btn" (click)="isOpen.set(false)">
+                    {{ action.label }}
+                  </a>
+                }
+              </div>
+            }
+            <div class="aia-msg-time">{{ msg.time }}</div>
+          </div>
+        </div>
+      }
+
+      <!-- Typing indicator -->
+      @if (isTyping()) {
+        <div class="aia-msg-row">
+          <div class="aia-msg-avatar"><i class="fa-solid fa-robot"></i></div>
+          <div class="aia-msg-bubble bot">
+            <div class="aia-typing">
+              <span></span><span></span><span></span>
+            </div>
+          </div>
+        </div>
+      }
+
+      <div #msgEnd></div>
+    </div>
+
+    <!-- Quick suggestions -->
+    <div class="aia-suggestions">
+      @for (s of suggestions; track s) {
+        <button class="aia-suggestion" (click)="send(s)">{{ s }}</button>
+      }
+    </div>
+
+    <!-- Input -->
+    <div class="aia-input-row">
+      <input
+        class="aia-input"
+        type="text"
+        placeholder="Ask me anything..."
+        [value]="input()"
+        (input)="input.set($any($event.target).value)"
+        (keydown)="onKey($event)"
+      />
+      <button class="aia-send-btn" (click)="send()" [disabled]="!input().trim() || isTyping()">
+        <i class="fa-solid fa-paper-plane"></i>
+      </button>
+    </div>
+
+  </div>
+}

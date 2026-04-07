@@ -1,0 +1,250 @@
+/* ---------- NAVBAR ---------- */
+header {
+  position: sticky;
+  top: 0;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  z-index: 1000;
+}
+.navbar {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.navbar .logo {
+  color: #0086a1;
+  font-size: 1.5rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+.navbar .logo a {
+   color: #0086a1;
+}
+.navbar ul {
+  list-style: none;
+  display: flex;
+  gap: 1.5rem;
+ margin-top: 20px;
+ padding: 0;
+}
+.navbar a {
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+  transition: .3s;
+}
+.navbar a:hover { color: #0086a1; }
+.navbar .btn {
+  background: #0086a1;
+  color: #fff;
+  padding: .5rem 1.2rem;
+  border-radius: .5rem;
+  text-decoration: none;
+  transition: .3s;
+}
+.navbar .btn:hover { background: #006e83; }
+
+/* ---------- NAVBAR buttons ---------- */
+.navbar-buttons {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+   cursor: pointer;
+}
+
+.sign-in-btn {
+  color: #333;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s;
+}
+
+.sign-in-btn:hover {
+  color: #0086a1;
+}
+.btn-primary {
+  background: #0086a1;
+  color: #fff;
+  padding: .9rem 1.8rem;
+  border: none;
+  border-radius: .5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: .3s;
+}
+.btn-primary:hover { background: #006e83; }
+
+/* ---------- SIDEBAR MENU & HAMBURGER ---------- */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  cursor: pointer;
+  width: 30px;
+  height: 21px;
+  justify-content: space-between;
+}
+
+.hamburger span {
+  display: block;
+  height: 3px;
+  width: 100%;
+  background-color: #333;
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  right: -300px;
+  width: 300px;
+  height: 100vh;
+  background: white;
+  box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+  z-index: 9999;
+  transition: right 0.28s ease;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar.active {
+  right: 0;
+}
+
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #eee;
+}
+
+.sidebar-logo {
+  color: #0086a1;
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.close-sidebar {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #333;
+}
+
+.sidebar-nav {
+  flex-grow: 1;
+}
+
+.sidebar-nav ul {
+  list-style: none;
+}
+
+.sidebar-nav li {
+  margin-bottom: 1rem;
+}
+
+.sidebar-nav a {
+  text-decoration: none;
+  color: #333;
+  font-size: 1.1rem;
+  display: block;
+  padding: 0.5rem 0;
+  transition: color 0.3s;
+}
+
+.sidebar-nav a:hover {
+  color: #0086a1;
+}
+
+.sidebar-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.sidebar-buttons .btn {
+  background: #0086a1;
+  color: #fff;
+  padding: .8rem 1.2rem;
+  border-radius: .5rem;
+  text-align: center;
+  text-decoration: none;
+  font-weight: 600;
+  width: 100%;
+  transition: .3s;
+}
+.sidebar-buttons .btn:hover { background: #006e83; }
+.sidebar-buttons .sign-in-btn {
+  text-align: center;
+  padding: .5rem 0;
+  display: block;
+}
+
+/* ---------- OVERLAY ---------- */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  z-index: 9998;
+  display: none;
+}
+
+.overlay.active {
+  display: block;
+}
+/* ---------- RESPONSIVENESS  ---------- */
+
+@media (max-width: 1024px) and (min-width: 769px) {
+  .hamburger { display: none; }
+  .navbar ul { display: flex; gap: 1rem; }
+  .sidebar { width: 320px; right: -320px; }
+  .sidebar.active { right: 0; }
+}
+
+@media (max-width: 768px) and (min-width: 481px) {
+  .hamburger { display: flex; }
+  .navbar ul { display: none; }
+  .navbar { padding: 1rem 1.2rem; }
+
+  .sidebar { width: 70vw; right: -70vw; }
+  .sidebar.active { right: 0; }
+
+  .navbar-buttons {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .hamburger { display: flex; margin-left: 0.2rem;}
+  .navbar ul { display: none; }
+  .navbar { padding: .8rem 1rem; }
+  .navbar .logo { font-size: 1.2rem; gap: .4rem; }
+
+
+  .navbar-buttons {
+    display: none;
+  }
+
+  .sidebar { width: 78vw; right: -78vw; padding: 1.6rem; }
+  .sidebar.active { right: 0; }
+}
+
+
+@media (min-width: 1025px) {
+  .hamburger { display: none; }
+  .sidebar { width: 320px; right: -320px; }
+  .sidebar.active { right: 0; }
+}

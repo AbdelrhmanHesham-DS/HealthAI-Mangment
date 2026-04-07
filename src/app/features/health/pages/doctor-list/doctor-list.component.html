@@ -1,0 +1,214 @@
+<app-health-navbar></app-health-navbar>
+
+<div class="dl-page">
+
+  <!-- Hero Search Bar -->
+  <div class="dl-hero">
+    <div class="dl-hero-bg"></div>
+    <div class="dl-hero-inner">
+      <h1>Find a <span class="dl-gradient">Doctor</span></h1>
+      <p>{{ allDoctors().length }}+ verified doctors ready to help you</p>
+      <div class="dl-search-row">
+        <div class="dl-search-box">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" placeholder="Doctor name, specialty, or clinic..."
+            [value]="searchQuery()" (input)="searchQuery.set($any($event.target).value)" />
+          @if (searchQuery()) {
+            <button class="dl-clear-input" (click)="searchQuery.set('')"><i class="fa-solid fa-xmark"></i></button>
+          }
+        </div>
+        <select class="dl-city-select" [value]="selectedCity()" (change)="selectedCity.set($any($event.target).value)">
+          @for (c of cities; track c) {
+            <option [value]="c">{{ c === 'all' ? 'All Cities' : c }}</option>
+          }
+        </select>
+        <button class="dl-filter-toggle" (click)="showFilters.set(!showFilters())" [class.active]="hasActiveFilters()">
+          <i class="fa-solid fa-sliders"></i> Filters
+          @if (hasActiveFilters()) { <span class="dl-filter-dot"></span> }
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="dl-layout">
+
+    <!-- ── SIDEBAR FILTERS ── -->
+    <aside class="dl-sidebar" [class.open]="showFilters()">
+      <div class="dl-sidebar-header">
+        <span><i class="fa-solid fa-sliders"></i> Filters</span>
+        @if (hasActiveFilters()) {
+          <button class="dl-clear-all" (click)="clearFilters()">Clear All</button>
+        }
+      </div>
+
+      <!-- Specialty -->
+      <div class="dl-filter-section">
+        <div class="dl-filter-label">Specialty</div>
+        @for (s of specialties; track s.key) {
+          <label class="dl-radio-item">
+            <input type="radio" name="specialty" [value]="s.key" [checked]="selectedSpecialty()===s.key" (change)="selectedSpecialty.set(s.key)" />
+            <span>{{ s.label }}</span>
+          </label>
+        }
+      </div>
+
+      <!-- Visit Type -->
+      <div class="dl-filter-section">
+        <div class="dl-filter-label">Visit Type</div>
+        <label class="dl-radio-item">
+          <input type="radio" name="type" value="all" [checked]="selectedType()==='all'" (change)="selectedType.set('all')" />
+          <span>All Types</span>
+        </label>
+        <label class="dl-radio-item">
+          <input type="radio" name="type" value="online" [checked]="selectedType()==='online'" (change)="selectedType.set('online')" />
+          <span><i class="fa-solid fa-video" style="color:#6366f1"></i> Online Consultation</span>
+        </label>
+        <label class="dl-radio-item">
+          <input type="radio" name="type" value="in-person" [checked]="selectedType()==='in-person'" (change)="selectedType.set('in-person')" />
+          <span><i class="fa-solid fa-hospital" style="color:#10b981"></i> In-Person Visit</span>
+        </label>
+      </div>
+
+      <!-- Rating -->
+      <div class="dl-filter-section">
+        <div class="dl-filter-label">Minimum Rating</div>
+        @for (r of ratingOptions; track r.val) {
+          <label class="dl-radio-item">
+            <input type="radio" name="rating" [value]="r.val" [checked]="minRating()===r.val" (change)="minRating.set(r.val)" />
+            <span>
+              @if (r.val > 0) { <i class="fa-solid fa-star" style="color:#f59e0b;font-size:0.75rem"></i> }
+              {{ r.label }}
+            </span>
+          </label>
+        }
+      </div>
+
+      <!-- Available Today -->
+      <div class="dl-filter-section">
+        <label class="dl-checkbox-item">
+          <input type="checkbox" [checked]="availableToday()" (change)="availableToday.set($any($event.target).checked)" />
+          <span><i class="fa-regular fa-calendar-check" style="color:#10b981"></i> Available Today</span>
+        </label>
+      </div>
+    </aside>
+
+    <!-- ── RESULTS ── -->
+    <div class="dl-results">
+
+      <!-- Toolbar -->
+      <div class="dl-toolbar">
+        <span class="dl-count">
+          <strong>{{ filteredDoctors().length }}</strong> doctors found
+          @if (selectedSpecialty() !== 'all') { <span class="dl-active-filter">{{ selectedSpecialty() }}</span> }
+        </span>
+        <div class="dl-sort">
+          <label>Sort by:</label>
+          <select [value]="sortBy()" (change)="sortBy.set($any($event.target).value)">
+            <option value="rating">Highest Rated</option>
+            <option value="fee_asc">Lowest Fee</option>
+            <option value="fee_desc">Highest Fee</option>
+            <option value="experience">Most Experienced</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Error state -->
+      @if (loadError()) {
+        <div class="dl-error-state">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+          <h3>Connection Error</h3>
+          <p>{{ loadError() }}</p>
+          <button class="dl-book-btn" (click)="ngOnInit()">Try Again</button>
+        </div>
+      }
+
+      <!-- Skeletons -->
+      @if (isLoading()) {
+        <div class="dl-list">
+          @for (i of [1,2,3,4]; track i) { <div class="dl-skeleton"></div> }
+        </div>
+      }
+
+      <!-- Doctor Cards — Vezeeta style horizontal -->
+      @if (!isLoading()) {
+        <div class="dl-list">
+          @for (doc of filteredDoctors(); track doc.id) {
+            <div class="dl-card">
+              <!-- Photo -->
+              <div class="dl-card-photo-wrap">
+                <img [src]="doc.photo" [alt]="doc.name" class="dl-card-photo"
+                  (error)="$any($event.target).src='https://ui-avatars.com/api/?name='+doc.name+'&background=6366f1&color=fff&size=150'" />
+                @if (doc.online) {
+                  <span class="dl-online-pill"><i class="fa-solid fa-video"></i> Online</span>
+                }
+              </div>
+
+              <!-- Info -->
+              <div class="dl-card-body">
+                <div class="dl-card-top-row">
+                  <div>
+                    <div class="dl-card-name">
+                      {{ doc.name }}
+                      @if (doc.verified) { <i class="fa-solid fa-circle-check dl-verified-icon"></i> }
+                    </div>
+                    <div class="dl-card-spec">{{ doc.specialty }}</div>
+                    <div class="dl-card-clinic"><i class="fa-solid fa-hospital"></i> {{ doc.clinicName }}</div>
+                  </div>
+                  <div class="dl-card-rating-box">
+                    <div class="dl-card-rating-val">{{ doc.rating }}</div>
+                    <div class="dl-card-stars">
+                      @for (s of stars(doc.rating); track $index) {
+                        <i class="fa-solid fa-star" [class.filled]="s===1"></i>
+                      }
+                    </div>
+                    <div class="dl-card-review-count">{{ doc.reviewCount }} reviews</div>
+                  </div>
+                </div>
+
+                <div class="dl-card-meta">
+                  <span><i class="fa-solid fa-location-dot"></i> {{ doc.location }}</span>
+                  <span><i class="fa-solid fa-briefcase-medical"></i> {{ doc.experience }} yrs exp</span>
+                  <span><i class="fa-regular fa-clock"></i> Wait: {{ doc.waitTime }}</span>
+                  <span><i class="fa-solid fa-language"></i> {{ doc.languages.join(' · ') }}</span>
+                </div>
+
+                <div class="dl-card-insurances">
+                  @for (ins of doc.insurances.slice(0,3); track ins) {
+                    <span class="dl-ins-tag">{{ ins }}</span>
+                  }
+                </div>
+              </div>
+
+              <!-- Right Panel -->
+              <div class="dl-card-right">
+                <div class="dl-card-fee">
+                  <span class="dl-fee-amount">EGP {{ doc.consultationFee }}</span>
+                  <span class="dl-fee-label">Consultation</span>
+                </div>
+                <div class="dl-next-avail">
+                  <i class="fa-regular fa-calendar-check"></i>
+                  <span>{{ doc.nextAvailable }}</span>
+                </div>
+                <a [routerLink]="['/health/book', doc.id]" class="dl-book-btn">
+                  Book Appointment
+                </a>
+                <a [routerLink]="['/health/doctor', doc.id]" class="dl-profile-btn">
+                  View Profile
+                </a>
+              </div>
+            </div>
+          }
+        </div>
+
+        @if (filteredDoctors().length === 0) {
+          <div class="dl-empty">
+            <i class="fa-solid fa-user-doctor"></i>
+            <h3>No doctors found</h3>
+            <p>Try adjusting your search or filters</p>
+            <button class="dl-book-btn" (click)="clearFilters()">Clear All Filters</button>
+          </div>
+        }
+      }
+    </div>
+  </div>
+</div>

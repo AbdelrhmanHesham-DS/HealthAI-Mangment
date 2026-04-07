@@ -1,0 +1,69 @@
+<div class="doc-shell">
+
+  <!-- Sidebar -->
+  <aside class="doc-sidebar" [class.open]="isSidebarOpen">
+    <!-- Logo -->
+    <div class="doc-sidebar-logo">
+      <div class="doc-logo-icon"><i class="fa-solid fa-heart-pulse"></i></div>
+      <span class="doc-logo-text">HealthAI</span>
+      <button class="doc-sidebar-close" (click)="isSidebarOpen = false">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <!-- Doctor info -->
+    <div class="doc-sidebar-user">
+      <div class="doc-sidebar-avatar">{{ auth.currentUser?.name?.[0] ?? 'D' }}</div>
+      <div>
+        <div class="doc-sidebar-name">{{ auth.currentUser?.name }}</div>
+        <div class="doc-sidebar-role"><i class="fa-solid fa-circle" style="color:#10b981;font-size:8px"></i> Doctor</div>
+      </div>
+    </div>
+
+    <!-- Nav -->
+    <nav class="doc-nav">
+      <a class="doc-nav-item" routerLink="Appointments" routerLinkActive="active">
+        <i class="fa-solid fa-calendar-check"></i><span>Appointments</span>
+      </a>
+      <a class="doc-nav-item" routerLink="Medical-Records" routerLinkActive="active">
+        <i class="fa-solid fa-file-medical"></i><span>Medical Records</span>
+      </a>
+      <a class="doc-nav-item" routerLink="Patients" routerLinkActive="active">
+        <i class="fa-solid fa-users"></i><span>Patients</span>
+      </a>
+      <a class="doc-nav-item" routerLink="My-Profile" routerLinkActive="active">
+        <i class="fa-solid fa-user-doctor"></i><span>My Profile</span>
+      </a>
+    </nav>
+
+    <!-- Sign out -->
+    <button class="doc-signout-btn" (click)="signOut()">
+      <i class="fa-solid fa-right-from-bracket"></i><span>Sign Out</span>
+    </button>
+  </aside>
+
+  <!-- Overlay for mobile -->
+  <div class="doc-overlay" [class.show]="isSidebarOpen" (click)="isSidebarOpen = false"></div>
+
+  <!-- Main -->
+  <div class="doc-main">
+    <!-- Top bar -->
+    <header class="doc-topbar">
+      <button class="doc-menu-btn" (click)="isSidebarOpen = !isSidebarOpen">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+      <div class="doc-topbar-title">Doctor Dashboard</div>
+      <div class="doc-topbar-right">
+        <div class="doc-topbar-user">
+          <div class="doc-topbar-avatar">{{ auth.currentUser?.name?.[0] ?? 'D' }}</div>
+          <span>{{ auth.currentUser?.name }}</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Page content -->
+    <div class="doc-content">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>

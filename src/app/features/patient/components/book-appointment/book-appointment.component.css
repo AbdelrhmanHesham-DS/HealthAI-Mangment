@@ -1,0 +1,369 @@
+section {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 2rem;
+}
+
+h3 {
+    font-size: 2rem;
+    color: var(--color-text-main);
+    margin-bottom: 0.5rem;
+}
+
+section > header p {
+    color: var(--color-text-muted);
+    margin: 0;
+}
+
+.details, .doctors, .guidelines {
+    display: flex;
+    margin: 0;
+    padding: 2rem;
+    background-color: var(--color-bg-card);
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: flex-start;
+    border-radius: 12px;
+    gap: 1.5rem;
+    box-shadow: var(--shadow-medium);
+    border: 1px solid var(--color-border-card);
+}
+
+.details header, .doctors header, .guidelines header {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    align-items: center;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--color-bg-section);
+    width: 100%;
+}
+
+.details header i, .doctors header i, .guidelines header i {
+    font-size: 1.5rem;
+    color: var(--color-primary);
+    padding: 0;
+    border: none;
+    background-color: transparent;
+}
+
+.details header h4, .doctors header h4, .guidelines header h4 {
+    margin: 0;
+    color: var(--color-text-main);
+    font-size: 1.3rem;
+}
+
+.preferred-date, .select-doctor, .preferred-time, .symptoms {
+    width: 100%;
+}
+
+.symptoms div {
+    width: 50%;
+}
+
+.dropdown {
+    width: 30%;
+}
+
+h5 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    margin-bottom: 0.5rem;
+}
+
+.btn-primary {
+    background-color: var(--color-primary);
+    border: none;
+    padding: 0.75rem 2rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 6px;
+    margin-top: 1rem;
+    transition: all 0.3s;
+}
+
+.btn-primary:hover {
+    background-color: var(--color-primary-dark);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-medium);
+}
+
+.doctor {
+    display: flex;
+    flex-direction: row;
+    gap: 1.5rem;
+    align-items: flex-start;
+    padding: 1.5rem;
+    background-color: var(--color-bg-section);
+    border-radius: 8px;
+    border: 1px solid var(--color-border-card);
+    width: 100%;
+    transition: all 0.3s;
+}
+
+.doctor:hover {
+    background-color: var(--color-border-light);
+    box-shadow: var(--shadow-light);
+    transform: translateX(5px);
+}
+
+.doctor i {
+    font-size: 3rem;
+    color: var(--color-primary);
+    padding: 0;
+    border: none;
+    background-color: transparent;
+}
+
+.doctor-detials {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.doctor-detials h4 {
+    margin: 0;
+    color: var(--color-text-main);
+    font-size: 1.2rem;
+}
+
+.doctor-detials h5 {
+    margin: 0;
+    color: var(--color-primary);
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.doctor-detials p {
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+}
+
+
+.guidelines ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+}
+
+.guidelines li {
+    padding: 0.75rem 0;
+    color: var(--color-text-secondary);
+    border-bottom: 1px solid var(--color-bg-section);
+    position: relative;
+    padding-left: 2rem;
+}
+
+.guidelines li:last-child {
+    border-bottom: none;
+}
+
+.guidelines li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: var(--color-primary);
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.form-control {
+    border: 1px solid var(--color-border-light);
+    border-radius: 6px;
+    padding: 0.75rem;
+    font-size: 0.95rem;
+    transition: all 0.3s;
+}
+
+.form-control:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 0.2rem var(--color-bg-icon-alt);
+    outline: none;
+}
+
+textarea.form-control {
+    resize: vertical;
+    min-height: 120px;
+}
+
+.dropdown-toggle {
+    width: 100%;
+    text-align: left;
+    background-color: var(--color-bg-section);
+    border: 1px solid var(--color-border-light);
+    color: var(--color-text-secondary);
+}
+
+.dropdown-toggle:hover, .dropdown-toggle:focus {
+    background-color: var(--color-border-light);
+    border-color: var(--color-primary);
+}
+
+.dropdown-menu {
+    width: 100%;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.dropdown-item {
+    padding: 0.75rem 1rem;
+    transition: all 0.2s;
+}
+
+.dropdown-item:hover {
+    background-color: var(--color-primary);
+    color: var(--color-text-white);
+}
+
+.error-message {
+    color: #dc3545;
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+    font-weight: 500;
+}
+
+.dropdown-item {
+    cursor: pointer;
+}
+
+@media (max-width: 768px) {
+    .dropdown, .symptoms div {
+        width: 100%;
+    }
+    
+    section {
+        padding: 1rem;
+    }
+    
+    .details, .doctors, .guidelines {
+        padding: 1.5rem;
+    }
+    
+    h3 {
+        font-size: 1.5rem;
+    }
+    
+    .details header h4, .doctors header h4, .guidelines header h4 {
+        font-size: 1.1rem;
+    }
+    
+    .doctor {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .doctor i {
+        font-size: 2.5rem;
+    }
+    
+    .btn-primary {
+        width: 100%;
+        padding: 1rem;
+    }
+    
+    .form-group[style*="width: 20%"] {
+        width: 100% !important;
+    }
+}
+
+@media (max-width: 480px) {
+    section {
+        padding: 0.5rem;
+        gap: 1rem;
+    }
+    
+    .details, .doctors, .guidelines {
+        padding: 1rem;
+        gap: 1rem;
+        border-radius: 8px;
+    }
+    
+    h3 {
+        font-size: 1.25rem;
+    }
+    
+    .details header, .doctors header, .guidelines header {
+        gap: 0.75rem;
+    }
+    
+    .details header i, .doctors header i, .guidelines header i {
+        font-size: 1.2rem;
+    }
+    
+    .details header h4, .doctors header h4, .guidelines header h4 {
+        font-size: 1rem;
+    }
+    
+    h5 {
+        font-size: 0.9rem;
+    }
+    
+    .form-control {
+        font-size: 0.9rem;
+        padding: 0.6rem;
+    }
+    
+    .dropdown-toggle {
+        font-size: 0.9rem;
+        padding: 0.6rem;
+    }
+    
+    .btn-primary {
+        font-size: 0.95rem;
+        padding: 0.85rem;
+    }
+    
+    .doctor-detials h4 {
+        font-size: 1rem;
+    }
+    
+    .doctor-detials h5 {
+        font-size: 0.85rem;
+    }
+    
+    .doctor-detials p {
+        font-size: 0.85rem;
+    }
+    
+    .guidelines li {
+        font-size: 0.9rem;
+        padding-left: 1.5rem;
+    }
+    
+    .guidelines li::before {
+        font-size: 1rem;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .dropdown {
+        width: 40%;
+    }
+    
+    .symptoms div {
+        width: 70%;
+    }
+    
+    section {
+        padding: 1.5rem;
+    }
+}
+
+@media (min-width: 1025px) {
+    section {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    
+    .dropdown {
+        width: 30%;
+    }
+    
+    .symptoms div {
+        width: 50%;
+    }
+}

@@ -1,0 +1,264 @@
+<app-health-navbar></app-health-navbar>
+
+<div class="dp-page">
+  @if (isLoading()) {
+    <div class="dp-loading">
+      <div class="dp-skeleton-header"></div>
+      <div class="dp-skeleton-body"></div>
+    </div>
+  }
+
+  @if (!isLoading() && doctor()) {
+    <!-- ── HEADER CARD ── -->
+    <div class="dp-header">
+      <div class="dp-header-bg"></div>
+      <div class="dp-container">
+        <div class="dp-header-card">
+          <div class="dp-photo-wrap">
+            <img [src]="doctor()!.photo" [alt]="doctor()!.name" class="dp-photo"
+              (error)="$any($event.target).src='https://ui-avatars.com/api/?name='+doctor()!.name+'&background=6366f1&color=fff&size=200'" />
+            @if (doctor()!.online) {
+              <span class="dp-online-pill"><i class="fa-solid fa-video"></i> Available Online</span>
+            }
+          </div>
+          <div class="dp-header-info">
+            <div class="dp-name-row">
+              <h1 class="dp-name">{{ doctor()!.name }}</h1>
+              @if (doctor()!.verified) { <span class="dp-verified"><i class="fa-solid fa-circle-check"></i> Verified</span> }
+            </div>
+            <div class="dp-specialty">{{ doctor()!.specialty }}</div>
+            <div class="dp-clinic"><i class="fa-solid fa-hospital"></i> {{ doctor()!.clinicName }}</div>
+            <div class="dp-meta-row">
+              <span><i class="fa-solid fa-location-dot"></i> {{ doctor()!.location }}</span>
+              <span><i class="fa-solid fa-briefcase-medical"></i> {{ doctor()!.experience }} years exp.</span>
+              <span><i class="fa-regular fa-clock"></i> Wait: {{ doctor()!.waitTime }}</span>
+              @if (doctor()!.address) {
+                <span><i class="fa-solid fa-phone"></i> Contact clinic for phone</span>
+              }
+            </div>
+            <div class="dp-rating-row">
+              <div class="dp-stars">
+                @for (s of stars(doctor()!.rating); track $index) {
+                  <i class="fa-solid fa-star" [class.filled]="s===1"></i>
+                }
+              </div>
+              <span class="dp-rating-val">{{ doctor()!.rating }}</span>
+              <span class="dp-review-count">({{ doctor()!.reviewCount }} reviews)</span>
+            </div>
+            <div class="dp-langs">
+              @for (l of doctor()!.languages; track l) {
+                <span class="dp-lang-tag"><i class="fa-solid fa-language"></i> {{ l }}</span>
+              }
+            </div>
+          </div>
+          <div class="dp-booking-panel">
+            <div class="dp-fee-box">
+              <span class="dp-fee-label">Consultation Fee</span>
+              <span class="dp-fee-val">EGP {{ doctor()!.consultationFee }}</span>
+            </div>
+            <div class="dp-next-avail">
+              <i class="fa-regular fa-calendar-check"></i>
+              Next available: <strong>{{ doctor()!.nextAvailable }}</strong>
+            </div>
+            <a [routerLink]="['/health/book', doctor()!.id]" class="dp-book-btn">
+              <i class="fa-solid fa-calendar-plus"></i> Book Appointment
+            </a>
+            <div class="dp-insurances">
+              <div class="dp-ins-label">Accepted Insurance</div>
+              <div class="dp-ins-list">
+                @for (ins of doctor()!.insurances; track ins) {
+                  <span class="dp-ins-tag">{{ ins }}</span>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TABS ── -->
+    <div class="dp-tabs-bar">
+      <div class="dp-container">
+        <div class="dp-tabs">
+          <button class="dp-tab" [class.active]="activeTab()==='about'" (click)="activeTab.set('about')">About</button>
+          <button class="dp-tab" [class.active]="activeTab()==='reviews'" (click)="activeTab.set('reviews')">
+            Reviews <span class="dp-tab-count">{{ reviews().length }}</span>
+          </button>
+          <button class="dp-tab" [class.active]="activeTab()==='availability'" (click)="activeTab.set('availability')">Availability</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── CONTENT ── -->
+    <div class="dp-container dp-content">
+
+      <!-- ABOUT -->
+      @if (activeTab() === 'about') {
+        <div class="dp-about-grid">
+          <div class="dp-about-main">
+            <div class="dp-section-card">
+              <h3><i class="fa-solid fa-user-doctor"></i> About Dr. {{ doctor()!.name.split(' ').slice(-1)[0] }}</h3>
+              <p class="dp-bio">{{ doctor()!.bio }}</p>
+            </div>
+            <div class="dp-section-card">
+              <h3><i class="fa-solid fa-graduation-cap"></i> Education & Training</h3>
+              <ul class="dp-edu-list">
+                @for (edu of doctor()!.education; track edu) {
+                  <li><i class="fa-solid fa-circle-dot"></i> {{ edu }}</li>
+                }
+              </ul>
+            </div>
+            <div class="dp-section-card">
+              <h3><i class="fa-solid fa-language"></i> Languages Spoken</h3>
+              <div class="dp-lang-chips">
+                @for (l of doctor()!.languages; track l) {
+                  <span class="dp-lang-chip">{{ l }}</span>
+                }
+              </div>
+            </div>
+          </div>
+          <div class="dp-about-side">
+            <div class="dp-section-card">
+              <h3><i class="fa-solid fa-location-dot"></i> Clinic Location</h3>
+              <div class="dp-address">
+                <div class="dp-address-name">{{ doctor()!.clinicName }}</div>
+                <div class="dp-address-text">{{ doctor()!.address }}</div>
+                <div class="dp-address-city">{{ doctor()!.city }}</div>
+              </div>
+              <div class="dp-map-placeholder">
+                <i class="fa-solid fa-map-location-dot"></i>
+                <span>View on Map</span>
+              </div>
+            </div>
+            <div class="dp-section-card">
+              <h3><i class="fa-solid fa-shield-halved"></i> Insurance</h3>
+              <div class="dp-ins-grid">
+                @for (ins of doctor()!.insurances; track ins) {
+                  <span class="dp-ins-chip">{{ ins }}</span>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- REVIEWS -->
+      @if (activeTab() === 'reviews') {
+        <div class="dp-reviews-layout">
+          <!-- Summary -->
+          <div class="dp-rating-summary">
+            <div class="dp-rating-big">{{ doctor()!.rating }}</div>
+            <div class="dp-rating-stars-big">
+              @for (s of stars(doctor()!.rating); track $index) {
+                <i class="fa-solid fa-star" [class.filled]="s===1"></i>
+              }
+            </div>
+            <div class="dp-rating-total">{{ doctor()!.reviewCount }} reviews</div>
+            <div class="dp-rating-bars">
+              @for (b of ratingBreakdown(); track b.star) {
+                <div class="dp-rating-bar-row">
+                  <span>{{ b.star }}</span>
+                  <i class="fa-solid fa-star" style="color:#f59e0b;font-size:0.7rem"></i>
+                  <div class="dp-bar-track"><div class="dp-bar-fill" [style.width.%]="b.pct"></div></div>
+                  <span class="dp-bar-count">{{ b.count }}</span>
+                </div>
+              }
+            </div>
+            @if (auth.isAuthenticated()) {
+              <button class="dp-write-review-btn" (click)="showReviewForm.set(!showReviewForm())">
+                <i class="fa-solid fa-pen"></i> Write a Review
+              </button>
+            }
+          </div>
+
+          <div class="dp-reviews-list">
+            <!-- Review Form -->
+            @if (showReviewForm()) {
+              <div class="dp-review-form">
+                <h4>Your Review</h4>
+                <div class="dp-star-picker">
+                  @for (i of [1,2,3,4,5]; track i) {
+                    <button class="dp-star-btn"
+                      (mouseenter)="hoverRating.set(i)"
+                      (mouseleave)="hoverRating.set(0)"
+                      (click)="newRating.set(i)">
+                      <i class="fa-solid fa-star" [class.active]="i <= (hoverRating() || newRating())"></i>
+                    </button>
+                  }
+                  <span>{{ newRating() }}/5</span>
+                </div>
+                <textarea class="dp-review-textarea" [value]="newComment()" (input)="newComment.set($any($event.target).value)" placeholder="Share your experience with this doctor..." rows="4"></textarea>
+                <div class="dp-review-form-actions">
+                  <button class="dp-cancel-btn" (click)="showReviewForm.set(false)">Cancel</button>
+                  <button class="dp-submit-btn" (click)="submitReview()" [disabled]="!newComment().trim()">Submit Review</button>
+                </div>
+              </div>
+            }
+
+            <!-- Reviews -->
+            @for (rev of reviews(); track rev.id) {
+              <div class="dp-review-card">
+                <div class="dp-review-header">
+                  <div class="dp-reviewer-avatar">{{ rev.patientAvatar }}</div>
+                  <div class="dp-reviewer-info">
+                    <div class="dp-reviewer-name">
+                      {{ rev.patientName }}
+                      @if (rev.verified) { <span class="dp-rev-verified"><i class="fa-solid fa-circle-check"></i> Verified Patient</span> }
+                    </div>
+                    <div class="dp-review-meta">
+                      <div class="dp-rev-stars">
+                        @for (s of stars(rev.rating); track $index) {
+                          <i class="fa-solid fa-star" [class.filled]="s===1"></i>
+                        }
+                      </div>
+                      <span class="dp-rev-date">{{ rev.date }}</span>
+                      <span class="dp-rev-type">{{ rev.visitType | titlecase }}</span>
+                    </div>
+                  </div>
+                </div>
+                <p class="dp-review-text">{{ rev.comment }}</p>
+              </div>
+            }
+
+            @if (reviews().length === 0) {
+              <div class="dp-no-reviews">
+                <i class="fa-regular fa-star"></i>
+                <p>No reviews yet. Be the first to review!</p>
+              </div>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- AVAILABILITY -->
+      @if (activeTab() === 'availability') {
+        <div class="dp-avail-section">
+          <div class="dp-avail-header">
+            <h3>Available Time Slots</h3>
+            <a [routerLink]="['/health/book', doctor()!.id]" class="dp-book-btn-sm">
+              <i class="fa-solid fa-calendar-plus"></i> Book Now
+            </a>
+          </div>
+          <div class="dp-avail-grid">
+            @for (day of doctor()!.availability; track day.day) {
+              <div class="dp-avail-day">
+                <div class="dp-avail-day-header">
+                  <span class="dp-avail-day-name">{{ day.day }}</span>
+                  <span class="dp-avail-day-date">{{ day.date }}</span>
+                </div>
+                <div class="dp-slots">
+                  @for (slot of day.slots; track slot.id) {
+                    <span class="dp-slot" [class.available]="slot.available" [class.taken]="!slot.available">
+                      {{ slot.time }}
+                    </span>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      }
+
+    </div>
+  }
+</div>

@@ -1,0 +1,68 @@
+<app-health-navbar></app-health-navbar>
+<div class="mr-page">
+  <div class="mr-hero">
+    <div class="mr-hero-bg"></div>
+    <div class="mr-hero-content">
+      <span class="mr-badge"><i class="fa-solid fa-file-medical"></i> Medical Records</span>
+      <h1>Your <span class="hl-gradient">Health History</span></h1>
+      <p>Securely stored and easily accessible medical records</p>
+    </div>
+  </div>
+  <div class="mr-container">
+    <div class="mr-type-tabs">
+      @for (t of types; track t.key) {
+        <button class="mr-type-tab" [class.active]="activeType() === t.key" (click)="activeType.set(t.key)">
+          <i class="fa-solid" [class]="'fa-solid ' + t.icon"></i> {{ t.label }}
+        </button>
+      }
+    </div>
+    <div class="mr-list">
+      @if (isLoading()) {
+        @for (i of [1,2,3]; track i) {
+          <div class="mr-skeleton"></div>
+        }
+      }
+      @if (!isLoading() && filtered().length === 0) {
+        <div class="mr-empty">
+          <i class="fa-solid fa-file-circle-xmark"></i>
+          <h3>No records found</h3>
+          <p>{{ activeType() === 'all' ? 'Your medical records will appear here after your first visit.' : 'No ' + activeType() + ' records found.' }}</p>
+        </div>
+      }
+      @for (rec of filtered(); track rec.id) {
+        <div class="mr-record" [class.expanded]="expandedId() === rec.id">
+          <div class="mr-record-header" (click)="toggle(rec.id)">
+            <div class="mr-record-left">
+              <div class="mr-rec-icon" [style.background]="color(rec.type) + '18'" [style.color]="color(rec.type)">
+                <i class="fa-solid" [class]="'fa-solid ' + icon(rec.type)"></i>
+              </div>
+              <div>
+                <div class="mr-rec-title">{{ rec.title }}</div>
+                <div class="mr-rec-meta">
+                  <span><i class="fa-regular fa-calendar"></i> {{ rec.date }}</span>
+                  <span><i class="fa-solid fa-user-doctor"></i> {{ rec.doctor }}</span>
+                  <span class="mr-rec-type-badge" [style.background]="color(rec.type) + '18'" [style.color]="color(rec.type)">{{ rec.type | titlecase }}</span>
+                </div>
+              </div>
+            </div>
+            <i class="fa-solid fa-chevron-down mr-chevron"></i>
+          </div>
+          @if (expandedId() === rec.id) {
+            <div class="mr-record-body">
+              <p>{{ rec.description }}</p>
+              <div class="mr-tags">
+                @for (tag of rec.tags; track tag) {
+                  <span class="mr-tag">{{ tag }}</span>
+                }
+              </div>
+              <div class="mr-record-actions">
+                <button class="mr-action-btn"><i class="fa-solid fa-download"></i> Download</button>
+                <button class="mr-action-btn"><i class="fa-solid fa-share"></i> Share</button>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </div>
+</div>

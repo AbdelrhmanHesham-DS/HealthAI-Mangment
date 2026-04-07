@@ -1,0 +1,91 @@
+<div class="doc-page">
+
+  <!-- Header -->
+  <div class="doc-page-header">
+    <div>
+      <h1 class="doc-page-title">Patients</h1>
+      <p class="doc-page-sub">View your patients from appointments</p>
+    </div>
+  </div>
+
+  <!-- Alert -->
+  @if (showAlert) {
+    <div class="doc-alert" [class]="'doc-alert-' + alertType">
+      <i class="fa-solid" [class]="alertType==='success'?'fa-circle-check':alertType==='error'?'fa-circle-exclamation':'fa-circle-info'"></i>
+      {{ alertMessage }}
+      <button (click)="showAlert = false"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+  }
+
+  <!-- Search -->
+  <div class="doc-search-bar">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="text" placeholder="Search by name or email..." [(ngModel)]="searchTerm" (input)="filterPatients()" />
+  </div>
+
+  <!-- Loading -->
+  @if (isLoading()) {
+    <div style="text-align:center;padding:3rem;opacity:.6">
+      <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
+      <p>Loading patients...</p>
+    </div>
+  }
+
+  <!-- Patient list -->
+  @if (!isLoading()) {
+    @if (filteredPatients.length > 0) {
+      <div class="doc-patient-list">
+        @for (p of filteredPatients; track p.id) {
+          <div class="doc-patient-card">
+            <div class="doc-patient-left">
+              <div class="doc-apt-avatar">{{ p.name[0] }}</div>
+              <div>
+                <div class="doc-apt-name">{{ p.name }}</div>
+                <div class="doc-apt-id">{{ p.email }}</div>
+                <div class="doc-patient-meta">
+                  <span *ngIf="p.lastVisit"><i class="fa-regular fa-calendar"></i> Last visit: {{ p.lastVisit }}</span>
+                  <span *ngIf="p.phone"><i class="fa-solid fa-phone"></i> {{ p.phone }}</span>
+                </div>
+                <p class="doc-patient-desc" *ngIf="p.reason">{{ p.reason }}</p>
+              </div>
+            </div>
+            <div class="doc-patient-actions">
+              <button class="doc-btn doc-btn-outline" (click)="viewPatient(p)">
+                <i class="fa-solid fa-eye"></i> View
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="doc-empty">
+        <i class="fa-solid fa-users-slash"></i>
+        <h3>No patients found</h3>
+        <p>{{ searchTerm ? 'Try a different search term.' : 'Patients will appear here once appointments are booked.' }}</p>
+      </div>
+    }
+  }
+
+  <!-- Patient Detail Modal -->
+  @if (selectedPatient) {
+    <div class="doc-modal-backdrop" (click)="closePatient()">
+      <div class="doc-modal" (click)="$event.stopPropagation()">
+        <div class="doc-modal-header">
+          <h3><i class="fa-solid fa-user"></i> {{ selectedPatient.name }}</h3>
+          <button (click)="closePatient()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="doc-modal-body">
+          <div class="doc-detail-grid">
+            <div class="doc-detail-item"><span class="doc-detail-lbl">Email</span><span class="doc-detail-val">{{ selectedPatient.email || '—' }}</span></div>
+            <div class="doc-detail-item"><span class="doc-detail-lbl">Phone</span><span class="doc-detail-val">{{ selectedPatient.phone || '—' }}</span></div>
+            <div class="doc-detail-item"><span class="doc-detail-lbl">Last Visit</span><span class="doc-detail-val">{{ selectedPatient.lastVisit || '—' }}</span></div>
+            <div class="doc-detail-item"><span class="doc-detail-lbl">Reason</span><span class="doc-detail-val">{{ selectedPatient.reason || '—' }}</span></div>
+          </div>
+        </div>
+        <div class="doc-modal-footer">
+          <button class="doc-btn doc-btn-outline" (click)="closePatient()">Close</button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

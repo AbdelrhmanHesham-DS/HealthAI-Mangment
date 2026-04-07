@@ -1,0 +1,49 @@
+<header>
+  <div class="navbar">
+    <div class="logo"><a routerLink="/"><i class="fas fa-heart-pulse"></i>HealthCarePlus</a> </div>
+    @if(layout=="user"){
+     <ul>
+      <li><a href="#home">Home</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#features">Services</a></li>
+     </ul>
+    }
+    
+    <div class="navbar-buttons">
+      <a routerLink="/login" class="sign-in-btn">Sign In</a>
+      <a routerLink="/register" class="sign-in-btn">Register</a>
+      @if(layout=="user"){
+        <a href="#" class="btn-primary" style="color: #fff;">Get Started</a>
+      }
+      
+    </div>
+    <div class="hamburger" aria-label="Open menu" role="button" tabindex="0">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+</header>
+<div class="sidebar" aria-hidden="true">
+  <div class="sidebar-header">
+    <div class="sidebar-logo"><i class="fas fa-heart-pulse"></i> HealthCarePlus</div>
+    <button class="close-sidebar" aria-label="Close menu"><i class="fas fa-times"></i></button>
+  </div>
+  <nav class="sidebar-nav">
+  @if(layout=="user"){
+      
+        <ul>
+          <li><a href="#home" onclick="closeSidebar()">Home</a></li>
+          <li><a href="#about" onclick="closeSidebar()">About</a></li>
+          <li><a href="#features" onclick="closeSidebar()">Services</a></li>
+        </ul>
+      
+  }
+  </nav>
+  <div class="sidebar-buttons">
+    <a routerLink="/login" class="sign-in-btn">Sign In</a>
+    <a routerLink="/register" class="sign-in-btn">Regiser</a>
+    <a href="#" class="btn">Get Started</a>
+  </div>
+</div>
+<div class="overlay" onclick="closeSidebar()"></div>

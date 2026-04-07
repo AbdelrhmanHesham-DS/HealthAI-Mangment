@@ -1,0 +1,109 @@
+<app-chat-navbar></app-chat-navbar>
+
+<div class="help-page">
+  <!-- Hero -->
+  <div class="help-hero">
+    <div class="help-hero-bg"></div>
+    <div class="help-hero-content">
+      <span class="help-badge"><i class="fa-solid fa-circle-question"></i> Help Center</span>
+      <h1>How can we <span class="cb-gradient-text">help you?</span></h1>
+      <p>Search our knowledge base or browse categories below</p>
+      <div class="help-search-wrapper">
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        <input
+          type="text"
+          class="help-search"
+          placeholder="Search for answers..."
+          [value]="searchQuery()"
+          (input)="searchQuery.set($any($event.target).value)"
+        />
+        @if (searchQuery()) {
+          <button class="search-clear" (click)="searchQuery.set('')">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        }
+      </div>
+    </div>
+  </div>
+
+  <div class="help-container">
+    <!-- Suggested Questions -->
+    <div class="help-section">
+      <h3 class="help-section-title">Popular Questions</h3>
+      <div class="suggestions-grid">
+        @for (q of suggestedQuestions; track q) {
+          <button class="suggestion-card" (click)="useSuggestion(q)">
+            <i class="fa-solid fa-arrow-right"></i>
+            <span>{{ q }}</span>
+          </button>
+        }
+      </div>
+    </div>
+
+    <!-- Categories -->
+    <div class="help-section">
+      <div class="category-tabs">
+        @for (cat of categories; track cat) {
+          <button class="cat-tab" [class.active]="activeCategory() === cat" (click)="activeCategory.set(cat)">
+            {{ cat }}
+          </button>
+        }
+      </div>
+    </div>
+
+    <!-- FAQ Accordion -->
+    <div class="help-section">
+      <h3 class="help-section-title">
+        Frequently Asked Questions
+        <span class="faq-count">{{ filteredFaqs().length }} results</span>
+      </h3>
+
+      @if (filteredFaqs().length === 0) {
+        <div class="no-results">
+          <i class="fa-solid fa-face-sad-tear"></i>
+          <p>No results found for "{{ searchQuery() }}"</p>
+          <button (click)="searchQuery.set('')" class="cb-btn-sm">Clear search</button>
+        </div>
+      }
+
+      <div class="faq-list">
+        @for (faq of filteredFaqs(); track faq.id) {
+          <div class="faq-item" [class.open]="faq.isOpen">
+            <button class="faq-question" (click)="toggleFaq(faq.id)">
+              <div class="faq-q-content">
+                <span class="faq-category-tag">{{ faq.category }}</span>
+                <span>{{ faq.question }}</span>
+              </div>
+              <i class="fa-solid fa-chevron-down faq-chevron"></i>
+            </button>
+            @if (faq.isOpen) {
+              <div class="faq-answer">
+                <p>{{ faq.answer }}</p>
+                <div class="faq-helpful">
+                  <span>Was this helpful?</span>
+                  <button class="helpful-btn"><i class="fa-regular fa-thumbs-up"></i> Yes</button>
+                  <button class="helpful-btn"><i class="fa-regular fa-thumbs-down"></i> No</button>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Still need help? -->
+    <div class="help-cta">
+      <div class="help-cta-icon"><i class="fa-solid fa-headset"></i></div>
+      <h3>Still need help?</h3>
+      <p>Our support team is available 24/7 to assist you</p>
+      <div class="help-cta-actions">
+        <a routerLink="/chatbot/chat" class="cb-btn-primary-sm">
+          <i class="fa-solid fa-comment-dots"></i> Chat with AI
+        </a>
+        <a routerLink="/chatbot/contact" class="cb-btn-outline-sm">
+          <i class="fa-solid fa-envelope"></i> Contact Support
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,167 @@
+<app-health-navbar></app-health-navbar>
+
+<div class="bp-page">
+  <div class="bp-container">
+    <!-- Progress -->
+    <div class="bp-progress">
+      @for (s of [1,2,3]; track s) {
+        <div class="bp-step" [class.active]="step() >= s" [class.current]="step() === s">
+          <div class="bp-step-num">{{ s }}</div>
+          <span>{{ s === 1 ? 'Select Time' : s === 2 ? 'Details' : 'Confirm' }}</span>
+        </div>
+        @if (s < 3) { <div class="bp-step-line" [class.active]="step() > s"></div> }
+      }
+    </div>
+
+    @if (doctor()) {
+      <div class="bp-grid">
+        <!-- Left: Doctor Info -->
+        <div class="bp-doctor-panel">
+          <div class="bp-doc-card">
+            @if (doctor()!.avatar) {
+              <img [src]="'http://localhost:3000' + doctor()!.avatar" alt="Doctor" class="bp-doc-avatar" />
+            } @else {
+              <div class="bp-doc-avatar-placeholder">{{ doctor()!.name?.[0] ?? 'D' }}</div>
+            }
+            <div class="bp-doc-info">
+              <div class="bp-doc-name">{{ doctor()!.name }} <i class="fa-solid fa-circle-check bp-verified"></i></div>
+              <div class="bp-doc-spec">{{ doctor()!.specialty }}</div>
+              <div class="bp-doc-rating">
+                @for (s of stars(doctor()!.rating); track $index) {
+                  <i class="fa-solid fa-star" [class.filled]="s===1"></i>
+                }
+                <span>{{ doctor()!.rating }} ({{ doctor()!.reviewCount }} reviews)</span>
+              </div>
+              <div class="bp-doc-meta">
+                <span><i class="fa-solid fa-briefcase-medical"></i> {{ doctor()!.experience }} yrs</span>
+                <span><i class="fa-solid fa-location-dot"></i> {{ doctor()!.location }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="bp-fee-card">
+            <div class="bp-fee-row"><span>Consultation Fee</span><strong>${{ doctor()!.consultationFee }}</strong></div>
+            <div class="bp-fee-row"><span>Type</span><strong>{{ selectedType() | titlecase }}</strong></div>
+            @if (selectedSlot() && currentDay) {
+              <div class="bp-fee-row"><span>Date</span><strong>{{ currentDay.day }}, {{ currentDay.date }}</strong></div>
+              <div class="bp-fee-row"><span>Time</span><strong>{{ currentDay.slots | slotTime:selectedSlot() }}</strong></div>
+            }
+          </div>
+        </div>
+
+        <!-- Right: Steps -->
+        <div class="bp-main-panel">
+
+          <!-- STEP 1: Select Time -->
+          @if (step() === 1) {
+            <div class="bp-panel">
+              <h2 class="bp-panel-title"><i class="fa-solid fa-calendar"></i> Select Date & Time</h2>
+
+              <!-- Consult Type -->
+              <div class="bp-section">
+                <div class="bp-section-label">Consultation Type</div>
+                <div class="bp-type-grid">
+                  @for (t of consultTypes; track t.key) {
+                    <button class="bp-type-btn" [class.active]="selectedType() === t.key" (click)="selectedType.set($any(t.key))">
+                      <i class="fa-solid" [class]="'fa-solid ' + t.icon"></i>
+                      <span>{{ t.label }}</span>
+                    </button>
+                  }
+                </div>
+              </div>
+
+              <!-- Day Tabs -->
+              <div class="bp-section">
+                <div class="bp-section-label">Available Days</div>
+                <div class="bp-day-tabs">
+                  @for (day of doctor()!.availability; track day.day; let i = $index) {
+                    <button class="bp-day-tab" [class.active]="selectedDay() === i" (click)="selectedDay.set(i); selectedSlot.set('')">
+                      <span class="bp-day-name">{{ day.day }}</span>
+                      <span class="bp-day-date">{{ day.date }}</span>
+                    </button>
+                  }
+                </div>
+              </div>
+
+              <!-- Time Slots -->
+              @if (currentDay) {
+                <div class="bp-section">
+                  <div class="bp-section-label">Available Times</div>
+                  <div class="bp-slots-grid">
+                    @for (slot of currentDay.slots; track slot.id) {
+                      <button class="bp-slot" [class.active]="selectedSlot() === slot.id" [class.unavailable]="!slot.available" [disabled]="!slot.available" (click)="selectSlot(slot.id)">
+                        {{ slot.time }}
+                      </button>
+                    }
+                  </div>
+                </div>
+              }
+
+              <button class="bp-next-btn" (click)="nextStep()" [disabled]="!selectedSlot()">
+                Continue <i class="fa-solid fa-arrow-right"></i>
+              </button>
+            </div>
+          }
+
+          <!-- STEP 2: Details -->
+          @if (step() === 2) {
+            <div class="bp-panel">
+              <h2 class="bp-panel-title"><i class="fa-solid fa-clipboard-list"></i> Appointment Details</h2>
+              <div class="bp-section">
+                <div class="bp-section-label">Reason for Visit</div>
+                <textarea class="bp-textarea" [value]="reason()" (input)="reason.set($any($event.target).value)" placeholder="Briefly describe your symptoms or reason for the appointment..." rows="4"></textarea>
+              </div>
+              <div class="bp-section">
+                <div class="bp-section-label">Patient Information</div>
+                <div class="bp-info-grid">
+                  <div class="bp-info-item"><label>Full Name</label><input type="text" [value]="auth.currentUser?.name || ''" readonly /></div>
+                  <div class="bp-info-item"><label>Email</label><input type="text" [value]="auth.currentUser?.email || ''" readonly /></div>
+                  <div class="bp-info-item"><label>Phone</label><input type="text" [value]="auth.currentUser?.phone || 'Not set — update in profile'" readonly /></div>
+                  <div class="bp-info-item"><label>Role</label><input type="text" [value]="auth.currentUser?.role || '' | titlecase" readonly /></div>
+                </div>
+              </div>
+              <div class="bp-btn-row">
+                <button class="bp-back-btn" (click)="step.set(1)"><i class="fa-solid fa-arrow-left"></i> Back</button>
+                <button class="bp-next-btn" (click)="nextStep()">Review Booking <i class="fa-solid fa-arrow-right"></i></button>
+              </div>
+            </div>
+          }
+
+          <!-- STEP 3: Confirm -->
+          @if (step() === 3) {
+            <div class="bp-panel">
+              <h2 class="bp-panel-title"><i class="fa-solid fa-check-circle"></i> Confirm Booking</h2>
+              <div class="bp-summary">
+                <div class="bp-summary-row"><span>Doctor</span><strong>{{ doctor()!.name }}</strong></div>
+                <div class="bp-summary-row"><span>Specialty</span><strong>{{ doctor()!.specialty }}</strong></div>
+                <div class="bp-summary-row"><span>Type</span><strong>{{ selectedType() | titlecase }}</strong></div>
+                @if (currentDay) {
+                  <div class="bp-summary-row"><span>Date</span><strong>{{ currentDay.day }}, {{ currentDay.date }}</strong></div>
+                  <div class="bp-summary-row"><span>Time</span><strong>{{ currentDay.slots | slotTime:selectedSlot() }}</strong></div>
+                }
+                <div class="bp-summary-row"><span>Reason</span><strong>{{ reason() || 'General consultation' }}</strong></div>
+                <div class="bp-summary-row bp-total"><span>Total Fee</span><strong class="bp-total-val">${{ doctor()!.consultationFee }}</strong></div>
+              </div>
+              <div class="bp-disclaimer"><i class="fa-solid fa-circle-info"></i> By confirming, you agree to our cancellation policy. Free cancellation up to 24 hours before the appointment.</div>
+              @if (bookingError()) {
+                <div class="bp-error"><i class="fa-solid fa-circle-exclamation"></i> {{ bookingError() }}</div>
+              }
+              <div class="bp-btn-row">
+                <button class="bp-back-btn" (click)="step.set(2)"><i class="fa-solid fa-arrow-left"></i> Back</button>
+                <button class="bp-confirm-btn" (click)="confirm()" [disabled]="isSubmitting()">
+                  @if (isSubmitting()) { <i class="fa-solid fa-spinner fa-spin"></i> Booking... }
+                  @else { <i class="fa-solid fa-calendar-check"></i> Confirm Booking }
+                </button>
+              </div>
+            </div>
+          }
+
+        </div>
+      </div>
+    } @else {
+      <div class="bp-loading">
+        <div class="bp-skeleton-card"></div>
+        <div class="bp-skeleton-main"></div>
+      </div>
+    }
+  </div>
+</div>

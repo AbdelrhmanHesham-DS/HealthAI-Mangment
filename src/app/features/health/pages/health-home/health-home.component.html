@@ -1,0 +1,237 @@
+<app-health-navbar></app-health-navbar>
+
+<div class="hh-page">
+
+  <!-- ═══ HERO ═══ -->
+  <section class="hh-hero">
+    <div class="hh-hero-bg">
+      <img src="Images/doctor-dash.png" alt="Healthcare platform" class="hh-hero-img" loading="lazy" />
+      <div class="hh-hero-overlay"></div>
+    </div>
+    <div class="hh-hero-content">
+      <h1 class="hh-hero-title">
+        Find the Best Doctors<br>
+        <span class="hh-gradient">Book Instantly</span>
+      </h1>
+      <p class="hh-hero-sub">Search from 20,000+ verified doctors. Book a clinic visit, video call, or home visit — all for free.</p>
+
+      <!-- Search Box -->
+      <div class="hh-search-box">
+        <div class="hh-search-field hh-search-main">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" placeholder="Doctor name, specialty, or clinic..."
+            [value]="searchQuery()" (input)="searchQuery.set($any($event.target).value)"
+            (keydown.enter)="search()" />
+        </div>
+        <div class="hh-search-divider"></div>
+        <div class="hh-search-field">
+          <i class="fa-solid fa-location-dot"></i>
+          <select [value]="selectedCity()" (change)="selectedCity.set($any($event.target).value)">
+            <option value="all">All Cities</option>
+            @for (c of cities; track c) { <option [value]="c">{{ c }}</option> }
+          </select>
+        </div>
+        <div class="hh-search-divider"></div>
+        <div class="hh-search-field">
+          <i class="fa-solid fa-stethoscope"></i>
+          <select [value]="selectedSpecialty()" (change)="selectedSpecialty.set($any($event.target).value)">
+            <option value="all">All Specialties</option>
+            @for (s of specialties; track s.key) { <option [value]="s.key">{{ s.label }}</option> }
+          </select>
+        </div>
+        <button class="hh-search-btn" (click)="search()">
+          <i class="fa-solid fa-magnifying-glass"></i> Search
+        </button>
+      </div>
+
+      <!-- Quick tags -->
+      <div class="hh-quick-tags">
+        <span class="hh-quick-label">Popular:</span>
+        @for (s of specialties.slice(0,5); track s.key) {
+          <button class="hh-quick-tag" (click)="searchBySpecialty(s.key)">{{ s.label }}</button>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ STATS ═══ -->
+  <div class="hh-stats-bar">
+    @for (s of stats; track s.label) {
+      <div class="hh-stat">
+        <span class="hh-stat-val">{{ s.value }}</span>
+        <span class="hh-stat-lbl">{{ s.label }}</span>
+      </div>
+    }
+  </div>
+
+  <!-- ═══ SPECIALTIES ═══ -->
+  <section class="hh-section">
+    <div class="hh-container">
+      <div class="hh-section-head aos">
+        <h2>Browse by <span class="hh-gradient">Specialty</span></h2>
+        <p>Find the right specialist for your health needs</p>
+      </div>
+      <div class="hh-spec-grid">
+        @for (s of specialties; track s.key) {
+          <button class="hh-spec-card aos" (click)="searchBySpecialty(s.key)">
+            <div class="hh-spec-icon" [style.background]="s.color + '15'" [style.color]="s.color">
+              <i class="fa-solid" [class]="'fa-solid ' + s.icon"></i>
+            </div>
+            <span>{{ s.label }}</span>
+          </button>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ FEATURED DOCTORS ═══ -->
+  <section class="hh-section hh-section-alt">
+    <div class="hh-container">
+      <div class="hh-section-head aos">
+        <h2>Top Rated <span class="hh-gradient">Doctors</span></h2>
+        <p>Highly rated doctors with verified patient reviews</p>
+      </div>
+
+      <!-- Loading skeletons -->
+      @if (featuredDoctors().length === 0) {
+        <div class="hh-doctors-grid">
+          @for (i of [1,2,3,4]; track i) {
+            <div class="hh-doc-skeleton">
+              <div class="hh-skel-photo"></div>
+              <div class="hh-skel-body">
+                <div class="hh-skel-line hh-skel-name"></div>
+                <div class="hh-skel-line hh-skel-spec"></div>
+                <div class="hh-skel-line hh-skel-loc"></div>
+                <div class="hh-skel-line hh-skel-short"></div>
+              </div>
+            </div>
+          }
+        </div>
+      }
+
+      <div class="hh-doctors-grid">
+        @for (doc of featuredDoctors(); track doc.id) {
+          <div class="hh-doc-card">
+            <div class="hh-doc-photo-wrap">
+              <div class="hh-doc-avatar-fallback" [style.background]="'linear-gradient(135deg,' + getAvatarColor(doc.name) + ')'">
+                {{ getInitials(doc.name) }}
+              </div>
+              <img [src]="doc.photo" [alt]="doc.name" class="hh-doc-photo"
+                (error)="hidePhoto($event)"
+                (load)="showPhoto($event)"
+                style="opacity:0;transition:opacity 0.3s" />
+              @if (doc.online) { <span class="hh-online-badge"><i class="fa-solid fa-video"></i> Online</span> }
+            </div>
+            <div class="hh-doc-info">
+              <div class="hh-doc-name">
+                {{ doc.name }}
+                @if (doc.verified) { <i class="fa-solid fa-circle-check hh-verified"></i> }
+              </div>
+              <div class="hh-doc-spec">{{ doc.specialty }}</div>
+              <div class="hh-doc-clinic"><i class="fa-solid fa-hospital"></i> {{ doc.clinicName }}</div>
+              <div class="hh-doc-location"><i class="fa-solid fa-location-dot"></i> {{ doc.location }}</div>
+              <div class="hh-doc-rating">
+                @for (s of stars(doc.rating); track $index) {
+                  <i class="fa-solid fa-star" [class.filled]="s===1"></i>
+                }
+                <span>{{ doc.rating }} ({{ doc.reviewCount }})</span>
+              </div>
+              <div class="hh-doc-footer">
+                <div class="hh-doc-fee">EGP {{ doc.consultationFee }}</div>
+                <div class="hh-doc-wait"><i class="fa-regular fa-clock"></i> {{ doc.nextAvailable }}</div>
+              </div>
+              <div class="hh-doc-actions">
+                <a [routerLink]="['/health/doctor', doc.id]" class="hh-btn-outline">View Profile</a>
+                <a [routerLink]="['/health/book', doc.id]" class="hh-btn-primary">Book Now</a>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+      <div class="hh-see-all">
+        <a routerLink="/health/doctors" class="hh-btn-outline-lg">
+          See All Doctors <i class="fa-solid fa-arrow-right"></i>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ HOW IT WORKS ═══ -->
+  <section class="hh-section">
+    <div class="hh-container">
+      <div class="hh-section-head aos">
+        <h2>How <span class="hh-gradient">HealthAI</span> Works</h2>
+      </div>
+      <div class="hh-how-grid">
+        @for (step of howItWorks; track step.title; let i = $index) {
+          <div class="hh-how-card aos">
+            <div class="hh-how-num">0{{ i + 1 }}</div>
+            <div class="hh-how-icon"><i class="fa-solid" [class]="'fa-solid ' + step.icon"></i></div>
+            <h3>{{ step.title }}</h3>
+            <p>{{ step.desc }}</p>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ AI CHATBOT CTA ═══ -->
+  <section class="hh-section hh-section-alt">
+    <div class="hh-container">
+      <div class="hh-ai-cta aos">
+        <div class="hh-ai-cta-content">
+          <div class="hh-ai-icon"><i class="fa-solid fa-robot"></i></div>
+          <div>
+            <h2>Not sure which doctor to see?</h2>
+            <p>Use <strong>MediAI</strong> — describe your symptoms and get instant AI-powered specialist recommendations.</p>
+          </div>
+        </div>
+        <a routerLink="/health/symptom-checker" class="hh-btn-primary-lg">
+          <i class="fa-solid fa-stethoscope"></i> Open MediAI
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ FOOTER ═══ -->
+  <footer class="hh-footer">
+    <div class="hh-container">
+      <div class="hh-footer-grid">
+        <div>
+          <div class="hh-footer-logo">
+            <div class="hh-footer-logo-icon"><i class="fa-solid fa-heart-pulse"></i></div>
+            <span>HealthAI</span>
+          </div>
+          <p>Egypt's leading platform for finding and booking verified doctors online.</p>
+          <div class="hh-disclaimer"><i class="fa-solid fa-triangle-exclamation"></i> For informational purposes only. Not a substitute for professional medical advice.</div>
+        </div>
+        <div class="hh-footer-col">
+          <h4>For Patients</h4>
+          <a routerLink="/health/doctors">Find a Doctor</a>
+          <a routerLink="/health/symptom-checker">MediAI Checker</a>
+          <a routerLink="/health/hospitals">Nearby Hospitals</a>
+          <a routerLink="/health/health-tracker">Health Tracker</a>
+          <a routerLink="/health/appointments">My Appointments</a>
+          <a routerLink="/health/records">Medical Records</a>
+        </div>
+        <div class="hh-footer-col">
+          <h4>For Doctors</h4>
+          <a routerLink="/login">Doctor Login</a>
+          <a href="#">Join HealthAI</a>
+          <a href="#">Doctor App</a>
+        </div>
+        <div class="hh-footer-col">
+          <h4>Company</h4>
+          <a routerLink="/chatbot/contact">Contact Us</a>
+          <a href="#">About Us</a>
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+        </div>
+      </div>
+      <div class="hh-footer-bottom">
+        <span>© 2026 HealthAI. All rights reserved.</span>
+        <span>Made with <i class="fa-solid fa-heart" style="color:#ef4444"></i> for better healthcare</span>
+      </div>
+    </div>
+  </footer>
+</div>

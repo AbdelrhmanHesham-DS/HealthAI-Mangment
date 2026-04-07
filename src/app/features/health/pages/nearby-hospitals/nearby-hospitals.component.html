@@ -1,0 +1,105 @@
+<app-health-navbar></app-health-navbar>
+
+<div class="nh-page">
+
+  <!-- Hero -->
+  <div class="nh-hero">
+    <div class="nh-hero-icon"><i class="fa-solid fa-map-location-dot"></i></div>
+    <div>
+      <h1 class="nh-hero-title">Nearby Hospitals & Clinics</h1>
+      <p class="nh-hero-sub">Find hospitals, clinics, emergency centers, and pharmacies near you</p>
+    </div>
+    <button class="nh-locate-btn" (click)="locateUser()" [disabled]="isLocating()">
+      @if (isLocating()) { <i class="fa-solid fa-spinner fa-spin"></i> Locating... }
+      @else { <i class="fa-solid fa-location-crosshairs"></i> Use My Location }
+    </button>
+  </div>
+
+  <!-- Emergency Banner -->
+  <div class="nh-emergency-banner">
+    <i class="fa-solid fa-triangle-exclamation"></i>
+    <span>In case of emergency, call <strong>123</strong> (Egypt Emergency Services) immediately</span>
+  </div>
+
+  <!-- Filters -->
+  <div class="nh-filters">
+    <div class="nh-search-box">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" placeholder="Search hospitals, clinics, specialties..." [value]="searchQuery()" (input)="searchQuery.set($any($event.target).value)" />
+    </div>
+    <select class="nh-select" [value]="selectedCity()" (change)="selectedCity.set($any($event.target).value)">
+      @for (c of cities; track c) { <option [value]="c">{{ c === 'all' ? 'All Cities' : c }}</option> }
+    </select>
+    <div class="nh-type-tabs">
+      @for (t of types; track t.key) {
+        <button class="nh-type-tab" [class.active]="selectedType() === t.key" (click)="selectedType.set(t.key)">
+          <i class="fa-solid" [class]="'fa-solid ' + t.icon"></i> {{ t.label }}
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- Count -->
+  <div class="nh-count">
+    <strong>{{ filtered.length }}</strong> facilities found
+    @if (userLocation()) { <span class="nh-located"><i class="fa-solid fa-location-dot"></i> Location detected</span> }
+  </div>
+
+  <!-- Cards -->
+  <div class="nh-grid">
+    @for (h of filtered; track h.id) {
+      <div class="nh-card">
+        <div class="nh-card-top">
+          <div class="nh-card-icon" [style.background]="typeColor(h.type) + '18'" [style.color]="typeColor(h.type)">
+            <i class="fa-solid" [class]="'fa-solid ' + typeIcon(h.type)"></i>
+          </div>
+          <div class="nh-card-info">
+            <div class="nh-card-name">{{ h.name }}</div>
+            <div class="nh-card-address"><i class="fa-solid fa-location-dot"></i> {{ h.address }}</div>
+          </div>
+          <div class="nh-card-badges">
+            @if (h.emergency) { <span class="nh-badge nh-badge-emergency">Emergency</span> }
+            @if (h.open24h) { <span class="nh-badge nh-badge-open">24/7</span> }
+          </div>
+        </div>
+
+        <div class="nh-card-meta">
+          <span><i class="fa-solid fa-route"></i> {{ h.distance }}</span>
+          <span><i class="fa-solid fa-phone"></i> {{ h.phone }}</span>
+          <span><i class="fa-solid fa-city"></i> {{ h.city }}</span>
+        </div>
+
+        <div class="nh-card-rating">
+          @for (s of stars(h.rating); track $index) {
+            <i class="fa-solid fa-star" [class.filled]="s===1"></i>
+          }
+          <span>{{ h.rating }}</span>
+        </div>
+
+        <div class="nh-specialties">
+          @for (sp of h.specialties.slice(0,3); track sp) {
+            <span class="nh-spec-tag">{{ sp }}</span>
+          }
+        </div>
+
+        <div class="nh-card-actions">
+          <button class="nh-map-btn" (click)="openMaps(h)">
+            <i class="fa-solid fa-map-location-dot"></i> View on Map
+          </button>
+          <a [href]="'tel:' + h.phone" class="nh-call-btn">
+            <i class="fa-solid fa-phone"></i> Call
+          </a>
+        </div>
+      </div>
+    }
+  </div>
+
+  @if (filtered.length === 0) {
+    <div class="nh-empty">
+      <i class="fa-solid fa-hospital-slash"></i>
+      <h3>No facilities found</h3>
+      <p>Try adjusting your search or filters</p>
+    </div>
+  }
+
+</div>

@@ -1,0 +1,119 @@
+<div class="doc-page">
+
+  <div class="doc-page-header">
+    <div>
+      <h1 class="doc-page-title">Appointments</h1>
+      <p class="doc-page-sub">Manage your patient appointments</p>
+    </div>
+    <div class="doc-stats-row">
+      <div class="doc-stat"><span class="doc-stat-val">{{ appointments.length }}</span><span class="doc-stat-lbl">Total</span></div>
+      <div class="doc-stat"><span class="doc-stat-val" style="color:#f59e0b">{{ appointments | apCount:'upcoming' }}</span><span class="doc-stat-lbl">Upcoming</span></div>
+      <div class="doc-stat"><span class="doc-stat-val" style="color:#10b981">{{ appointments | apCount:'completed' }}</span><span class="doc-stat-lbl">Completed</span></div>
+    </div>
+  </div>
+
+  <div class="doc-search-bar">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="text" placeholder="Search by patient name or reason..." [(ngModel)]="searchTerm" (input)="filterPatients()" />
+  </div>
+
+  @if (isLoading) {
+    <div class="doc-empty"><i class="fa-solid fa-spinner fa-spin" style="opacity:0.5"></i><p>Loading appointments...</p></div>
+  } @else if (filteredAppointments.length > 0) {
+    <div class="doc-apt-grid">
+      @for (apt of filteredAppointments; track apt.id) {
+        <div class="doc-apt-card">
+          <div class="doc-apt-card-top">
+            <div class="doc-apt-patient">
+              <div class="doc-apt-avatar">{{ apt.patientName?.[0] ?? 'P' }}</div>
+              <div>
+                <div class="doc-apt-name">{{ apt.patientName }}</div>
+                <div class="doc-apt-id">{{ apt.type | titlecase }} consultation</div>
+              </div>
+            </div>
+            <span class="doc-badge" [class]="'doc-badge-' + apt.status">{{ apt.status }}</span>
+          </div>
+
+          <div class="doc-apt-meta">
+            <span><i class="fa-regular fa-calendar"></i> {{ apt.date }}</span>
+            <span><i class="fa-regular fa-clock"></i> {{ apt.time }}</span>
+            <span><i class="fa-solid fa-coins"></i> EGP {{ apt.fee }}</span>
+          </div>
+
+          <div class="doc-apt-symptoms">
+            <i class="fa-solid fa-notes-medical"></i> {{ apt.reason || 'No reason provided' }}
+          </div>
+
+          <div class="doc-apt-actions">
+            <button class="doc-btn doc-btn-outline" (click)="openDetailsModal(apt)">
+              <i class="fa-solid fa-eye"></i> Details
+            </button>
+            @if (apt.status === 'upcoming') {
+              <button class="doc-btn doc-btn-success" (click)="updateStatus(apt, 'completed')">
+                <i class="fa-solid fa-check"></i> Complete
+              </button>
+              <button class="doc-btn doc-btn-danger" (click)="updateStatus(apt, 'cancelled')">
+                <i class="fa-solid fa-xmark"></i> Cancel
+              </button>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="doc-empty">
+      <i class="fa-solid fa-calendar-xmark"></i>
+      <h3>No appointments found</h3>
+      <p>{{ searchTerm ? 'Try adjusting your search.' : 'No appointments yet.' }}</p>
+    </div>
+  }
+
+  <!-- Details Modal — shows patient phone (private) -->
+  @if (showDetailsModal && selectedAppointment) {
+    <div class="doc-modal-backdrop" (click)="closeDetailsModal()">
+      <div class="doc-modal" (click)="$event.stopPropagation()">
+        <div class="doc-modal-header">
+          <h3><i class="fa-solid fa-user-injured"></i> Appointment Details</h3>
+          <button (click)="closeDetailsModal()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="doc-modal-body">
+          <div class="doc-detail-grid">
+            <div class="doc-detail-item"><span class="doc-detail-lbl">Patient</span><span class="doc-detail-val">{{ selectedAppointment.patientName }}</span></div>
+            <div class="doc-detail-item"><span class="doc-detail-lbl">Date</span><span class="doc-detail-val">{{ selectedAppointment.date }}</span></div>
+            <div class="doc-detail-item"><span class="doc-detail-lbl">Time</span><span class="doc-detail-val">{{ selectedAppointment.time }}</span></div>
+            <div class="doc-detail-item"><span class="doc-detail-lbl">Type</span><span class="doc-detail-val">{{ selectedAppointment.type | titlecase }}</span></div>
+            <div class="doc-detail-item"><span class="doc-detail-lbl">Fee</span><span class="doc-detail-val">EGP {{ selectedAppointment.fee }}</span></div>
+            <div class="doc-detail-item"><span class="doc-detail-lbl">Status</span><span class="doc-detail-val"><span class="doc-badge" [class]="'doc-badge-'+selectedAppointment.status">{{ selectedAppointment.status }}</span></span></div>
+          </div>
+
+          <!-- Patient contact — private, only visible to doctor -->
+          @if (selectedAppointment.patientId?.phone) {
+            <div class="doc-contact-box">
+              <i class="fa-solid fa-lock" style="color:#f59e0b"></i>
+              <div>
+                <div class="doc-detail-lbl">Patient Phone (Private)</div>
+                <a [href]="'tel:' + selectedAppointment.patientId.phone" class="doc-phone-link">
+                  <i class="fa-solid fa-phone"></i> {{ selectedAppointment.patientId.phone }}
+                </a>
+              </div>
+            </div>
+          }
+
+          <div class="doc-detail-section">
+            <div class="doc-detail-lbl">Reason for Visit</div>
+            <div class="doc-detail-box">{{ selectedAppointment.reason || 'Not specified' }}</div>
+          </div>
+          @if (selectedAppointment.notes) {
+            <div class="doc-detail-section">
+              <div class="doc-detail-lbl">Notes</div>
+              <div class="doc-detail-box">{{ selectedAppointment.notes }}</div>
+            </div>
+          }
+        </div>
+        <div class="doc-modal-footer">
+          <button class="doc-btn doc-btn-outline" (click)="closeDetailsModal()">Close</button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

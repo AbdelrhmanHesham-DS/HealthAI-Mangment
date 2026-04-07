@@ -1,0 +1,195 @@
+<app-health-navbar></app-health-navbar>
+
+<div class="ht-page">
+
+  <!-- Header -->
+  <div class="ht-header">
+    <div class="ht-header-left">
+      <div class="ht-header-icon"><i class="fa-solid fa-heart-pulse"></i></div>
+      <div>
+        <h1 class="ht-title">Health Tracker</h1>
+        <p class="ht-sub">Monitor your vital signs and health metrics</p>
+      </div>
+    </div>
+    <button class="ht-add-btn" (click)="showForm.set(!showForm())">
+      <i class="fa-solid" [class.fa-plus]="!showForm()" [class.fa-xmark]="showForm()"></i>
+      {{ showForm() ? 'Cancel' : 'Log Reading' }}
+    </button>
+  </div>
+
+  <!-- Risk Alerts -->
+  @if (risks().length > 0) {
+    <div class="ht-risks">
+      @for (risk of risks(); track risk.message) {
+        <div class="ht-risk-card" [class]="'ht-risk-' + risk.level">
+          <i class="fa-solid" [class.fa-triangle-exclamation]="risk.level==='high'" [class.fa-circle-exclamation]="risk.level==='medium'" [class.fa-circle-info]="risk.level==='low'"></i>
+          <span>{{ risk.message }}</span>
+          <a routerLink="/health/doctors" class="ht-risk-link">Find Doctor →</a>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Summary Cards -->
+  <div class="ht-summary-grid">
+    @for (cfg of metricConfigs; track cfg.type) {
+      <div class="ht-summary-card" [class.active]="activeType() === cfg.type" (click)="selectType(cfg.type)">
+        <div class="ht-summary-icon" [style.background]="cfg.color + '18'" [style.color]="cfg.color">
+          <i class="fa-solid" [class]="'fa-solid ' + cfg.icon"></i>
+        </div>
+        <div class="ht-summary-info">
+          <div class="ht-summary-label">{{ cfg.label }}</div>
+          @if (summary()[cfg.type]) {
+            <div class="ht-summary-val" [style.color]="getStatusColor(cfg.type, summary()[cfg.type].value)">
+              {{ formatValue(summary()[cfg.type]) }} <span class="ht-summary-unit">{{ cfg.unit }}</span>
+            </div>
+            <div class="ht-summary-time">{{ summary()[cfg.type].recordedAt | date:'MMM d' }}</div>
+          } @else {
+            <div class="ht-summary-empty">No data yet</div>
+          }
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Log Form -->
+  @if (showForm()) {
+    <div class="ht-form-card">
+      <h3 class="ht-form-title">
+        <i class="fa-solid" [class]="'fa-solid ' + activeConfig.icon" [style.color]="activeConfig.color"></i>
+        Log {{ activeConfig.label }}
+      </h3>
+      <div class="ht-form-normal">Normal range: {{ activeConfig.normal }}</div>
+      <div class="ht-form-row">
+        <div class="ht-form-group">
+          <label>{{ activeConfig.hasTwo ? 'Systolic' : activeConfig.label }} ({{ activeConfig.unit }})</label>
+          <input type="number" [placeholder]="activeConfig.placeholder" [value]="newValue()" (input)="newValue.set($any($event.target).value)" />
+        </div>
+        @if (activeConfig.hasTwo) {
+          <div class="ht-form-group">
+            <label>Diastolic ({{ activeConfig.unit2 }})</label>
+            <input type="number" [placeholder]="activeConfig.placeholder2 || ''" [value]="newValue2()" (input)="newValue2.set($any($event.target).value)" />
+          </div>
+        }
+        <div class="ht-form-group ht-form-note">
+          <label>Note (optional)</label>
+          <input type="text" placeholder="e.g. After exercise" [value]="newNote()" (input)="newNote.set($any($event.target).value)" />
+        </div>
+      </div>
+      <button class="ht-save-btn" (click)="save()" [disabled]="!newValue() || isSaving()">
+        @if (isSaving()) { <i class="fa-solid fa-spinner fa-spin"></i> Saving... }
+        @else { <i class="fa-solid fa-floppy-disk"></i> Save Reading }
+      </button>
+      @if (saved()) {
+        <div class="ht-saved-msg"><i class="fa-solid fa-circle-check"></i> Reading saved!</div>
+      }
+    </div>
+  }
+
+  <!-- Chart + History -->
+  <div class="ht-main-grid">
+
+    <!-- Chart -->
+    <div class="ht-chart-card">
+      <div class="ht-chart-header">
+        <h3>{{ activeConfig.label }} Trend</h3>
+        <span class="ht-chart-unit">{{ activeConfig.unit }}</span>
+      </div>
+      @if (metrics().length > 0) {
+        <div class="ht-chart-wrap"><canvas #chartCanvas></canvas></div>
+      } @else {
+        <div class="ht-chart-empty">
+          <i class="fa-solid fa-chart-line"></i>
+          <p>No data yet. Log your first reading above.</p>
+        </div>
+      }
+    </div>
+
+    <!-- History -->
+    <div class="ht-history-card">
+      <h3 class="ht-history-title">Recent Readings</h3>
+      @if (metrics().length === 0) {
+        <div class="ht-history-empty">No readings logged yet.</div>
+      }
+      <div class="ht-history-list">
+        @for (m of metrics().slice(0, 10); track m.id) {
+          <div class="ht-history-item">
+            <div class="ht-history-val" [style.color]="getStatusColor(m.type, m.value)">
+              {{ formatValue(m) }} <span class="ht-history-unit">{{ activeConfig.unit }}</span>
+            </div>
+            <div class="ht-history-meta">
+              <span>{{ m.recordedAt | date:'MMM d, h:mm a' }}</span>
+              @if (m.note) { <span class="ht-history-note">{{ m.note }}</span> }
+            </div>
+            <button class="ht-delete-btn" (click)="deleteMetric(m.id)" title="Delete">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- AI Risk Prediction Section -->
+  <div class="ht-risk-section">
+    <div class="ht-risk-header">
+      <div class="ht-risk-icon"><i class="fa-solid fa-brain"></i></div>
+      <div>
+        <h3>AI Health Risk Assessment</h3>
+        <p>Based on your logged metrics, here's your health risk overview</p>
+      </div>
+    </div>
+
+    <!-- Predictive Risks (from trend analysis) -->
+    @if (predictions().length > 0) {
+      <div class="ht-predictions">
+        <div class="ht-pred-title"><i class="fa-solid fa-chart-line"></i> Predictive Risk Alerts</div>
+        @for (pred of predictions(); track pred.risk) {
+          <div class="ht-pred-card" [class]="'ht-pred-' + pred.level">
+            <div class="ht-pred-header">
+              <span class="ht-pred-risk">{{ pred.risk }}</span>
+              <span class="ht-pred-level">{{ pred.level | titlecase }}</span>
+            </div>
+            <div class="ht-pred-reason">{{ pred.reason }}</div>
+            <div class="ht-pred-action"><i class="fa-solid fa-arrow-right"></i> {{ pred.action }}</div>
+          </div>
+        }
+      </div>
+    }
+    <div class="ht-risk-grid">
+      <div class="ht-risk-item">
+        <div class="ht-risk-item-icon" style="background:rgba(239,68,68,0.12);color:#ef4444"><i class="fa-solid fa-heart"></i></div>
+        <div class="ht-risk-item-label">Cardiovascular Risk</div>
+        <div class="ht-risk-item-val" [style.color]="summary()['blood_pressure'] && summary()['blood_pressure'].value >= 140 ? '#ef4444' : '#10b981'">
+          {{ summary()['blood_pressure'] && summary()['blood_pressure'].value >= 140 ? 'Elevated' : 'Normal' }}
+        </div>
+      </div>
+      <div class="ht-risk-item">
+        <div class="ht-risk-item-icon" style="background:rgba(139,92,246,0.12);color:#8b5cf6"><i class="fa-solid fa-droplet"></i></div>
+        <div class="ht-risk-item-label">Diabetes Risk</div>
+        <div class="ht-risk-item-val" [style.color]="summary()['blood_sugar'] && summary()['blood_sugar'].value >= 126 ? '#f59e0b' : '#10b981'">
+          {{ summary()['blood_sugar'] && summary()['blood_sugar'].value >= 126 ? 'Monitor' : 'Normal' }}
+        </div>
+      </div>
+      <div class="ht-risk-item">
+        <div class="ht-risk-item-icon" style="background:rgba(6,182,212,0.12);color:#06b6d4"><i class="fa-solid fa-lungs"></i></div>
+        <div class="ht-risk-item-label">Respiratory</div>
+        <div class="ht-risk-item-val" [style.color]="summary()['oxygen'] && summary()['oxygen'].value < 95 ? '#ef4444' : '#10b981'">
+          {{ summary()['oxygen'] && summary()['oxygen'].value < 95 ? 'Low O₂' : 'Normal' }}
+        </div>
+      </div>
+      <div class="ht-risk-item">
+        <div class="ht-risk-item-icon" style="background:rgba(245,158,11,0.12);color:#f59e0b"><i class="fa-solid fa-person-walking"></i></div>
+        <div class="ht-risk-item-label">Activity Level</div>
+        <div class="ht-risk-item-val" [style.color]="summary()['steps'] && summary()['steps'].value >= 8000 ? '#10b981' : '#f59e0b'">
+          {{ summary()['steps'] ? (summary()['steps'].value >= 8000 ? 'Active' : 'Low') : 'No data' }}
+        </div>
+      </div>
+    </div>
+    <div class="ht-risk-disclaimer">
+      <i class="fa-solid fa-triangle-exclamation"></i>
+      This is an AI-generated risk overview based on your logged data. It is not a medical diagnosis. Always consult a licensed physician.
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,100 @@
+:host { display: block; background: var(--bg-base,#0f172a); min-height: 100vh; color: var(--text-primary,#fff); }
+.pd-page { padding-top: 68px; }
+.pd-container { max-width: 960px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+.pd-gradient { background: linear-gradient(135deg,#6366f1,#8b5cf6); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+
+/* Welcome */
+.pd-welcome { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap; }
+.pd-welcome-left { display: flex; align-items: center; gap: 1rem; }
+.pd-avatar { width: 52px; height: 52px; background: linear-gradient(135deg,#6366f1,#8b5cf6); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; font-weight: 800; color: white; flex-shrink: 0; }
+.pd-welcome-title { font-size: clamp(1.2rem,3vw,1.6rem); font-weight: 800; margin: 0 0 0.2rem; }
+.pd-welcome-sub { color: var(--text-muted,rgba(255,255,255,0.45)); font-size: 0.875rem; margin: 0; }
+.pd-book-btn { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.65rem 1.25rem; background: linear-gradient(135deg,#6366f1,#8b5cf6); color: white; border-radius: 10px; text-decoration: none; font-size: 0.875rem; font-weight: 600; transition: all 0.2s; border: none; cursor: pointer; }
+.pd-book-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(99,102,241,0.35); color: white; }
+
+/* Stats */
+.pd-stats-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 1rem; margin-bottom: 2rem; }
+.pd-stat-card { background: var(--bg-surface,rgba(30,41,59,0.6)); border: 1px solid var(--border-subtle,rgba(255,255,255,0.06)); border-radius: 14px; padding: 1.25rem; display: flex; align-items: center; gap: 0.85rem; }
+.pd-stat-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
+.pd-stat-val { font-size: 1.4rem; font-weight: 800; line-height: 1; margin-bottom: 0.15rem; }
+.pd-stat-lbl { font-size: 0.75rem; color: var(--text-muted,rgba(255,255,255,0.4)); }
+
+/* Tabs */
+.pd-tabs { display: flex; gap: 0.5rem; margin-bottom: 1.75rem; background: var(--bg-surface,rgba(30,41,59,0.5)); border: 1px solid var(--border-subtle,rgba(255,255,255,0.06)); border-radius: 12px; padding: 0.35rem; }
+.pd-tab { flex: 1; padding: 0.6rem; background: none; border: none; border-radius: 9px; color: var(--text-muted,rgba(255,255,255,0.5)); font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 0.4rem; font-family: inherit; }
+.pd-tab:hover { color: var(--text-primary,#fff); }
+.pd-tab.active { background: rgba(99,102,241,0.15); color: #a5b4fc; }
+.pd-tab-badge { background: #ef4444; color: white; padding: 0.1rem 0.4rem; border-radius: 50px; font-size: 0.65rem; font-weight: 700; }
+
+.pd-section-title { font-size: 0.9rem; font-weight: 700; color: var(--text-muted,rgba(255,255,255,0.5)); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 1rem; }
+
+/* Appointments */
+.pd-apt-list { display: flex; flex-direction: column; gap: 1rem; }
+.pd-apt-card { background: var(--bg-surface,rgba(30,41,59,0.6)); border: 1px solid var(--border-subtle,rgba(255,255,255,0.06)); border-radius: 16px; padding: 1.25rem; display: flex; align-items: flex-start; gap: 1rem; transition: all 0.2s; }
+.pd-apt-card:hover { border-color: rgba(99,102,241,0.2); box-shadow: 0 6px 20px rgba(0,0,0,0.2); }
+.pd-apt-upcoming { border-left: 3px solid #6366f1; }
+.pd-apt-completed { border-left: 3px solid #10b981; opacity: 0.85; }
+.pd-apt-photo { width: 56px; height: 56px; border-radius: 14px; object-fit: cover; object-position: top; flex-shrink: 0; }
+.pd-apt-info { flex: 1; min-width: 0; }
+.pd-apt-doc-name { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.15rem; }
+.pd-apt-spec { font-size: 0.78rem; color: #a5b4fc; font-weight: 600; margin-bottom: 0.4rem; }
+.pd-apt-meta { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 0.35rem; }
+.pd-apt-meta span { font-size: 0.78rem; color: var(--text-muted,rgba(255,255,255,0.45)); display: flex; align-items: center; gap: 0.3rem; }
+.pd-apt-reason { font-size: 0.8rem; color: var(--text-secondary,rgba(255,255,255,0.6)); }
+.pd-apt-notes { font-size: 0.78rem; color: var(--text-muted,rgba(255,255,255,0.4)); display: flex; align-items: flex-start; gap: 0.3rem; margin-top: 0.3rem; }
+.pd-apt-notes i { color: #f59e0b; flex-shrink: 0; margin-top: 2px; }
+.pd-apt-right { display: flex; flex-direction: column; align-items: flex-end; gap: 0.5rem; flex-shrink: 0; }
+.pd-apt-fee { font-size: 1rem; font-weight: 800; color: #6366f1; }
+.pd-apt-status { padding: 0.22rem 0.6rem; border-radius: 50px; font-size: 0.7rem; font-weight: 600; }
+.pd-status-upcoming { background: rgba(99,102,241,0.12); color: #a5b4fc; }
+.pd-status-completed { background: rgba(16,185,129,0.12); color: #6ee7b7; }
+.pd-join-btn { padding: 0.45rem 0.85rem; background: linear-gradient(135deg,#6366f1,#8b5cf6); color: white; border: none; border-radius: 8px; font-size: 0.78rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.3rem; }
+.pd-review-btn { display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.4rem 0.75rem; background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.25); border-radius: 8px; color: #fcd34d; font-size: 0.75rem; font-weight: 600; text-decoration: none; transition: all 0.2s; }
+.pd-review-btn:hover { background: rgba(245,158,11,0.18); color: #fcd34d; }
+
+/* Records */
+.pd-records-list { display: flex; flex-direction: column; gap: 0.75rem; }
+.pd-record-card { background: var(--bg-surface,rgba(30,41,59,0.6)); border: 1px solid var(--border-subtle,rgba(255,255,255,0.06)); border-radius: 14px; padding: 1.1rem 1.25rem; display: flex; align-items: center; gap: 1rem; }
+.pd-rec-icon { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; }
+.pd-rec-info { flex: 1; min-width: 0; }
+.pd-rec-title { font-size: 0.9rem; font-weight: 700; margin-bottom: 0.3rem; }
+.pd-rec-meta { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 0.3rem; }
+.pd-rec-meta span { font-size: 0.75rem; color: var(--text-muted,rgba(255,255,255,0.4)); display: flex; align-items: center; gap: 0.3rem; }
+.pd-rec-type { background: rgba(99,102,241,0.1); color: #a5b4fc; padding: 0.1rem 0.45rem; border-radius: 50px; font-size: 0.68rem !important; font-weight: 600; }
+.pd-rec-desc { font-size: 0.8rem; color: var(--text-muted,rgba(255,255,255,0.4)); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pd-download-btn { width: 34px; height: 34px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 9px; color: rgba(255,255,255,0.5); cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s; }
+.pd-download-btn:hover { background: rgba(99,102,241,0.1); color: #a5b4fc; }
+
+/* Notifications */
+.pd-notif-list { display: flex; flex-direction: column; gap: 0.6rem; }
+.pd-notif-card { background: var(--bg-surface,rgba(30,41,59,0.6)); border: 1px solid var(--border-subtle,rgba(255,255,255,0.06)); border-radius: 14px; padding: 1rem 1.25rem; display: flex; align-items: center; gap: 1rem; cursor: pointer; transition: all 0.2s; position: relative; }
+.pd-notif-card.unread { border-color: rgba(99,102,241,0.2); background: rgba(99,102,241,0.05); }
+.pd-notif-card:hover { border-color: rgba(99,102,241,0.25); }
+.pd-notif-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; }
+.pd-notif-content { flex: 1; }
+.pd-notif-title { font-size: 0.875rem; font-weight: 700; margin-bottom: 0.2rem; }
+.pd-notif-msg { font-size: 0.8rem; color: var(--text-secondary,rgba(255,255,255,0.6)); margin-bottom: 0.2rem; }
+.pd-notif-time { font-size: 0.72rem; color: var(--text-muted,rgba(255,255,255,0.35)); }
+.pd-notif-dot { width: 8px; height: 8px; background: #6366f1; border-radius: 50%; flex-shrink: 0; }
+
+/* Empty */
+.pd-empty { text-align: center; padding: 4rem 1rem; color: var(--text-muted,rgba(255,255,255,0.4)); }
+.pd-empty i { font-size: 3rem; display: block; margin-bottom: 1rem; color: rgba(99,102,241,0.3); }
+.pd-empty h3 { font-size: 1.1rem; font-weight: 700; color: var(--text-primary,#fff); margin-bottom: 0.5rem; }
+.pd-empty p { margin-bottom: 1.5rem; font-size: 0.875rem; }
+
+@media (max-width: 640px) { .pd-stats-row { grid-template-columns: 1fr 1fr; } .pd-apt-card { flex-direction: column; } .pd-apt-right { align-items: flex-start; flex-direction: row; flex-wrap: wrap; } }
+
+/* Light theme */
+html.light-theme .pd-stat-card, html.light-theme .pd-apt-card, html.light-theme .pd-record-card, html.light-theme .pd-notif-card { background: #fff; border-color: rgba(15,23,42,0.07); box-shadow: 0 2px 8px rgba(15,23,42,0.05); }
+html.light-theme .pd-tabs { background: #fff; border-color: rgba(15,23,42,0.07); }
+html.light-theme .pd-apt-meta span, html.light-theme .pd-rec-meta span { color: #64748b; }
+html.light-theme .pd-apt-reason, html.light-theme .pd-notif-msg { color: #475569; }
+html.light-theme .pd-notif-card.unread { background: rgba(99,102,241,0.04); border-color: rgba(99,102,241,0.15); }
+
+/* Quick Actions */
+.pd-quick-actions { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 1.5rem; }
+.pd-quick-action { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 16px 12px; background: var(--bg-surface,rgba(30,41,59,0.7)); border: 1px solid var(--border-subtle,rgba(255,255,255,0.06)); border-radius: 14px; text-decoration: none; color: var(--text-secondary,rgba(255,255,255,0.65)); font-size: 0.8rem; font-weight: 500; transition: all 0.2s; }
+.pd-quick-action:hover { border-color: rgba(99,102,241,0.3); color: var(--text-primary,#fff); transform: translateY(-2px); }
+.pd-quick-action i { font-size: 1.3rem; }
+@media (max-width:500px) { .pd-quick-actions { grid-template-columns: repeat(2,1fr); } }
