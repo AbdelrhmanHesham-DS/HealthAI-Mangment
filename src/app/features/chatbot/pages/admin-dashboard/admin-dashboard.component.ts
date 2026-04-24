@@ -3,13 +3,14 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ChatNavbarComponent } from '../../components/chat-navbar/chat-navbar.component';
 import { ToastComponent } from '../../components/toast/toast.component';
+import { AdminAppointmentBookingComponent } from '../../components/admin-appointment-booking/admin-appointment-booking.component';
 import { ChatService } from '../../services/chat.service';
 import { ChatUser, AnalyticsData } from '../../models/chat.model';
 
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink, ChatNavbarComponent, ToastComponent],
+  imports: [CommonModule, RouterLink, ChatNavbarComponent, ToastComponent, AdminAppointmentBookingComponent],
   templateUrl: './admin-dashboard.component.html',
   styleUrl: './admin-dashboard.component.css'
 })
@@ -28,6 +29,7 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit {
     { id: 'overview', icon: 'fa-chart-pie', label: 'Overview' },
     { id: 'users', icon: 'fa-users', label: 'Users' },
     { id: 'chats', icon: 'fa-comments', label: 'Chats' },
+    { id: 'appointments', icon: 'fa-calendar', label: 'Appointments' },
     { id: 'analytics', icon: 'fa-chart-line', label: 'Analytics' },
     { id: 'settings', icon: 'fa-gear', label: 'Settings' },
   ];

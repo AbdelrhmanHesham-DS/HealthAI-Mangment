@@ -1,0 +1,112 @@
+<div class="doctor-list-container">
+  <div class="header">
+    <h1>Find a Doctor</h1>
+    <p>Browse and book appointments with our available doctors</p>
+  </div>
+
+  <!-- Filters Section -->
+  <div class="filters-section">
+    <div class="filter-group">
+      <label for="search">Search by name or specialty</label>
+      <input 
+        id="search"
+        type="text" 
+        placeholder="Search doctors..." 
+        [(ngModel)]="searchQuery"
+        (input)="onSearchChange()"
+        class="search-input"
+      />
+    </div>
+
+    <div class="filter-group">
+      <label for="specialty">Specialty</label>
+      <select 
+        id="specialty"
+        [(ngModel)]="selectedSpecialty"
+        (change)="onSpecialtyChange()"
+        class="filter-select"
+      >
+        <option value="">All Specialties</option>
+        <option *ngFor="let spec of specialties" [value]="spec">{{ spec }}</option>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label for="rating">Minimum Rating</label>
+      <select 
+        id="rating"
+        [(ngModel)]="minRating"
+        (change)="onRatingChange()"
+        class="filter-select"
+      >
+        <option [value]="0">All Ratings</option>
+        <option [value]="3">3+ Stars</option>
+        <option [value]="4">4+ Stars</option>
+        <option [value]="4.5">4.5+ Stars</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading">
+    <p>Loading doctors...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error" class="error-message">
+    {{ error }}
+  </div>
+
+  <!-- Doctors List -->
+  <div *ngIf="!loading && !error" class="doctors-grid">
+    <div *ngIf="filteredDoctors.length === 0" class="no-results">
+      <p>No doctors found matching your criteria.</p>
+    </div>
+
+    <div *ngFor="let doctor of filteredDoctors" class="doctor-card">
+      <div class="doctor-header">
+        <img 
+          [src]="doctor.avatar || 'assets/default-avatar.png'" 
+          [alt]="doctor.name"
+          class="doctor-avatar"
+        />
+        <div class="doctor-info">
+          <h3>{{ doctor.name }}</h3>
+          <p class="specialty">{{ doctor.specialty }}</p>
+          <p class="experience" *ngIf="doctor.experience">{{ doctor.experience }} years experience</p>
+        </div>
+      </div>
+
+      <div class="doctor-details">
+        <div class="rating">
+          <span class="stars">
+            <span *ngFor="let _ of getRatingStars(doctor.rating)" class="star">★</span>
+          </span>
+          <span class="rating-value">{{ doctor.rating }} ({{ doctor.reviewCount }} reviews)</span>
+        </div>
+
+        <div class="fee">
+          <span class="label">Consultation Fee:</span>
+          <span class="value">${{ doctor.consultationFee }}</span>
+        </div>
+
+        <div class="location" *ngIf="doctor.city">
+          <span class="label">Location:</span>
+          <span class="value">{{ doctor.city }}</span>
+        </div>
+
+        <div class="availability" *ngIf="doctor.nextAvailable">
+          <span class="label">Next Available:</span>
+          <span class="value">{{ doctor.nextAvailable }}</span>
+        </div>
+      </div>
+
+      <button 
+        class="view-profile-btn"
+        (click)="viewDoctorProfile(doctor.id)"
+      >
+        View Profile & Book
+      </button>
+    </div>
+  </div>
+</div>

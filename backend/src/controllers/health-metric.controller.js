@@ -165,3 +165,225 @@ exports.getSummary = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+// ========== NEW AI-ENHANCED ENDPOINTS ==========
+
+const { isOutOfRange } = require('../utils/clinicalRanges');
+const { analyzeTrend, findCorrelations } = require('../services/trendAnalysis.service');
+const User = require('../models/User');
+
+// GET /api/metrics/patient/:patientId/history
+// Returns comprehensive patient history with filtering
+exports.getPatientHistory = async (req, res) => {
+  try {
+    const { patientId } = req.params;
+    const { startDate, endDate, metricType } = req.query;
+
+    // Authorization check: verify doctor-patient relationship
+    // For now, allow if user is a doctor (role check should be added)
+    if (req.user.role !== 'doctor' && req.user.id !== patientId) {
+      return res.status(403).json({ message: 'Unauthorized access to patient data' });
+    }
+
+    // Build query filter
+    const filter = { patientId };
+    
+    if (metricType) {
+      filter.type = metricType;
+    }
+    
+    if (startDate || endDate) {
+      filter.recordedAt = {};
+      if (startDate) filter.recordedAt.$gte = new Date(startDate);
+      if (endDate) filter.recordedAt.$lte = new Date(endDate);
+    }
+
+    // Query health metrics
+    const metrics = await HealthMetric.find(filter)
+      .sort({ recordedAt: -1 })
+      .limit(1000)
+      .lean();
+
+    // Get patient info for gender-specific ranges
+    const patient = await User.findById(patientId).select('gender');
+    const patientGender = patient?.gender || 'male';
+
+    // Categorize metrics and apply range checking
+    const bloodLevelTypes = ['hemoglobin', 'white_blood_cells', 'platelets', 'red_blood_cells', 
+                             'hematocrit', 'mcv', 'mch', 'mchc'];
+    const sugarLevelTypes = ['fasting_glucose', 'postprandial_glucose', 'hba1c', 'random_glucose', 'blood_sugar'];
+
+    const categorized = {
+      bloodLevels: [],
+      sugarLevels: [],
+      otherMetrics: [],
+      medicalHistory: [] // Placeholder for future medical history integration
+    };
+
+    metrics.forEach(metric => {
+      const rangeCheck = isOutOfRange(metric.type, metric.value, patientGender, metric.value2);
+      const enrichedMetric = {
+        ...metric,
+        rangeStatus: rangeCheck.inRange ? 'normal' : rangeCheck.severity,
+        rangeMessage: rangeCheck.message
+      };
+
+      if (bloodLevelTypes.includes(metric.type)) {
+        categorized.bloodLevels.push(enrichedMetric);
+      } else if (sugarLevelTypes.includes(metric.type)) {
+        categorized.sugarLevels.push(enrichedMetric);
+      } else {
+        categorized.otherMetrics.push(enrichedMetric);
+      }
+    });
+
+    res.json({
+      totalRecords: metrics.length,
+      data: categorized
+    });
+  } catch (err) {
+    console.error('Error fetching patient history:', err);
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// GET /api/metrics/patient/:patientId/trends
+// Returns trend analysis for specified metrics
+exports.getPatientTrends = async (req, res) => {
+  try {
+    const { patientId } = req.params;
+    const { metricTypes, months = 6 } = req.query;
+
+    // Authorization check
+    if (req.user.role !== 'doctor' && req.user.id !== patientId) {
+      return res.status(403).json({ message: 'Unauthorized access to patient data' });
+    }
+
+    // Parse metric types
+    const types = metricTypes ? metricTypes.split(',') : ['blood_sugar', 'blood_pressure', 'weight'];
+
+    // Analyze trends for each metric type
+    const trends = [];
+    for (const type of types) {
+      try {
+        const trend = await analyzeTrend(patientId, type, parseInt(months));
+        trends.push(trend);
+      } catch (error) {
+        console.error(`Error analyzing trend for ${type}:`, error);
+      }
+    }
+
+    // Find correlations if multiple metrics
+    let correlations = [];
+    if (types.length >= 2) {
+      try {
+        correlations = await findCorrelations(patientId, types);
+      } catch (error) {
+        console.error('Error finding correlations:', error);
+      }
+    }
+
+    res.json({
+      trends,
+      correlations
+    });
+  } catch (err) {
+    console.error('Error fetching patient trends:', err);
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// GET /api/metrics/patient/:patientId/summary
+// Returns latest readings with risk assessment
+exports.getPatientSummary = async (req, res) => {
+  try {
+    const { patientId } = req.params;
+
+    // Authorization check
+    if (req.user.role !== 'doctor' && req.user.id !== patientId) {
+      return res.status(403).json({ message: 'Unauthorized access to patient data' });
+    }
+
+    // Get patient info
+    const patient = await User.findById(patientId).select('gender dateOfBirth');
+    const patientGender = patient?.gender || 'male';
+
+    // Get latest reading for each metric type
+    const metricTypes = [
+      'blood_pressure', 'heart_rate', 'weight', 'blood_sugar', 
+      'temperature', 'oxygen', 'hemoglobin', 'fasting_glucose', 'hba1c'
+    ];
+
+    const latestMetrics = {};
+    const areasOfConcern = [];
+    const anomalies = [];
+
+    for (const type of metricTypes) {
+      const latest = await HealthMetric.findOne({ patientId, type })
+        .sort({ recordedAt: -1 })
+        .lean();
+
+      if (latest) {
+        const rangeCheck = isOutOfRange(type, latest.value, patientGender, latest.value2);
+        
+        latestMetrics[type] = {
+          ...latest,
+          rangeStatus: rangeCheck.inRange ? 'normal' : rangeCheck.severity,
+          rangeMessage: rangeCheck.message
+        };
+
+        // Identify areas of concern
+        if (!rangeCheck.inRange && rangeCheck.severity !== 'low') {
+          areasOfConcern.push({
+            metric: type,
+            value: latest.value,
+            severity: rangeCheck.severity,
+            message: rangeCheck.message
+          });
+        }
+
+        // Check for anomalies (sudden changes)
+        const previous = await HealthMetric.findOne({ 
+          patientId, 
+          type,
+          recordedAt: { $lt: latest.recordedAt }
+        })
+        .sort({ recordedAt: -1 })
+        .lean();
+
+        if (previous) {
+          const changePercent = Math.abs(((latest.value - previous.value) / previous.value) * 100);
+          if (changePercent > 20) {
+            anomalies.push({
+              metric: type,
+              currentValue: latest.value,
+              previousValue: previous.value,
+              changePercent: changePercent.toFixed(1),
+              message: `Sudden ${changePercent.toFixed(1)}% change detected`
+            });
+          }
+        }
+      }
+    }
+
+    // Calculate risk score (0-100)
+    let riskScore = 0;
+    areasOfConcern.forEach(concern => {
+      if (concern.severity === 'emergency') riskScore += 30;
+      else if (concern.severity === 'high') riskScore += 20;
+      else if (concern.severity === 'medium') riskScore += 10;
+    });
+    anomalies.forEach(() => riskScore += 5);
+    riskScore = Math.min(riskScore, 100);
+
+    res.json({
+      latestMetrics,
+      riskScore,
+      areasOfConcern,
+      anomalies
+    });
+  } catch (err) {
+    console.error('Error fetching patient summary:', err);
+    res.status(500).json({ message: err.message });
+  }
+};

@@ -50,19 +50,47 @@
         <div class="ha-stats-grid">
           <div class="ha-stat-card">
             <div class="ha-stat-icon" style="background:rgba(99,102,241,0.12);color:#6366f1"><i class="fa-solid fa-users"></i></div>
-            <div><div class="ha-stat-val">{{ stats()?.totalPatients | number }}</div><div class="ha-stat-lbl">Total Patients</div><div class="ha-stat-change">+8.2% this month</div></div>
+            <div><div class="ha-stat-val">{{ stats()?.totalPatients | number }}</div><div class="ha-stat-lbl">Total Patients</div><div class="ha-stat-change">+{{ stats()?.newPatientsThisMonth || 0 }} this month</div></div>
           </div>
           <div class="ha-stat-card">
             <div class="ha-stat-icon" style="background:rgba(16,185,129,0.12);color:#10b981"><i class="fa-solid fa-user-doctor"></i></div>
-            <div><div class="ha-stat-val">{{ stats()?.totalDoctors }}</div><div class="ha-stat-lbl">Active Doctors</div><div class="ha-stat-change">+3 this month</div></div>
+            <div><div class="ha-stat-val">{{ stats()?.totalDoctors }}</div><div class="ha-stat-lbl">Active Doctors</div><div class="ha-stat-change">+{{ stats()?.newDoctorsThisMonth || 0 }} this month</div></div>
           </div>
           <div class="ha-stat-card">
             <div class="ha-stat-icon" style="background:rgba(245,158,11,0.12);color:#f59e0b"><i class="fa-solid fa-calendar-check"></i></div>
-            <div><div class="ha-stat-val">{{ stats()?.totalAppointments | number }}</div><div class="ha-stat-lbl">Total Appointments</div><div class="ha-stat-change">+12.5% this month</div></div>
+            <div><div class="ha-stat-val">{{ stats()?.totalAppointments | number }}</div><div class="ha-stat-lbl">Total Appointments</div><div class="ha-stat-change">{{ stats()?.completedCount || 0 }} completed</div></div>
           </div>
           <div class="ha-stat-card">
             <div class="ha-stat-icon" style="background:rgba(6,182,212,0.12);color:#06b6d4"><i class="fa-solid fa-star"></i></div>
-            <div><div class="ha-stat-val">{{ stats()?.satisfaction }}%</div><div class="ha-stat-lbl">Satisfaction Rate</div><div class="ha-stat-change">+2.1% this month</div></div>
+            <div><div class="ha-stat-val">{{ stats()?.satisfaction }}%</div><div class="ha-stat-lbl">Satisfaction Rate</div><div class="ha-stat-change">{{ stats()?.avgRating || '0.0' }}/5.0 avg rating</div></div>
+          </div>
+        </div>
+
+        <!-- Additional Stats Row -->
+        <div class="ha-stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+          <div class="ha-stat-card-mini">
+            <div class="ha-stat-mini-icon" style="background:rgba(139,92,246,0.12);color:#8b5cf6"><i class="fa-solid fa-calendar-check"></i></div>
+            <div><div class="ha-stat-mini-val">{{ stats()?.completedCount || 0 }}</div><div class="ha-stat-mini-lbl">Completed</div></div>
+          </div>
+          <div class="ha-stat-card-mini">
+            <div class="ha-stat-mini-icon" style="background:rgba(236,72,153,0.12);color:#ec4899"><i class="fa-solid fa-calendar-day"></i></div>
+            <div><div class="ha-stat-mini-val">{{ stats()?.todayAppointments }}</div><div class="ha-stat-mini-lbl">Today's Appointments</div></div>
+          </div>
+          <div class="ha-stat-card-mini">
+            <div class="ha-stat-mini-icon" style="background:rgba(245,158,11,0.12);color:#f59e0b"><i class="fa-solid fa-clock"></i></div>
+            <div><div class="ha-stat-mini-val">{{ stats()?.pendingDoctors || 0 }}</div><div class="ha-stat-mini-lbl">Pending Approvals</div></div>
+          </div>
+          <div class="ha-stat-card-mini">
+            <div class="ha-stat-mini-icon" style="background:rgba(14,165,233,0.12);color:#0ea5e9"><i class="fa-solid fa-star-half-stroke"></i></div>
+            <div><div class="ha-stat-mini-val">{{ stats()?.totalReviews || 0 }}</div><div class="ha-stat-mini-lbl">Total Reviews</div></div>
+          </div>
+          <div class="ha-stat-card-mini">
+            <div class="ha-stat-mini-icon" style="background:rgba(34,197,94,0.12);color:#22c55e"><i class="fa-solid fa-check-circle"></i></div>
+            <div><div class="ha-stat-mini-val">{{ stats()?.upcomingCount || 0 }}</div><div class="ha-stat-mini-lbl">Upcoming</div></div>
+          </div>
+          <div class="ha-stat-card-mini">
+            <div class="ha-stat-mini-icon" style="background:rgba(239,68,68,0.12);color:#ef4444"><i class="fa-solid fa-xmark-circle"></i></div>
+            <div><div class="ha-stat-mini-val">{{ stats()?.cancelledCount || 0 }}</div><div class="ha-stat-mini-lbl">Cancelled</div></div>
           </div>
         </div>
 
@@ -73,7 +101,7 @@
             <table class="ha-table">
               <thead><tr><th>Patient</th><th>Doctor</th><th>Date</th><th>Type</th><th>Status</th></tr></thead>
               <tbody>
-                @for (apt of dataService.appointments(); track apt.id) {
+                @for (apt of dataService.appointments().slice(0, 10); track apt.id) {
                   <tr>
                     <td>{{ apt.patientName }}</td>
                     <td>
@@ -81,7 +109,7 @@
                         @if (apt.doctorAvatar) {
                           <img [src]="'http://localhost:3000' + apt.doctorAvatar" alt="Doctor" class="ha-mini-avatar" />
                         } @else {
-                          <div class="ha-mini-avatar-placeholder">{{ apt.doctorName?.[0] ?? 'D' }}</div>
+                          <div class="ha-mini-avatar-placeholder">{{ apt.doctorName[0] || 'D' }}</div>
                         }
                         {{ apt.doctorName }}
                       </div>
@@ -99,19 +127,57 @@
 
       <!-- PATIENTS -->
       @if (activeNav() === 'patients') {
+        <!-- Search & Filter Bar -->
+        <div class="ha-filter-bar">
+          <div class="ha-search-box">
+            <i class="fa-solid fa-search"></i>
+            <input 
+              type="text" 
+              placeholder="Search by name, email, or phone..." 
+              [(ngModel)]="searchQuery"
+              class="ha-search-input"
+            />
+          </div>
+          <button class="ha-btn ha-btn-secondary" (click)="exportUsersCSV('patient')">
+            <i class="fa-solid fa-download"></i> Export CSV
+          </button>
+        </div>
+
+        <!-- Bulk Actions Toolbar -->
+        @if (selectedUsers().length > 0) {
+          <div class="ha-bulk-toolbar">
+            <div class="ha-bulk-info">
+              <i class="fa-solid fa-check-square"></i>
+              {{ selectedUsers().length }} selected
+            </div>
+            <div class="ha-bulk-actions">
+              <button class="ha-btn ha-btn-danger" (click)="bulkDelete()">
+                <i class="fa-solid fa-trash"></i> Delete All
+              </button>
+              <button class="ha-btn ha-btn-secondary" (click)="clearSelection()">
+                Clear Selection
+              </button>
+            </div>
+          </div>
+        }
+
         <div class="ha-card">
-          <div class="ha-card-header"><h3>All Patients <span class="ha-count-badge">{{ patients().length }}</span></h3></div>
+          <div class="ha-card-header"><h3>All Patients <span class="ha-count-badge">{{ filteredPatients().length }}</span></h3></div>
           <div class="ha-table-wrap">
             <table class="ha-table">
-              <thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Joined</th><th>Actions</th></tr></thead>
+              <thead><tr><th><input type="checkbox" (change)="$any($event.target).checked ? selectAllUsers(filteredPatients()) : clearSelection()" class="ha-checkbox" /></th><th>Name</th><th>Email</th><th>Phone</th><th>Joined</th><th>Actions</th></tr></thead>
               <tbody>
-                @for (p of patients(); track p.id) {
+                @for (p of filteredPatients(); track p.id) {
                   <tr>
+                    <td><input type="checkbox" [checked]="selectedUsers().includes(p.id)" (change)="toggleUserSelection(p.id)" class="ha-checkbox" /></td>
                     <td class="ha-bold">{{ p.name }}</td>
                     <td class="ha-muted">{{ p.email }}</td>
                     <td class="ha-muted">{{ p.phone || '—' }}</td>
                     <td class="ha-muted">{{ p.createdAt | date:'mediumDate' }}</td>
-                    <td>
+                    <td style="display:flex;gap:8px">
+                      <button class="ha-action-btn ha-action-primary" (click)="openEditModal(p)" title="Edit">
+                        <i class="fa-solid fa-pen"></i>
+                      </button>
                       <button class="ha-action-btn ha-action-danger" (click)="deleteUser(p.id)" title="Delete">
                         <i class="fa-solid fa-trash"></i>
                       </button>
@@ -126,19 +192,80 @@
 
       <!-- DOCTORS -->
       @if (activeNav() === 'doctors') {
+        <!-- Search & Filter Bar -->
+        <div class="ha-filter-bar">
+          <div class="ha-search-box">
+            <i class="fa-solid fa-search"></i>
+            <input 
+              type="text" 
+              placeholder="Search by name or specialty..." 
+              [(ngModel)]="searchQuery"
+              class="ha-search-input"
+            />
+          </div>
+          <select class="ha-filter-select" [(ngModel)]="filterSpecialty">
+            <option value="">All Specialties</option>
+            <option value="Cardiology">Cardiology</option>
+            <option value="Dermatology">Dermatology</option>
+            <option value="Pediatrics">Pediatrics</option>
+            <option value="Orthopedics">Orthopedics</option>
+            <option value="Neurology">Neurology</option>
+            <option value="Psychiatry">Psychiatry</option>
+          </select>
+          <button class="ha-btn ha-btn-secondary" (click)="exportUsersCSV('doctor')">
+            <i class="fa-solid fa-download"></i> Export CSV
+          </button>
+        </div>
+
+        <!-- Bulk Actions Toolbar -->
+        @if (selectedUsers().length > 0) {
+          <div class="ha-bulk-toolbar">
+            <div class="ha-bulk-info">
+              <i class="fa-solid fa-check-square"></i>
+              {{ selectedUsers().length }} selected
+            </div>
+            <div class="ha-bulk-actions">
+              <button class="ha-btn ha-btn-danger" (click)="bulkDelete()">
+                <i class="fa-solid fa-trash"></i> Delete All
+              </button>
+              <button class="ha-btn ha-btn-secondary" (click)="clearSelection()">
+                Clear Selection
+              </button>
+            </div>
+          </div>
+        }
+
         <div class="ha-card">
-          <div class="ha-card-header"><h3>All Doctors <span class="ha-count-badge">{{ doctors().length }}</span></h3></div>
+          <div class="ha-card-header"><h3>All Doctors <span class="ha-count-badge">{{ filteredDoctors().length }}</span></h3></div>
           <div class="ha-table-wrap">
             <table class="ha-table">
-              <thead><tr><th>Doctor</th><th>Specialty</th><th>Rating</th><th>Experience</th><th>Status</th></tr></thead>
+              <thead><tr><th><input type="checkbox" (change)="$any($event.target).checked ? selectAllUsers(filteredDoctors()) : clearSelection()" class="ha-checkbox" /></th><th>Doctor</th><th>Specialty</th><th>Rating</th><th>Experience</th><th>Status</th><th>Actions</th></tr></thead>
               <tbody>
-                @for (doc of doctors(); track doc.id) {
+                @for (doc of filteredDoctors(); track doc.id) {
                   <tr>
-                    <td><div class="ha-doc-cell"><div class="ha-mini-avatar">{{ doc.avatar }}</div>{{ doc.name }}</div></td>
+                    <td><input type="checkbox" [checked]="selectedUsers().includes(doc.id)" (change)="toggleUserSelection(doc.id)" class="ha-checkbox" /></td>
+                    <td>
+                      <div class="ha-doc-cell">
+                        @if (doc.avatar) {
+                          <img [src]="'http://localhost:3000' + doc.avatar" alt="Doctor" class="ha-mini-avatar" />
+                        } @else {
+                          <div class="ha-mini-avatar-placeholder">{{ doc.name[0] || 'D' }}</div>
+                        }
+                        {{ doc.name }}
+                      </div>
+                    </td>
                     <td class="ha-muted">{{ doc.specialty }}</td>
-                    <td><span class="ha-rating"><i class="fa-solid fa-star"></i> {{ doc.rating }}</span></td>
+                    <td><span class="ha-rating"><i class="fa-solid fa-star"></i> {{ doc.rating || '0.0' }}</span></td>
                     <td class="ha-muted">{{ doc.experience }} yrs</td>
                     <td><span class="ha-status" [class]="doc.online ? 'ha-status-active' : 'ha-status-inactive'">{{ doc.online ? 'Online' : 'Offline' }}</span></td>
+                    <td style="display:flex;gap:8px">
+                      <button class="ha-action-btn ha-action-primary" (click)="openEditModal(doc)" title="Edit">
+                        <i class="fa-solid fa-pen"></i>
+                      </button>
+                      <button class="ha-action-btn ha-action-danger" (click)="deleteUser(doc.id)" title="Delete">
+                        <i class="fa-solid fa-trash"></i>
+                      </button>
+                    </td>
                   </tr>
                 }
               </tbody>
@@ -149,6 +276,27 @@
 
       <!-- PENDING DOCTORS -->
       @if (activeNav() === 'pending') {
+        <!-- Bulk Actions Toolbar -->
+        @if (selectedUsers().length > 0) {
+          <div class="ha-bulk-toolbar">
+            <div class="ha-bulk-info">
+              <i class="fa-solid fa-check-square"></i>
+              {{ selectedUsers().length }} selected
+            </div>
+            <div class="ha-bulk-actions">
+              <button class="ha-btn ha-btn-success" (click)="bulkApprove()">
+                <i class="fa-solid fa-check"></i> Approve All
+              </button>
+              <button class="ha-btn ha-btn-warning" (click)="bulkReject()">
+                <i class="fa-solid fa-xmark"></i> Reject All
+              </button>
+              <button class="ha-btn ha-btn-secondary" (click)="clearSelection()">
+                Clear Selection
+              </button>
+            </div>
+          </div>
+        }
+
         <div class="ha-card">
           <div class="ha-card-header">
             <h3>Pending Doctor Applications <span class="ha-count-badge" style="background:rgba(245,158,11,0.15);color:#f59e0b">{{ pendingDoctors().length }}</span></h3>
@@ -161,10 +309,11 @@
           } @else {
             <div class="ha-table-wrap">
               <table class="ha-table">
-                <thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Specialty</th><th>Certificate</th><th>Applied</th><th>Actions</th></tr></thead>
+                <thead><tr><th><input type="checkbox" (change)="$any($event.target).checked ? selectAllUsers(pendingDoctors()) : clearSelection()" class="ha-checkbox" /></th><th>Name</th><th>Email</th><th>Phone</th><th>Specialty</th><th>Certificate</th><th>Applied</th><th>Actions</th></tr></thead>
                 <tbody>
                   @for (doc of pendingDoctors(); track doc.id) {
                     <tr>
+                      <td><input type="checkbox" [checked]="selectedUsers().includes(doc.id)" (change)="toggleUserSelection(doc.id)" class="ha-checkbox" /></td>
                       <td class="ha-bold">{{ doc.name }}</td>
                       <td class="ha-muted">{{ doc.email }}</td>
                       <td class="ha-muted">{{ doc.phone || '—' }}</td>
@@ -195,10 +344,15 @@
       <!-- APPOINTMENTS -->
       @if (activeNav() === 'appointments') {
         <div class="ha-card">
-          <div class="ha-card-header"><h3>All Appointments</h3></div>
+          <div class="ha-card-header">
+            <h3>All Appointments</h3>
+            <button class="ha-btn ha-btn-primary" (click)="openAppointmentModal()">
+              <i class="fa-solid fa-plus"></i> Book Appointment
+            </button>
+          </div>
           <div class="ha-table-wrap">
             <table class="ha-table">
-              <thead><tr><th>Patient</th><th>Doctor</th><th>Date</th><th>Time</th><th>Type</th><th>Fee</th><th>Status</th></tr></thead>
+              <thead><tr><th>Patient</th><th>Doctor</th><th>Date</th><th>Time</th><th>Type</th><th>Fee</th><th>Status</th><th>Actions</th></tr></thead>
               <tbody>
                 @for (apt of dataService.appointments(); track apt.id) {
                   <tr>
@@ -208,7 +362,7 @@
                         @if (apt.doctorAvatar) {
                           <img [src]="'http://localhost:3000' + apt.doctorAvatar" alt="Doctor" class="ha-mini-avatar" />
                         } @else {
-                          <div class="ha-mini-avatar-placeholder">{{ apt.doctorName?.[0] ?? 'D' }}</div>
+                          <div class="ha-mini-avatar-placeholder">{{ apt.doctorName[0] || 'D' }}</div>
                         }
                         {{ apt.doctorName }}
                       </div>
@@ -216,8 +370,50 @@
                     <td class="ha-muted">{{ apt.date }}</td>
                     <td class="ha-muted">{{ apt.time }}</td>
                     <td class="ha-muted">{{ apt.type | titlecase }}</td>
-                    <td class="ha-fee">${{ apt.fee }}</td>
+                    <td class="ha-fee">EGP {{ apt.fee }}</td>
                     <td><span class="ha-status" [class]="'ha-status-' + apt.status">{{ apt.status | titlecase }}</span></td>
+                    <td style="display:flex;gap:8px">
+                      <button class="ha-action-btn ha-action-primary" (click)="openAppointmentModal(apt)" title="Edit">
+                        <i class="fa-solid fa-pen"></i>
+                      </button>
+                      <select class="ha-status-select" [value]="apt.status" (change)="updateAppointmentStatus(apt.id, $any($event.target).value)">
+                        <option value="upcoming">Upcoming</option>
+                        <option value="completed">Completed</option>
+                        <option value="cancelled">Cancelled</option>
+                      </select>
+                      <button class="ha-action-btn ha-action-danger" (click)="deleteAppointmentConfirm(apt.id)" title="Delete">
+                        <i class="fa-solid fa-trash"></i>
+                      </button>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      }
+
+      <!-- REVIEWS -->
+      @if (activeNav() === 'reviews') {
+        <div class="ha-card">
+          <div class="ha-card-header"><h3>All Reviews <span class="ha-count-badge">{{ reviews().length }}</span></h3></div>
+          <div class="ha-table-wrap">
+            <table class="ha-table">
+              <thead><tr><th>Patient</th><th>Doctor</th><th>Rating</th><th>Comment</th><th>Visit Type</th><th>Date</th><th>Actions</th></tr></thead>
+              <tbody>
+                @for (review of reviews(); track review.id) {
+                  <tr>
+                    <td class="ha-bold">{{ review.patientName || review.patientId?.name || 'Anonymous' }}</td>
+                    <td class="ha-muted">{{ review.doctorId?.name || 'Unknown' }}</td>
+                    <td><span class="ha-rating"><i class="fa-solid fa-star"></i> {{ review.rating }}/5</span></td>
+                    <td class="ha-muted" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ review.comment || '—' }}</td>
+                    <td class="ha-muted">{{ review.visitType | titlecase }}</td>
+                    <td class="ha-muted">{{ review.createdAt | date:'mediumDate' }}</td>
+                    <td>
+                      <button class="ha-action-btn ha-action-danger" (click)="deleteReview(review.id)" title="Delete">
+                        <i class="fa-solid fa-trash"></i>
+                      </button>
+                    </td>
                   </tr>
                 }
               </tbody>
@@ -233,13 +429,393 @@
           <div class="ha-chart-container"><canvas #chartCanvas></canvas></div>
         </div>
         <div class="ha-analytics-grid">
-          <div class="ha-analytics-card"><div class="ha-analytics-val">${{ stats()?.revenue | number }}</div><div class="ha-analytics-lbl">Total Revenue</div></div>
+          <div class="ha-analytics-card"><div class="ha-analytics-val">{{ stats()?.totalAppointments | number }}</div><div class="ha-analytics-lbl">Total Appointments</div></div>
           <div class="ha-analytics-card"><div class="ha-analytics-val">{{ stats()?.todayAppointments }}</div><div class="ha-analytics-lbl">Today's Appointments</div></div>
           <div class="ha-analytics-card"><div class="ha-analytics-val">{{ stats()?.satisfaction }}%</div><div class="ha-analytics-lbl">Patient Satisfaction</div></div>
           <div class="ha-analytics-card"><div class="ha-analytics-val">{{ stats()?.totalDoctors }}</div><div class="ha-analytics-lbl">Active Doctors</div></div>
+        </div>
+        
+        <!-- Doctor Performance -->
+        @if (doctorAnalytics().length > 0) {
+          <div class="ha-card">
+            <div class="ha-card-header"><h3>Doctor Performance</h3></div>
+            <div class="ha-table-wrap">
+              <table class="ha-table">
+                <thead><tr><th>Doctor</th><th>Specialty</th><th>Appointments</th><th>Completed</th><th>Completion Rate</th></tr></thead>
+                <tbody>
+                  @for (stat of doctorAnalytics().slice(0, 10); track stat.doctor.id) {
+                    <tr>
+                      <td class="ha-bold">{{ stat.doctor.name }}</td>
+                      <td class="ha-muted">{{ stat.doctor.specialty }}</td>
+                      <td>{{ stat.appointments }}</td>
+                      <td>{{ stat.completed }}</td>
+                      <td><span class="ha-badge-success">{{ stat.completionRate }}%</span></td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+        }
+      }
+
+      <!-- NOTIFICATIONS -->
+      @if (activeNav() === 'notifications') {
+        <div class="ha-card">
+          <div class="ha-card-header">
+            <h3>Send Notifications</h3>
+            <button class="ha-btn ha-btn-primary" (click)="openNotificationModal()">
+              <i class="fa-solid fa-plus"></i> New Notification
+            </button>
+          </div>
+          <div class="ha-notification-options">
+            <div class="ha-notification-card" (click)="openNotificationModal()">
+              <i class="fa-solid fa-bullhorn"></i>
+              <h4>Broadcast Message</h4>
+              <p>Send notification to all users or specific role</p>
+            </div>
+            <div class="ha-notification-card" (click)="openNotificationModal()">
+              <i class="fa-solid fa-envelope"></i>
+              <h4>Targeted Message</h4>
+              <p>Send notification to selected users</p>
+            </div>
+            <div class="ha-notification-card" (click)="openNotificationModal()">
+              <i class="fa-solid fa-bell"></i>
+              <h4>System Alert</h4>
+              <p>Send system-wide announcement</p>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- ACTIVITY LOGS -->
+      @if (activeNav() === 'activity') {
+        <div class="ha-card">
+          <div class="ha-card-header">
+            <h3>Activity Logs <span class="ha-count-badge">{{ activityLogs().length }}</span></h3>
+            <button class="ha-btn ha-btn-secondary" (click)="loadActivityLogs()">
+              <i class="fa-solid fa-refresh"></i> Refresh
+            </button>
+          </div>
+          <div class="ha-table-wrap">
+            <table class="ha-table">
+              <thead><tr><th>Admin</th><th>Action</th><th>Details</th><th>Target User</th><th>IP Address</th><th>Date</th></tr></thead>
+              <tbody>
+                @for (log of activityLogs(); track log.id) {
+                  <tr>
+                    <td class="ha-bold">{{ log.adminId?.name || 'System' }}</td>
+                    <td><span class="ha-badge-info">{{ log.action }}</span></td>
+                    <td class="ha-muted">{{ log.details || '—' }}</td>
+                    <td class="ha-muted">{{ log.userId?.name || '—' }}</td>
+                    <td class="ha-muted">{{ log.ipAddress || '—' }}</td>
+                    <td class="ha-muted">{{ log.createdAt | date:'medium' }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
         </div>
       }
 
     </div>
   </main>
 </div>
+
+<!-- Edit User Modal -->
+@if (showEditModal()) {
+  <div class="ha-modal-overlay" (click)="closeEditModal()">
+    <div class="ha-modal ha-modal-large" (click)="$event.stopPropagation()">
+      <div class="ha-modal-header">
+        <h3>Edit {{ editingUser()?.role | titlecase }} - {{ editingUser()?.name }}</h3>
+        <button class="ha-modal-close" (click)="closeEditModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="ha-modal-body">
+        <div class="ha-form-grid">
+          <!-- Basic Information -->
+          <div class="ha-form-section ha-form-full">
+            <h4 class="ha-form-section-title">Basic Information</h4>
+          </div>
+          
+          <div class="ha-form-group">
+            <label>Name *</label>
+            <input type="text" [(ngModel)]="editForm().name" class="ha-input" required />
+          </div>
+          <div class="ha-form-group">
+            <label>Email *</label>
+            <input type="email" [(ngModel)]="editForm().email" class="ha-input" required />
+          </div>
+          <div class="ha-form-group">
+            <label>Phone</label>
+            <input type="text" [(ngModel)]="editForm().phone" class="ha-input" placeholder="+20-XXX-XXXX" />
+          </div>
+          <div class="ha-form-group">
+            <label>Password (leave empty to keep current)</label>
+            <input type="password" [(ngModel)]="editForm().password" class="ha-input" placeholder="Enter new password" />
+          </div>
+          <div class="ha-form-group ha-form-full">
+            <label>Address</label>
+            <input type="text" [(ngModel)]="editForm().address" class="ha-input" />
+          </div>
+          
+          @if (editingUser()?.role === 'doctor') {
+            <!-- Doctor Specific Fields -->
+            <div class="ha-form-section ha-form-full">
+              <h4 class="ha-form-section-title">Professional Information</h4>
+            </div>
+            
+            <div class="ha-form-group">
+              <label>Specialty *</label>
+              <select [(ngModel)]="editForm().specialty" class="ha-input">
+                <option value="">Select Specialty</option>
+                <option value="Cardiology">Cardiology</option>
+                <option value="Dermatology">Dermatology</option>
+                <option value="Pediatrics">Pediatrics</option>
+                <option value="Orthopedics">Orthopedics</option>
+                <option value="Neurology">Neurology</option>
+                <option value="Psychiatry">Psychiatry</option>
+                <option value="General Practice">General Practice</option>
+                <option value="Internal Medicine">Internal Medicine</option>
+              </select>
+            </div>
+            <div class="ha-form-group">
+              <label>Experience (years)</label>
+              <input type="number" [(ngModel)]="editForm().experience" class="ha-input" min="0" />
+            </div>
+            <div class="ha-form-group">
+              <label>Consultation Fee (EGP)</label>
+              <input type="number" [(ngModel)]="editForm().consultationFee" class="ha-input" min="0" />
+            </div>
+            <div class="ha-form-group">
+              <label>Approval Status</label>
+              <select [(ngModel)]="editForm().approvalStatus" class="ha-input">
+                <option value="pending">Pending</option>
+                <option value="approved">Approved</option>
+                <option value="rejected">Rejected</option>
+              </select>
+            </div>
+            <div class="ha-form-group ha-form-full">
+              <label>Bio</label>
+              <textarea [(ngModel)]="editForm().bio" class="ha-textarea" rows="3" placeholder="Doctor's biography"></textarea>
+            </div>
+            <div class="ha-form-group ha-form-full">
+              <label>Education (comma-separated)</label>
+              <textarea [(ngModel)]="editForm().educationText" class="ha-textarea" rows="2" placeholder="MD from Cairo University, Residency at..."></textarea>
+            </div>
+            <div class="ha-form-group ha-form-full">
+              <label>Languages (comma-separated)</label>
+              <input type="text" [(ngModel)]="editForm().languagesText" class="ha-input" placeholder="English, Arabic, French" />
+            </div>
+            <div class="ha-form-group">
+              <label>Certificate URL</label>
+              <input type="text" [(ngModel)]="editForm().certificateUrl" class="ha-input" placeholder="https://..." />
+            </div>
+            <div class="ha-form-group">
+              <label>Clinic Name</label>
+              <input type="text" [(ngModel)]="editForm().clinicName" class="ha-input" />
+            </div>
+          }
+          
+          <!-- Account Status -->
+          <div class="ha-form-section ha-form-full">
+            <h4 class="ha-form-section-title">Account Status</h4>
+          </div>
+          
+          <div class="ha-form-group">
+            <label>Role</label>
+            <select [(ngModel)]="editForm().role" class="ha-input">
+              <option value="patient">Patient</option>
+              <option value="doctor">Doctor</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+          <div class="ha-form-group">
+            <label class="ha-checkbox-label">
+              <input type="checkbox" [(ngModel)]="editForm().approved" class="ha-checkbox" />
+              Account Approved
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="ha-modal-footer">
+        <button class="ha-btn ha-btn-secondary" (click)="closeEditModal()">Cancel</button>
+        <button class="ha-btn ha-btn-primary" (click)="saveUserEdit()">
+          <i class="fa-solid fa-floppy-disk"></i> Save Changes
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Notification Modal -->
+@if (showNotificationModal()) {
+  <div class="ha-modal-overlay" (click)="closeNotificationModal()">
+    <div class="ha-modal" (click)="$event.stopPropagation()">
+      <div class="ha-modal-header">
+        <h3>Send Notification</h3>
+        <button class="ha-modal-close" (click)="closeNotificationModal()">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="ha-modal-body">
+        <div class="ha-form-group">
+          <label>Title *</label>
+          <input 
+            type="text" 
+            [(ngModel)]="notificationForm().title" 
+            class="ha-input" 
+            placeholder="Notification title"
+          />
+        </div>
+        <div class="ha-form-group">
+          <label>Message *</label>
+          <textarea 
+            [(ngModel)]="notificationForm().message" 
+            class="ha-textarea" 
+            rows="4"
+            placeholder="Notification message"
+          ></textarea>
+        </div>
+        <div class="ha-form-grid">
+          <div class="ha-form-group">
+            <label>Target Audience</label>
+            <select [(ngModel)]="notificationForm().role" class="ha-input">
+              <option value="all">All Users</option>
+              <option value="patient">Patients Only</option>
+              <option value="doctor">Doctors Only</option>
+            </select>
+          </div>
+          <div class="ha-form-group">
+            <label>Type</label>
+            <select [(ngModel)]="notificationForm().type" class="ha-input">
+              <option value="system">System</option>
+              <option value="announcement">Announcement</option>
+              <option value="reminder">Reminder</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="ha-modal-footer">
+        <button class="ha-btn ha-btn-secondary" (click)="closeNotificationModal()">
+          Cancel
+        </button>
+        <button class="ha-btn ha-btn-primary" (click)="sendBroadcast()">
+          <i class="fa-solid fa-paper-plane"></i> Send Notification
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Appointment Modal -->
+@if (showAppointmentModal()) {
+  <div class="ha-modal-overlay" (click)="closeAppointmentModal()">
+    <div class="ha-modal ha-modal-large" (click)="$event.stopPropagation()">
+      <div class="ha-modal-header">
+        <h3>{{ editingAppointment() ? 'Edit Appointment' : 'Book New Appointment' }}</h3>
+        <button class="ha-modal-close" (click)="closeAppointmentModal()">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="ha-modal-body">
+        <div class="ha-form-grid">
+          <!-- Patient Selection -->
+          <div class="ha-form-group">
+            <label>Patient *</label>
+            <select [(ngModel)]="appointmentForm().patientId" class="ha-input" required>
+              <option value="">Select Patient</option>
+              <option [value]="adminId()">📌 Book for myself ({{ auth.currentUser?.name }})</option>
+              @for (patient of patients(); track patient.id) {
+                <option [value]="patient.id">{{ patient.name }} ({{ patient.email }})</option>
+              }
+            </select>
+          </div>
+          
+          <!-- Doctor Selection -->
+          <div class="ha-form-group">
+            <label>Doctor *</label>
+            <select [(ngModel)]="appointmentForm().doctorId" class="ha-input" required>
+              <option value="">Select Doctor</option>
+              @for (doctor of doctors(); track doctor.id) {
+                <option [value]="doctor.id">{{ doctor.name }} - {{ doctor.specialty }}</option>
+              }
+            </select>
+          </div>
+          
+          <!-- Date -->
+          <div class="ha-form-group">
+            <label>Date *</label>
+            <input 
+              type="date" 
+              [(ngModel)]="appointmentForm().date" 
+              class="ha-input" 
+              required
+            />
+          </div>
+          
+          <!-- Time -->
+          <div class="ha-form-group">
+            <label>Time *</label>
+            <input 
+              type="time" 
+              [(ngModel)]="appointmentForm().time" 
+              class="ha-input" 
+              required
+            />
+          </div>
+          
+          <!-- Type -->
+          <div class="ha-form-group">
+            <label>Appointment Type *</label>
+            <select [(ngModel)]="appointmentForm().type" class="ha-input">
+              <option value="video">Video Call</option>
+              <option value="in-person">In-Person</option>
+              <option value="chat">Chat</option>
+            </select>
+          </div>
+          
+          <!-- Fee -->
+          <div class="ha-form-group">
+            <label>Consultation Fee (EGP)</label>
+            <input 
+              type="number" 
+              [(ngModel)]="appointmentForm().fee" 
+              class="ha-input" 
+              min="0"
+              placeholder="0"
+            />
+          </div>
+          
+          <!-- Reason -->
+          <div class="ha-form-group ha-form-full">
+            <label>Reason for Visit</label>
+            <textarea 
+              [(ngModel)]="appointmentForm().reason" 
+              class="ha-textarea" 
+              rows="2"
+              placeholder="Brief description of the reason for appointment"
+            ></textarea>
+          </div>
+          
+          <!-- Notes -->
+          <div class="ha-form-group ha-form-full">
+            <label>Admin Notes</label>
+            <textarea 
+              [(ngModel)]="appointmentForm().notes" 
+              class="ha-textarea" 
+              rows="2"
+              placeholder="Internal notes (not visible to patient)"
+            ></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="ha-modal-footer">
+        <button class="ha-btn ha-btn-secondary" (click)="closeAppointmentModal()">
+          Cancel
+        </button>
+        <button class="ha-btn ha-btn-primary" (click)="saveAppointment()">
+          <i class="fa-solid fa-floppy-disk"></i> {{ editingAppointment() ? 'Update' : 'Book' }} Appointment
+        </button>
+      </div>
+    </div>
+  </div>
+}

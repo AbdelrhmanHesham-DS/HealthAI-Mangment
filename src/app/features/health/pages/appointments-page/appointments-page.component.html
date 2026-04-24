@@ -43,7 +43,7 @@
             @if (apt.doctorAvatar) {
               <img [src]="'http://localhost:3000' + apt.doctorAvatar" alt="Doctor" class="ap-doc-avatar" />
             } @else {
-              <div class="ap-doc-avatar-placeholder">{{ apt.doctorName?.[0] ?? 'D' }}</div>
+              <div class="ap-doc-avatar-placeholder">{{ apt.doctorName[0] || 'D' }}</div>
             }
             <div class="ap-card-info">
               <div class="ap-doc-name">{{ apt.doctorName }}</div>
@@ -101,7 +101,7 @@
           @if (activeCall()!.apt.doctorAvatar) {
             <img [src]="'http://localhost:3000' + activeCall()!.apt.doctorAvatar" alt="Doctor" class="ap-call-avatar" />
           } @else {
-            <div class="ap-call-avatar-placeholder">{{ activeCall()!.apt.doctorName?.[0] ?? 'D' }}</div>
+            <div class="ap-call-avatar-placeholder">{{ activeCall()!.apt.doctorName[0] || 'D' }}</div>
           }
           <div>
             <div class="ap-call-name">{{ activeCall()!.apt.doctorName }}</div>
@@ -139,7 +139,7 @@
         @if (reviewModalApt()!.doctorAvatar) {
           <img [src]="'http://localhost:3000' + reviewModalApt()!.doctorAvatar" alt="Doctor" class="ap-review-avatar" />
         } @else {
-          <div class="ap-review-avatar-placeholder">{{ reviewModalApt()!.doctorName?.[0] ?? 'D' }}</div>
+          <div class="ap-review-avatar-placeholder">{{ reviewModalApt()!.doctorName[0] || 'D' }}</div>
         }
         <div>
           <div class="ap-review-doc-name">{{ reviewModalApt()!.doctorName }}</div>

@@ -22,7 +22,7 @@ export class HealthNavbarComponent implements OnInit {
   navLinks = [
     { label: 'Home',           path: '/health' },
     { label: 'Find Doctors',   path: '/health/doctors' },
-    { label: 'MediAI',         path: '/health/symptom-checker' },
+    { label: 'MediAI Chat',    path: '/chatbot/advanced' },
     { label: 'Hospitals',      path: '/health/hospitals' },
     { label: 'Health Tracker', path: '/health/health-tracker' },
     { label: 'Appointments',   path: '/health/appointments' },

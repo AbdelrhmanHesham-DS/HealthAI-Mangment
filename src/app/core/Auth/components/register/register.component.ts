@@ -3,13 +3,14 @@ import { FormBuilder, Validators, FormGroup, ReactiveFormsModule } from '@angula
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth-service.service';
 import { CommonModule } from '@angular/common';
+import { AuthNavbarComponent } from '../../../../shared/components/auth-navbar/auth-navbar.component';
 import { forkJoin } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, RouterLink],
+  imports: [ReactiveFormsModule, CommonModule, RouterLink, AuthNavbarComponent],
   templateUrl: './register.component.html',
   styleUrl: './register.component.css'
 })

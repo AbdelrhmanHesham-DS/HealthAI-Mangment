@@ -61,3 +61,33 @@
 .doc-file-name { font-size: 0.875rem; color: #94a3b8; }
 .doc-phone-input { background: rgba(139,92,246,0.05); border: 1px solid rgba(139,92,246,0.15); border-radius: 10px; padding: 10px 14px; color: #ffffff; font-size: 0.9rem; outline: none; transition: border-color 0.2s; width: 100%; box-sizing: border-box; }
 .doc-phone-input:focus { border-color: #8b5cf6; }
+
+/* Information Grid Styles */
+.doc-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 600px) { .doc-info-grid { grid-template-columns: 1fr; } }
+.doc-info-item { display: flex; flex-direction: column; gap: 6px; }
+.doc-info-full { grid-column: 1 / -1; }
+.doc-info-label { font-size: 0.8rem; font-weight: 600; color: #8b5cf6; display: flex; align-items: center; gap: 6px; }
+.doc-info-label i { font-size: 0.85rem; }
+.doc-info-value { color: #94a3b8; font-size: 0.9rem; line-height: 1.5; }
+
+/* Upload Info Styles */
+.doc-upload-info { display: flex; align-items: center; gap: 10px; color: #94a3b8; font-size: 0.875rem; flex: 1; }
+.doc-upload-info i { color: #8b5cf6; font-size: 1.1rem; }
+
+/* Documents Grid Styles */
+.doc-documents-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+.doc-document-card { display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: rgba(139,92,246,0.08); border: 1px solid rgba(139,92,246,0.2); border-radius: 12px; color: #94a3b8; text-decoration: none; transition: all 0.2s; position: relative; }
+.doc-document-card:hover { background: rgba(139,92,246,0.15); border-color: rgba(139,92,246,0.35); color: #8b5cf6; }
+.doc-document-card > i:first-child { font-size: 1.3rem; color: #8b5cf6; }
+.doc-document-card > span { flex: 1; font-size: 0.875rem; font-weight: 500; }
+.doc-external-icon { font-size: 0.75rem; opacity: 0.6; }
+
+/* Profile Actions Styles */
+.doc-profile-actions { display: flex; justify-content: flex-end; gap: 12px; padding-top: 8px; }
+@media (max-width: 600px) { .doc-profile-actions { flex-direction: column; } }
+
+/* Info Note Styles */
+.doc-info-note { display: flex; align-items: flex-start; gap: 12px; padding: 16px; background: rgba(139,92,246,0.08); border: 1px solid rgba(139,92,246,0.2); border-radius: 12px; margin-top: 16px; color: #94a3b8; font-size: 0.875rem; line-height: 1.6; }
+.doc-info-note i { color: #8b5cf6; font-size: 1.1rem; margin-top: 2px; flex-shrink: 0; }
+.doc-info-note strong { color: #8b5cf6; font-weight: 600; }

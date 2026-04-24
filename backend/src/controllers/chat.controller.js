@@ -11,10 +11,16 @@ try {
   }
 } catch (e) { /* openai package not installed */ }
 
-async function getRAGResponse(userMessage, conversationHistory, language) {
+async function getRAGResponse(userMessage, conversationHistory, language, patientContext = '') {
   const { systemPrompt, contextUsed, method } = await buildRAGPromptSemantic(userMessage, language);
+  
+  // Inject patient context into system prompt if available
+  const enhancedSystemPrompt = patientContext 
+    ? systemPrompt + patientContext
+    : systemPrompt;
+  
   const messages = [
-    { role: 'system', content: systemPrompt },
+    { role: 'system', content: enhancedSystemPrompt },
     ...conversationHistory.slice(-6).map(m => ({
       role: m.role === 'bot' ? 'assistant' : 'user',
       content: m.content,
@@ -99,7 +105,7 @@ exports.getConversation = async (req, res) => {
 // POST /api/chat/conversations/:id/messages
 exports.sendMessage = async (req, res) => {
   try {
-    const { content } = req.body;
+    const { content, consultationContext } = req.body;
     if (!content?.trim()) return res.status(400).json({ message: 'Message content is required' });
 
     const conv = await Conversation.findOne({ _id: req.params.id, userId: req.user.id });
@@ -131,12 +137,42 @@ exports.sendMessage = async (req, res) => {
       return res.json({ userMessage: userMsg, botMessage: botMsg });
     }
 
+    // ── NEW: Load patient context if in consultation mode ────────────────
+    let patientContextText = '';
+    if (consultationContext && consultationContext.patientId) {
+      try {
+        const { buildPatientContext, formatMetricsForAI } = require('../services/aiContext.service');
+        const patientContext = await buildPatientContext(consultationContext.patientId);
+        
+        // Format context for AI
+        patientContextText = `\n\n=== PATIENT CONTEXT ===\nPatient: ${patientContext.demographics.name} (${patientContext.demographics.age}y, ${patientContext.demographics.gender})\n\nRecent Blood Levels:\n${formatMetricsForAI(patientContext.recentMetrics.bloodLevels)}\n\nRecent Sugar Levels:\n${formatMetricsForAI(patientContext.recentMetrics.sugarLevels)}\n\nOther Metrics:\n${formatMetricsForAI(patientContext.recentMetrics.otherMetrics)}\n\nClinical Flags:\n${patientContext.clinicalFlags.map(f => `- ${f.metric}: ${f.status} (${f.message})`).join('\n')}\n======================\n`;
+      } catch (contextErr) {
+        console.error('Error loading patient context:', contextErr);
+        // Continue without context if it fails
+      }
+    }
+
     // ── Use OpenAI with RAG if available, otherwise use fallback responses ──
     let botContent;
     if (openai) {
       try {
-        const ragResult = await getRAGResponse(content, conv.messages.slice(0, -1), conv.language);
+        const ragResult = await getRAGResponse(content, conv.messages.slice(0, -1), conv.language, patientContextText);
         botContent = ragResult.text;
+        
+        // Add medical disclaimer to all medical recommendations
+        if (botContent.toLowerCase().includes('recommend') || 
+            botContent.toLowerCase().includes('suggest') ||
+            botContent.toLowerCase().includes('should')) {
+          botContent += '\n\n⚕️ Medical Disclaimer: This information is for educational purposes only and is not a substitute for professional medical advice, diagnosis, or treatment. Always consult with a qualified healthcare provider.';
+        }
+        
+        // Add medication warnings if discussing medications
+        if (botContent.toLowerCase().includes('medication') || 
+            botContent.toLowerCase().includes('drug') ||
+            botContent.toLowerCase().includes('prescription')) {
+          botContent += '\n\n⚠️ Medication Warning: Always consult your healthcare provider before starting, stopping, or changing any medication. Be aware of potential drug interactions and side effects.';
+        }
+        
       } catch (aiErr) {
         console.error('OpenAI error:', aiErr.message);
         const responses = BOT_RESPONSES[conv.language] || BOT_RESPONSES['en'];

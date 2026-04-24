@@ -1,0 +1,67 @@
+<div class="review-form-container">
+  <div class="form-card">
+    <div class="form-header">
+      <h1>Leave a Review</h1>
+      <p *ngIf="doctorName">for Dr. {{ doctorName }}</p>
+    </div>
+
+    <!-- Success Message -->
+    <div *ngIf="success" class="success-message">
+      <p>✓ Thank you! Your review has been submitted successfully.</p>
+      <p>Redirecting to your appointments...</p>
+    </div>
+
+    <!-- Error Message -->
+    <div *ngIf="error" class="error-message">
+      {{ error }}
+    </div>
+
+    <!-- Review Form -->
+    <form *ngIf="!success" (ngSubmit)="submitReview()">
+      <!-- Rating Section -->
+      <div class="form-group">
+        <label>Rating</label>
+        <div class="rating-selector">
+          <button 
+            *ngFor="let i of getRatingStars(); let idx = index"
+            type="button"
+            class="star-btn"
+            [class.active]="idx < rating"
+            (click)="setRating(idx + 1)"
+          >
+            ★
+          </button>
+        </div>
+        <p class="rating-text">{{ rating }} out of 5 stars</p>
+      </div>
+
+      <!-- Comment Section -->
+      <div class="form-group">
+        <label for="comment">Your Review</label>
+        <textarea 
+          id="comment"
+          [(ngModel)]="comment"
+          name="comment"
+          placeholder="Share your experience with this doctor..."
+          rows="6"
+          class="form-control"
+        ></textarea>
+        <p class="char-count">{{ comment.length }} / 500 characters</p>
+      </div>
+
+      <!-- Buttons -->
+      <div class="form-actions">
+        <button type="button" class="btn-cancel" (click)="goBack()">
+          Cancel
+        </button>
+        <button 
+          type="submit" 
+          class="btn-submit"
+          [disabled]="loading || !comment.trim()"
+        >
+          {{ loading ? 'Submitting...' : 'Submit Review' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

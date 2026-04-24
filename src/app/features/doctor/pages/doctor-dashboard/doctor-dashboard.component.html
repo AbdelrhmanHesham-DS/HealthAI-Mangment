@@ -1,0 +1,506 @@
+<app-health-navbar></app-health-navbar>
+
+<div class="dd-layout">
+  <!-- Sidebar -->
+  <aside class="dd-sidebar" [class.collapsed]="!isSidebarOpen()">
+    <div class="dd-sidebar-header">
+      @if (isSidebarOpen()) {
+        <div class="dd-brand">
+          <div class="dd-brand-icon"><i class="fa-solid fa-stethoscope"></i></div>
+          <span>Doctor Portal</span>
+        </div>
+      }
+      <button class="dd-toggle-btn" (click)="isSidebarOpen.set(!isSidebarOpen())">
+        <i class="fa-solid" [class.fa-chevron-left]="isSidebarOpen()" [class.fa-chevron-right]="!isSidebarOpen()"></i>
+      </button>
+    </div>
+
+    <nav class="dd-nav">
+      @for (item of navItems; track item.id) {
+        <button class="dd-nav-item" [class.active]="activeNav() === item.id" (click)="setNav(item.id)">
+          <i class="fa-solid" [class]="'fa-solid ' + item.icon"></i>
+          @if (isSidebarOpen()) { <span>{{ item.label }}</span> }
+        </button>
+      }
+    </nav>
+
+    @if (isSidebarOpen()) {
+      <div class="dd-sidebar-footer">
+        <div class="dd-doctor-info">
+          <div class="dd-doctor-avatar">{{ auth.currentUser?.name?.[0] }}</div>
+          <div>
+            <div class="dd-doctor-name">{{ auth.currentUser?.name }}</div>
+            <div class="dd-doctor-specialty">{{ auth.currentUser?.specialty }}</div>
+          </div>
+        </div>
+        <button class="dd-logout-btn" (click)="auth.logout()" title="Sign Out">
+          <i class="fa-solid fa-right-from-bracket"></i>
+        </button>
+      </div>
+    }
+  </aside>
+
+  <!-- Main Content -->
+  <main class="dd-main">
+    <div class="dd-topbar">
+      <div>
+        <h2 class="dd-page-title">{{ activeLabel() }}</h2>
+        <span class="dd-breadcrumb">Doctor / {{ activeLabel() }}</span>
+      </div>
+      <div class="dd-topbar-right">
+        <a routerLink="/health" class="dd-back-link"><i class="fa-solid fa-arrow-left"></i> Back</a>
+      </div>
+    </div>
+
+    <div class="dd-content">
+      <!-- OVERVIEW -->
+      @if (activeNav() === 'overview') {
+        <div class="dd-stats-grid">
+          <div class="dd-stat-card">
+            <div class="dd-stat-icon" style="background:rgba(99,102,241,0.12);color:#6366f1">
+              <i class="fa-solid fa-calendar-check"></i>
+            </div>
+            <div>
+              <div class="dd-stat-val">{{ totalAppointments() }}</div>
+              <div class="dd-stat-lbl">Total Appointments</div>
+            </div>
+          </div>
+
+          <div class="dd-stat-card">
+            <div class="dd-stat-icon" style="background:rgba(16,185,129,0.12);color:#10b981">
+              <i class="fa-solid fa-check-circle"></i>
+            </div>
+            <div>
+              <div class="dd-stat-val">{{ completedAppointments() }}</div>
+              <div class="dd-stat-lbl">Completed</div>
+            </div>
+          </div>
+
+          <div class="dd-stat-card">
+            <div class="dd-stat-icon" style="background:rgba(245,158,11,0.12);color:#f59e0b">
+              <i class="fa-solid fa-clock"></i>
+            </div>
+            <div>
+              <div class="dd-stat-val">{{ upcomingAppointments() }}</div>
+              <div class="dd-stat-lbl">Upcoming</div>
+            </div>
+          </div>
+
+          <div class="dd-stat-card">
+            <div class="dd-stat-icon" style="background:rgba(6,182,212,0.12);color:#06b6d4">
+              <i class="fa-solid fa-star"></i>
+            </div>
+            <div>
+              <div class="dd-stat-val">{{ averageRating() }}</div>
+              <div class="dd-stat-lbl">Average Rating</div>
+            </div>
+          </div>
+
+          <div class="dd-stat-card">
+            <div class="dd-stat-icon" style="background:rgba(139,92,246,0.12);color:#8b5cf6">
+              <i class="fa-solid fa-users"></i>
+            </div>
+            <div>
+              <div class="dd-stat-val">{{ totalPatients() }}</div>
+              <div class="dd-stat-lbl">Total Patients</div>
+            </div>
+          </div>
+
+          <div class="dd-stat-card">
+            <div class="dd-stat-icon" style="background:rgba(236,72,153,0.12);color:#ec4899">
+              <i class="fa-solid fa-wallet"></i>
+            </div>
+            <div>
+              <div class="dd-stat-val">{{ earnings() | currency }}</div>
+              <div class="dd-stat-lbl">Total Earnings</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Appointments -->
+        <div class="dd-card">
+          <div class="dd-card-header">
+            <h3>Recent Appointments</h3>
+            <button class="dd-card-action" (click)="setNav('appointments')">View All</button>
+          </div>
+          <div class="dd-table-wrap">
+            <table class="dd-table">
+              <thead>
+                <tr>
+                  <th>Patient</th>
+                  <th>Date & Time</th>
+                  <th>Type</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (apt of appointments() | slice:0:5; track apt.id) {
+                  <tr>
+                    <td>{{ apt.patientName }}</td>
+                    <td>{{ apt.date }} {{ apt.time }}</td>
+                    <td><span class="dd-badge">{{ apt.type }}</span></td>
+                    <td>
+                      <span class="dd-status" [class]="'dd-status-' + apt.status">
+                        {{ apt.status | titlecase }}
+                      </span>
+                    </td>
+                    <td>
+                      <button class="dd-btn-sm" (click)="openPrescriptionModal(apt.id, apt.patientId)">
+                        <i class="fa-solid fa-prescription-bottle"></i>
+                      </button>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      }
+
+      <!-- APPOINTMENTS -->
+      @if (activeNav() === 'appointments') {
+        <div class="dd-card">
+          <div class="dd-card-header">
+            <h3>My Appointments</h3>
+            <button class="dd-btn dd-btn-primary" (click)="openAppointmentModal()">
+              <i class="fa-solid fa-plus"></i> New Appointment
+            </button>
+          </div>
+
+          <div class="dd-filters">
+            <input type="text" [(ngModel)]="searchQuery" placeholder="Search patient..." class="dd-input">
+            <select [(ngModel)]="filterStatus" class="dd-input">
+              <option value="">All Status</option>
+              <option value="upcoming">Upcoming</option>
+              <option value="completed">Completed</option>
+              <option value="cancelled">Cancelled</option>
+            </select>
+          </div>
+
+          <div class="dd-table-wrap">
+            <table class="dd-table">
+              <thead>
+                <tr>
+                  <th>Patient</th>
+                  <th>Date & Time</th>
+                  <th>Type</th>
+                  <th>Reason</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (apt of filteredAppointments(); track apt.id) {
+                  <tr>
+                    <td>{{ apt.patientName }}</td>
+                    <td>{{ apt.date }} {{ apt.time }}</td>
+                    <td><span class="dd-badge">{{ apt.type }}</span></td>
+                    <td>{{ apt.reason }}</td>
+                    <td>
+                      <select [(ngModel)]="apt.status" (change)="updateAppointmentStatus(apt.id, apt.status)" class="dd-status-select">
+                        <option value="upcoming">Upcoming</option>
+                        <option value="completed">Completed</option>
+                        <option value="cancelled">Cancelled</option>
+                      </select>
+                    </td>
+                    <td>
+                      <button class="dd-btn-sm" (click)="openPrescriptionModal(apt.id, apt.patientId)" title="Add Prescription">
+                        <i class="fa-solid fa-prescription-bottle"></i>
+                      </button>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      }
+
+      <!-- VIDEO CALLS -->
+      @if (activeNav() === 'video-calls') {
+        <div class="dd-card">
+          <div class="dd-card-header">
+            <h3>Video Calls</h3>
+            <span class="dd-badge-count">{{ videoCalls().length }} upcoming</span>
+          </div>
+
+          @if (videoCalls().length === 0) {
+            <div class="dd-empty-state">
+              <i class="fa-solid fa-video"></i>
+              <p>No upcoming video calls</p>
+              <small>Video calls will appear here when scheduled</small>
+            </div>
+          } @else {
+            <div class="dd-video-calls-list">
+              @for (call of videoCalls(); track call.id) {
+                <div class="dd-video-call-card">
+                  <div class="dd-call-left">
+                    <div class="dd-call-avatar">{{ call.patientName?.[0] }}</div>
+                    <div class="dd-call-info">
+                      <h4>{{ call.patientName }}</h4>
+                      <p>{{ call.date }} at {{ call.time }}</p>
+                      <small>{{ call.reason }}</small>
+                    </div>
+                  </div>
+                  <div class="dd-call-right">
+                    <button class="dd-btn dd-btn-primary" (click)="joinCall(call)">
+                      <i class="fa-solid fa-video"></i> Join Call
+                    </button>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
+
+      <!-- PATIENTS -->
+      @if (activeNav() === 'patients') {
+        <div class="dd-card">
+          <div class="dd-card-header">
+            <h3>My Patients</h3>
+            <span class="dd-badge-count">{{ totalPatients() }} patients</span>
+          </div>
+
+          <div class="dd-patients-grid">
+            @for (patient of patients(); track patient.id) {
+              <div class="dd-patient-card">
+                <div class="dd-patient-header">
+                  <div class="dd-patient-avatar">{{ patient.name?.[0] }}</div>
+                  <div>
+                    <h4>{{ patient.name }}</h4>
+                    <p>{{ patient.email }}</p>
+                  </div>
+                </div>
+                <div class="dd-patient-info">
+                  <p><strong>Phone:</strong> {{ patient.phone }}</p>
+                  <p><strong>Age:</strong> {{ patient.age }}</p>
+                  <p><strong>Gender:</strong> {{ patient.gender }}</p>
+                </div>
+                <div class="dd-patient-actions">
+                  <button class="dd-btn-sm" title="View Medical Records">
+                    <i class="fa-solid fa-file-medical"></i>
+                  </button>
+                  <button class="dd-btn-sm" title="Send Message">
+                    <i class="fa-solid fa-message"></i>
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- PRESCRIPTIONS -->
+      @if (activeNav() === 'prescriptions') {
+        <div class="dd-card">
+          <div class="dd-card-header">
+            <h3>Prescriptions</h3>
+          </div>
+          <p class="dd-placeholder">Prescriptions will appear here</p>
+        </div>
+      }
+
+      <!-- EARNINGS -->
+      @if (activeNav() === 'earnings') {
+        <div class="dd-card">
+          <div class="dd-card-header">
+            <h3>Earnings</h3>
+            <button class="dd-btn-sm" (click)="exportEarnings()">
+              <i class="fa-solid fa-download"></i> Export
+            </button>
+          </div>
+          <div class="dd-earnings-summary">
+            <div class="dd-earning-stat">
+              <span>Total Earnings</span>
+              <h2>{{ earnings() | currency }}</h2>
+            </div>
+            <div class="dd-earning-stat">
+              <span>Completed Appointments</span>
+              <h2>{{ completedAppointments() }}</h2>
+            </div>
+            <div class="dd-earning-stat">
+              <span>Average Per Appointment</span>
+              <h2>{{ (earnings() / (completedAppointments() || 1)) | currency }}</h2>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- REVIEWS -->
+      @if (activeNav() === 'reviews') {
+        <div class="dd-card">
+          <div class="dd-card-header">
+            <h3>Patient Reviews</h3>
+            <span class="dd-badge-count">{{ totalReviews() }} reviews</span>
+          </div>
+
+          <div class="dd-reviews-list">
+            @for (review of reviews(); track review.id) {
+              <div class="dd-review-item">
+                <div class="dd-review-header">
+                  <div>
+                    <h4>{{ review.patientName }}</h4>
+                    <div class="dd-rating">
+                      @for (i of [1,2,3,4,5]; track i) {
+                        <i class="fa-solid fa-star" [class.filled]="i <= review.rating"></i>
+                      }
+                    </div>
+                  </div>
+                  <button class="dd-btn-sm dd-btn-danger" (click)="deleteReview(review.id)">
+                    <i class="fa-solid fa-trash"></i>
+                  </button>
+                </div>
+                <p class="dd-review-text">{{ review.comment }}</p>
+                <small>{{ review.date | date }}</small>
+              </div>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- SCHEDULE -->
+      @if (activeNav() === 'schedule') {
+        <div class="dd-card">
+          <div class="dd-card-header">
+            <h3>My Schedule</h3>
+          </div>
+          <p class="dd-placeholder">Schedule management coming soon</p>
+        </div>
+      }
+
+      <!-- PROFILE -->
+      @if (activeNav() === 'profile') {
+        <div class="dd-card">
+          <div class="dd-card-header">
+            <h3>My Profile</h3>
+          </div>
+          <div class="dd-profile-info">
+            <p><strong>Name:</strong> {{ auth.currentUser?.name }}</p>
+            <p><strong>Email:</strong> {{ auth.currentUser?.email }}</p>
+            <p><strong>Specialty:</strong> {{ auth.currentUser?.specialty }}</p>
+            <p><strong>Experience:</strong> {{ auth.currentUser?.experience }} years</p>
+            <p><strong>Consultation Fee:</strong> {{ auth.currentUser?.consultationFee | currency }}</p>
+          </div>
+        </div>
+      }
+    </div>
+  </main>
+</div>
+
+<!-- Appointment Modal -->
+@if (showAppointmentModal()) {
+  <div class="dd-modal-overlay" (click)="closeAppointmentModal()">
+    <div class="dd-modal" (click)="$event.stopPropagation()">
+      <div class="dd-modal-header">
+        <h3>New Appointment</h3>
+        <button class="dd-modal-close" (click)="closeAppointmentModal()">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="dd-modal-body">
+        <div class="dd-form-group">
+          <label>Patient *</label>
+          <select [(ngModel)]="appointmentForm().patientId" class="dd-input">
+            <option value="">Select Patient</option>
+            @for (patient of patients(); track patient.id) {
+              <option [value]="patient.id">{{ patient.name }}</option>
+            }
+          </select>
+        </div>
+        <div class="dd-form-group">
+          <label>Date *</label>
+          <input type="date" [(ngModel)]="appointmentForm().date" class="dd-input">
+        </div>
+        <div class="dd-form-group">
+          <label>Time *</label>
+          <input type="time" [(ngModel)]="appointmentForm().time" class="dd-input">
+        </div>
+        <div class="dd-form-group">
+          <label>Type *</label>
+          <select [(ngModel)]="appointmentForm().type" class="dd-input">
+            <option value="video">Video Call</option>
+            <option value="in-person">In-Person</option>
+            <option value="chat">Chat</option>
+          </select>
+        </div>
+        <div class="dd-form-group">
+          <label>Reason</label>
+          <textarea [(ngModel)]="appointmentForm().reason" class="dd-textarea" rows="3"></textarea>
+        </div>
+        <div class="dd-form-group">
+          <label>Notes</label>
+          <textarea [(ngModel)]="appointmentForm().notes" class="dd-textarea" rows="2"></textarea>
+        </div>
+      </div>
+      <div class="dd-modal-footer">
+        <button class="dd-btn dd-btn-secondary" (click)="closeAppointmentModal()">Cancel</button>
+        <button class="dd-btn dd-btn-primary" (click)="saveAppointment()">Create Appointment</button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Prescription Modal -->
+@if (showPrescriptionModal()) {
+  <div class="dd-modal-overlay" (click)="closePrescriptionModal()">
+    <div class="dd-modal" (click)="$event.stopPropagation()">
+      <div class="dd-modal-header">
+        <h3>Add Prescription</h3>
+        <button class="dd-modal-close" (click)="closePrescriptionModal()">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="dd-modal-body">
+        <div class="dd-form-group">
+          <label>Medications *</label>
+          <textarea [(ngModel)]="prescriptionForm().medications" class="dd-textarea" rows="3" placeholder="List medications"></textarea>
+        </div>
+        <div class="dd-form-group">
+          <label>Dosage *</label>
+          <input type="text" [(ngModel)]="prescriptionForm().dosage" class="dd-input" placeholder="e.g., 500mg">
+        </div>
+        <div class="dd-form-group">
+          <label>Duration *</label>
+          <input type="text" [(ngModel)]="prescriptionForm().duration" class="dd-input" placeholder="e.g., 7 days">
+        </div>
+        <div class="dd-form-group">
+          <label>Instructions</label>
+          <textarea [(ngModel)]="prescriptionForm().instructions" class="dd-textarea" rows="3" placeholder="Special instructions"></textarea>
+        </div>
+      </div>
+      <div class="dd-modal-footer">
+        <button class="dd-btn dd-btn-secondary" (click)="closePrescriptionModal()">Cancel</button>
+        <button class="dd-btn dd-btn-primary" (click)="savePrescription()">Save Prescription</button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Video Call Modal -->
+@if (activeCall()) {
+  <div class="dd-call-overlay">
+    <div class="dd-call-modal">
+      <div class="dd-call-header">
+        <div class="dd-call-info">
+          <div class="dd-call-avatar">{{ activeCall()!.apt.patientName?.[0] }}</div>
+          <div>
+            <div class="dd-call-name">{{ activeCall()!.apt.patientName }}</div>
+            <div class="dd-call-spec">{{ activeCall()!.apt.reason }}</div>
+          </div>
+          <div class="dd-call-live"><span class="dd-live-dot"></span> Live</div>
+        </div>
+        <button class="dd-call-end" (click)="endCall()">
+          <i class="fa-solid fa-phone-slash"></i> End Call
+        </button>
+      </div>
+      <iframe
+        [src]="activeCall()!.url"
+        class="dd-call-frame"
+        allow="camera; microphone; fullscreen; display-capture; autoplay"
+        allowfullscreen>
+      </iframe>
+    </div>
+  </div>
+}

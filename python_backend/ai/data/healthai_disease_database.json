@@ -1,0 +1,348 @@
+{
+  "diseases": {
+    "Alzheimer": {
+      "name": "Alzheimer's Disease",
+      "description": "A progressive neurodegenerative disorder characterized by memory loss, cognitive decline, and behavioral changes. It is the most common cause of dementia.",
+      "symptoms": ["memory loss", "confusion", "difficulty concentrating", "mood changes", "withdrawal from activities", "disorientation to time", "difficulty driving", "difficulty reading", "misplacing objects", "suspicion"],
+      "precautions": ["maintain cognitive activities", "exercise regularly", "eat healthy diet", "get proper sleep", "manage stress", "social engagement"],
+      "severity": "high",
+      "category": "neurological"
+    },
+    "Malaria": {
+      "name": "Malaria",
+      "description": "An infectious disease caused by protozoan parasites transmitted by Anopheles mosquitoes. It causes fever, chills, and flu-like symptoms.",
+      "symptoms": ["fever", "chills", "sweating", "headache", "muscle aches", "fatigue"],
+      "precautions": ["consult nearest hospital", "avoid oily food", "avoid non-vegetarian food", "keep mosquitos out", "use mosquito nets", "apply insect repellent"],
+      "severity": "high",
+      "category": "infectious"
+    },
+    "Allergy": {
+      "name": "Allergy",
+      "description": "An immune system response to a foreign substance that is not typically harmful to the body. Can include reactions to foods, pollen, or pet dander.",
+      "symptoms": ["itching", "rash", "swelling", "hives", "sneezing", "runny nose"],
+      "precautions": ["apply calamine lotion", "cover area with bandage", "use ice to compress itching", "avoid allergen", "take antihistamines"],
+      "severity": "low",
+      "category": "immunological"
+    },
+    "Hypothyroidism": {
+      "name": "Hypothyroidism",
+      "description": "A disorder where the thyroid gland does not produce enough thyroid hormone, leading to slowed metabolism and various symptoms.",
+      "symptoms": ["fatigue", "weight gain", "cold sensitivity", "dry skin", "hair loss", "depression"],
+      "precautions": ["reduce stress", "exercise regularly", "eat healthy", "get proper sleep", "take thyroid medication as prescribed"],
+      "severity": "medium",
+      "category": "endocrine"
+    },
+    "Psoriasis": {
+      "name": "Psoriasis",
+      "description": "A chronic skin disorder that forms thick, red, bumpy patches covered with silvery scales. Most commonly appears on scalp, elbows, knees, and lower back.",
+      "symptoms": ["red patches", "silvery scales", "itching", "burning sensation", "dry skin"],
+      "precautions": ["wash hands with warm soapy water", "stop bleeding using pressure", "consult doctor", "salt baths", "moisturize skin"],
+      "severity": "medium",
+      "category": "dermatological"
+    },
+    "GERD": {
+      "name": "Gastroesophageal Reflux Disease (GERD)",
+      "description": "A digestive disorder affecting the lower esophageal sphincter, causing acid reflux and heartburn.",
+      "symptoms": ["heartburn", "acid indigestion", "chest pain", "difficulty swallowing", "regurgitation"],
+      "precautions": ["avoid fatty spicy food", "avoid lying down after eating", "maintain healthy weight", "exercise regularly", "elevate head while sleeping"],
+      "severity": "medium",
+      "category": "gastrointestinal"
+    },
+    "Chronic cholestasis": {
+      "name": "Chronic Cholestasis",
+      "description": "A chronic liver condition characterized by defective bile acid transport from the liver to the intestine.",
+      "symptoms": ["itching", "jaundice", "fatigue", "pale stools", "dark urine"],
+      "precautions": ["cold baths", "anti-itch medicine", "consult doctor", "eat healthy", "avoid alcohol"],
+      "severity": "high",
+      "category": "hepatic"
+    },
+    "Hepatitis": {
+      "name": "Hepatitis",
+      "description": "Inflammation of the liver caused by viral infection. Multiple types exist (A, B, C, D, E).",
+      "symptoms": ["jaundice", "fatigue", "abdominal pain", "nausea", "dark urine", "pale stools"],
+      "precautions": ["consult nearest hospital", "wash hands thoroughly", "avoid fatty spicy food", "take medication", "get vaccinated"],
+      "severity": "high",
+      "category": "hepatic"
+    },
+    "Osteoarthritis": {
+      "name": "Osteoarthritis",
+      "description": "The most common form of arthritis, occurring when protective cartilage that cushions bone ends wears down over time.",
+      "symptoms": ["joint pain", "stiffness", "reduced range of motion", "swelling", "creaking sounds"],
+      "precautions": ["acetaminophen", "consult nearest hospital", "follow up", "salt baths", "exercise", "weight management"],
+      "severity": "medium",
+      "category": "musculoskeletal"
+    },
+    "Vertigo": {
+      "name": "Benign Paroxysmal Positional Vertigo (BPPV)",
+      "description": "One of the most common causes of vertigo, causing brief episodes of mild to intense dizziness.",
+      "symptoms": ["dizziness", "spinning sensation", "nausea", "balance problems", "eye movement issues"],
+      "precautions": ["lie down", "avoid sudden body changes", "avoid abrupt head movement", "relax", "slow movements"],
+      "severity": "medium",
+      "category": "neurological"
+    },
+    "Hypoglycemia": {
+      "name": "Hypoglycemia",
+      "description": "A condition where blood sugar level is lower than normal, often related to diabetes treatment.",
+      "symptoms": ["shakiness", "sweating", "rapid heartbeat", "anxiety", "confusion", "hunger"],
+      "precautions": ["lie down on side", "check pulse", "drink sugary drinks", "consult doctor", "carry glucose tablets"],
+      "severity": "high",
+      "category": "metabolic"
+    },
+    "Acne": {
+      "name": "Acne",
+      "description": "Formation of comedones, papules, pustules, nodules, and cysts as a result of obstruction and inflammation of hair follicles.",
+      "symptoms": ["pimples", "blackheads", "whiteheads", "oily skin", "redness"],
+      "precautions": ["bathe twice daily", "avoid fatty spicy food", "drink plenty of water", "avoid too many products", "use gentle cleanser"],
+      "severity": "low",
+      "category": "dermatological"
+    },
+    "Diabetes": {
+      "name": "Diabetes",
+      "description": "A disease where blood glucose is too high. Insulin helps glucose from food get into cells to be used for energy.",
+      "symptoms": ["increased thirst", "frequent urination", "fatigue", "blurred vision", "slow healing"],
+      "precautions": ["have balanced diet", "exercise regularly", "consult doctor", "follow up", "monitor blood sugar", "take medication"],
+      "severity": "high",
+      "category": "metabolic"
+    },
+    "Impetigo": {
+      "name": "Impetigo",
+      "description": "A common and highly contagious skin infection mainly affecting infants and children, appearing as red sores.",
+      "symptoms": ["red sores", "honey-colored crusts", "blisters", "itching", "swelling"],
+      "precautions": ["soak affected area in warm water", "use antibiotics", "remove scabs with wet cloth", "consult doctor", "keep area clean"],
+      "severity": "medium",
+      "category": "dermatological"
+    },
+    "Hypertension": {
+      "name": "Hypertension (High Blood Pressure)",
+      "description": "A long-term medical condition where blood pressure in arteries is persistently elevated.",
+      "symptoms": ["usually asymptomatic", "headache", "shortness of breath", "nosebleeds", "chest pain"],
+      "precautions": ["meditation", "salt baths", "reduce stress", "get proper sleep", "exercise", "limit salt intake"],
+      "severity": "high",
+      "category": "cardiovascular"
+    },
+    "Peptic ulcer disease": {
+      "name": "Peptic Ulcer Disease",
+      "description": "A break in the inner lining of the stomach, first part of small intestine, or lower esophagus.",
+      "symptoms": ["burning stomach pain", "bloating", "heartburn", "nausea", "dark stools"],
+      "precautions": ["avoid fatty spicy food", "consume probiotic food", "eliminate milk", "limit alcohol", "manage stress"],
+      "severity": "medium",
+      "category": "gastrointestinal"
+    },
+    "Hemorrhoids": {
+      "name": "Dimorphic Hemorrhoids (Piles)",
+      "description": "Vascular structures in the anal canal that become enlarged and inflamed.",
+      "symptoms": ["rectal pain", "itching", "bleeding", "swelling", "discomfort"],
+      "precautions": ["avoid fatty spicy food", "consume witch hazel", "warm bath with epsom salt", "consume aloe vera juice", "increase fiber"],
+      "severity": "medium",
+      "category": "gastrointestinal"
+    },
+    "Common cold": {
+      "name": "Common Cold",
+      "description": "A viral infection of the nose and throat (upper respiratory tract), usually harmless.",
+      "symptoms": ["runny nose", "cough", "sore throat", "sneezing", "mild fever"],
+      "precautions": ["drink vitamin C rich drinks", "take vapor", "avoid cold food", "keep fever in check", "rest"],
+      "severity": "low",
+      "category": "infectious"
+    },
+    "Chicken pox": {
+      "name": "Chicken Pox",
+      "description": "A highly contagious disease caused by varicella-zoster virus, causing itchy blister-like rash.",
+      "symptoms": ["itchy rash", "blisters", "fever", "fatigue", "headache"],
+      "precautions": ["use neem in bathing", "consume neem leaves", "take vaccine", "avoid public places", "isolate from others"],
+      "severity": "medium",
+      "category": "infectious"
+    },
+    "Cervical spondylosis": {
+      "name": "Cervical Spondylosis",
+      "description": "Age-related wear and tear affecting spinal disks in the neck, causing osteoarthritis.",
+      "symptoms": ["neck pain", "stiffness", "numbness", "weakness", "tingling"],
+      "precautions": ["use heating pad or cold pack", "exercise", "take OTC pain reliever", "consult doctor", "maintain posture"],
+      "severity": "medium",
+      "category": "musculoskeletal"
+    },
+    "Hyperthyroidism": {
+      "name": "Hyperthyroidism",
+      "description": "A condition where thyroid gland produces too much thyroid hormone, accelerating metabolism.",
+      "symptoms": ["weight loss", "rapid heartbeat", "anxiety", "tremors", "heat sensitivity"],
+      "precautions": ["eat healthy", "massage", "use lemon balm", "take radioactive iodine treatment", "consult doctor"],
+      "severity": "medium",
+      "category": "endocrine"
+    },
+    "Urinary tract infection": {
+      "name": "Urinary Tract Infection (UTI)",
+      "description": "An infection of the kidney, ureter, bladder, or urethra.",
+      "symptoms": ["frequent urge to urinate", "pain or burning when urinating", "cloudy urine", "pelvic pain"],
+      "precautions": ["drink plenty of water", "increase vitamin C intake", "drink cranberry juice", "take probiotics", "urinate after intercourse"],
+      "severity": "medium",
+      "category": "urological"
+    },
+    "Varicose veins": {
+      "name": "Varicose Veins",
+      "description": "Enlarged and twisted veins, appearing as bulging blue blood vessels visible through skin.",
+      "symptoms": ["visible veins", "leg pain", "swelling", "heaviness", "skin discoloration"],
+      "precautions": ["lie down flat and raise leg high", "use ointments", "use vein compression", "don't stand still for long", "exercise"],
+      "severity": "low",
+      "category": "cardiovascular"
+    },
+    "AIDS": {
+      "name": "AIDS (Acquired Immunodeficiency Syndrome)",
+      "description": "A chronic, potentially life-threatening condition caused by HIV, damaging the immune system.",
+      "symptoms": ["fever", "fatigue", "swollen lymph nodes", "weight loss", "opportunistic infections"],
+      "precautions": ["avoid open cuts", "wear PPE if possible", "consult doctor", "follow up", "take antiretroviral therapy"],
+      "severity": "high",
+      "category": "infectious"
+    },
+    "Paralysis": {
+      "name": "Paralysis (Brain Hemorrhage)",
+      "description": "Intracerebral hemorrhage when blood bursts into brain tissue, causing damage.",
+      "symptoms": ["sudden headache", "weakness", "confusion", "paralysis", "speech difficulty"],
+      "precautions": ["massage", "eat healthy", "exercise", "consult doctor", "emergency care"],
+      "severity": "high",
+      "category": "neurological"
+    },
+    "Typhoid": {
+      "name": "Typhoid",
+      "description": "An acute illness characterized by fever caused by Salmonella typhi bacteria.",
+      "symptoms": ["fever", "headache", "constipation", "malaise", "chills", "muscle pain"],
+      "precautions": ["eat high calorie vegetables", "antibiotic therapy", "consult doctor", "medication", "rest"],
+      "severity": "high",
+      "category": "infectious"
+    },
+    "Hepatitis B": {
+      "name": "Hepatitis B",
+      "description": "An infection of the liver caused by hepatitis B virus, spread through blood and body fluids.",
+      "symptoms": ["jaundice", "fatigue", "abdominal pain", "nausea", "dark urine"],
+      "precautions": ["consult nearest hospital", "vaccination", "eat healthy", "medication", "avoid sharing needles"],
+      "severity": "high",
+      "category": "hepatic"
+    },
+    "Hepatitis A": {
+      "name": "Hepatitis A",
+      "description": "A highly contagious liver infection caused by hepatitis A virus.",
+      "symptoms": ["jaundice", "fatigue", "abdominal pain", "nausea", "fever"],
+      "precautions": ["consult nearest hospital", "vaccination", "eat healthy", "medication", "wash hands thoroughly"],
+      "severity": "high",
+      "category": "hepatic"
+    },
+    "Fungal infection": {
+      "name": "Fungal Infection",
+      "description": "An infection when an invading fungus takes over an area of the body.",
+      "symptoms": ["itching", "rash", "redness", "scaling", "discomfort"],
+      "precautions": ["bathe twice", "use detol or neem in bathing water", "keep infected area dry", "use clean cloths", "antifungal cream"],
+      "severity": "medium",
+      "category": "dermatological"
+    },
+    "Hepatitis C": {
+      "name": "Hepatitis C",
+      "description": "Inflammation of the liver due to hepatitis C virus, usually spread via blood.",
+      "symptoms": ["jaundice", "fatigue", "abdominal pain", "nausea", "dark urine"],
+      "precautions": ["consult nearest hospital", "vaccination", "eat healthy", "medication", "avoid blood exposure"],
+      "severity": "high",
+      "category": "hepatic"
+    },
+    "Migraine": {
+      "name": "Migraine",
+      "description": "A neurological condition causing severe throbbing pain, usually on one side of the head.",
+      "symptoms": ["severe headache", "nausea", "vomiting", "light sensitivity", "sound sensitivity"],
+      "precautions": ["meditation", "reduce stress", "use polaroid glasses in sun", "consult doctor", "avoid triggers"],
+      "severity": "medium",
+      "category": "neurological"
+    },
+    "Bronchial asthma": {
+      "name": "Bronchial Asthma",
+      "description": "A medical condition causing airway swelling and narrowing, making breathing difficult.",
+      "symptoms": ["coughing", "shortness of breath", "wheezing", "chest tightness", "difficulty breathing"],
+      "precautions": ["switch to loose clothing", "take deep breaths", "get away from trigger", "seek help", "use inhaler"],
+      "severity": "high",
+      "category": "respiratory"
+    },
+    "Alcoholic hepatitis": {
+      "name": "Alcoholic Hepatitis",
+      "description": "A diseased, inflammatory condition of the liver caused by heavy alcohol consumption.",
+      "symptoms": ["jaundice", "fatigue", "abdominal pain", "nausea", "fever"],
+      "precautions": ["stop alcohol consumption", "consult doctor", "medication", "follow up", "rest"],
+      "severity": "high",
+      "category": "hepatic"
+    },
+    "Jaundice": {
+      "name": "Jaundice",
+      "description": "Yellow staining of skin and eyes by abnormally high blood levels of bile pigment bilirubin.",
+      "symptoms": ["yellow skin", "yellow eyes", "dark urine", "pale stools", "itching"],
+      "precautions": ["drink plenty of water", "consume milk thistle", "eat fruits and high fiber food", "medication", "consult doctor"],
+      "severity": "medium",
+      "category": "hepatic"
+    },
+    "Hepatitis E": {
+      "name": "Hepatitis E",
+      "description": "A rare form of liver inflammation caused by hepatitis E virus, transmitted via food or water.",
+      "symptoms": ["jaundice", "fatigue", "abdominal pain", "nausea", "fever"],
+      "precautions": ["stop alcohol consumption", "rest", "consult doctor", "medication", "clean water"],
+      "severity": "medium",
+      "category": "hepatic"
+    },
+    "Dengue": {
+      "name": "Dengue",
+      "description": "An acute infectious disease caused by dengue virus, transmitted by Aedes mosquitoes.",
+      "symptoms": ["fever", "severe joint pain", "headache", "rash", "muscle pain"],
+      "precautions": ["drink papaya leaf juice", "avoid fatty spicy food", "keep mosquitos away", "keep hydrated", "rest"],
+      "severity": "high",
+      "category": "infectious"
+    },
+    "Hepatitis D": {
+      "name": "Hepatitis D",
+      "description": "An infection causing liver inflammation, also known as hepatitis delta virus.",
+      "symptoms": ["jaundice", "fatigue", "abdominal pain", "nausea", "dark urine"],
+      "precautions": ["consult doctor", "medication", "eat healthy", "follow up", "avoid alcohol"],
+      "severity": "high",
+      "category": "hepatic"
+    },
+    "Heart attack": {
+      "name": "Heart Attack",
+      "description": "Death of heart muscle due to loss of blood supply, usually caused by coronary artery blockage.",
+      "symptoms": ["chest pain", "shortness of breath", "arm pain", "jaw pain", "sweating"],
+      "precautions": ["call ambulance", "chew or swallow aspirin", "keep calm", "lie down", "emergency care"],
+      "severity": "critical",
+      "category": "cardiovascular"
+    },
+    "Pneumonia": {
+      "name": "Pneumonia",
+      "description": "An infection in one or both lungs caused by bacteria, viruses, or fungi.",
+      "symptoms": ["cough", "fever", "shortness of breath", "chest pain", "fatigue"],
+      "precautions": ["consult doctor", "medication", "rest", "follow up", "stay hydrated"],
+      "severity": "high",
+      "category": "respiratory"
+    },
+    "Arthritis": {
+      "name": "Arthritis",
+      "description": "Swelling and tenderness of one or more joints, with main symptoms being pain and stiffness.",
+      "symptoms": ["joint pain", "stiffness", "swelling", "reduced range of motion", "redness"],
+      "precautions": ["exercise", "use hot and cold therapy", "try acupuncture", "massage", "weight management"],
+      "severity": "medium",
+      "category": "musculoskeletal"
+    },
+    "Gastroenteritis": {
+      "name": "Gastroenteritis",
+      "description": "Inflammation of the digestive tract, particularly stomach and intestines.",
+      "symptoms": ["diarrhea", "abdominal cramps", "nausea", "vomiting", "fever"],
+      "precautions": ["stop eating solid food for a while", "take small sips of water", "rest", "ease back into eating", "stay hydrated"],
+      "severity": "medium",
+      "category": "gastrointestinal"
+    },
+    "Tuberculosis": {
+      "name": "Tuberculosis (TB)",
+      "description": "An infectious disease usually caused by Mycobacterium tuberculosis bacteria.",
+      "symptoms": ["persistent cough", "chest pain", "coughing up blood", "fever", "night sweats"],
+      "precautions": ["cover mouth", "consult doctor", "medication", "rest", "isolation"],
+      "severity": "high",
+      "category": "infectious"
+    },
+    "Drug reaction": {
+      "name": "Drug Reaction",
+      "description": "An injury caused by taking medication, may occur from single dose or prolonged use.",
+      "symptoms": ["rash", "itching", "swelling", "difficulty breathing", "anaphylaxis"],
+      "precautions": ["stop taking drug", "consult doctor", "seek emergency care", "report to pharmacist"],
+      "severity": "high",
+      "category": "pharmacological"
+    }
+  }
+}

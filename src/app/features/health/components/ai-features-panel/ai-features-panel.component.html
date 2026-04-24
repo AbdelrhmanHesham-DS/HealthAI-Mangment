@@ -1,0 +1,348 @@
+<div class="ai-features-container">
+  <div class="ai-header">
+    <h2>🤖 AI Health Assistant</h2>
+    <p>Advanced AI-powered health analysis and guidance</p>
+  </div>
+
+  <!-- Tab Navigation -->
+  <div class="ai-tabs">
+    <button 
+      class="ai-tab" 
+      [class.active]="activeTab() === 'symptoms'"
+      (click)="switchTab('symptoms')">
+      <i class="fa-solid fa-stethoscope"></i> Symptoms
+    </button>
+    <button 
+      class="ai-tab" 
+      [class.active]="activeTab() === 'blood-test'"
+      (click)="switchTab('blood-test')">
+      <i class="fa-solid fa-droplet"></i> Blood Test
+    </button>
+    <button 
+      class="ai-tab" 
+      [class.active]="activeTab() === 'first-aid'"
+      (click)="switchTab('first-aid')">
+      <i class="fa-solid fa-heart-pulse"></i> First Aid
+    </button>
+    <button 
+      class="ai-tab" 
+      [class.active]="activeTab() === 'prescription'"
+      (click)="switchTab('prescription')">
+      <i class="fa-solid fa-pills"></i> Medications
+    </button>
+    <button 
+      class="ai-tab" 
+      [class.active]="activeTab() === 'health'"
+      (click)="switchTab('health')">
+      <i class="fa-solid fa-chart-line"></i> Health Monitor
+    </button>
+    <button 
+      class="ai-tab" 
+      [class.active]="activeTab() === 'appointment'"
+      (click)="switchTab('appointment')">
+      <i class="fa-solid fa-calendar"></i> Appointment
+    </button>
+  </div>
+
+  <!-- Tab Content -->
+  <div class="ai-content">
+    <!-- SYMPTOMS ANALYSIS -->
+    @if (activeTab() === 'symptoms') {
+      <div class="ai-section">
+        <h3>Symptom Analysis</h3>
+        <p class="ai-description">Describe your symptoms and get AI analysis</p>
+        
+        <div class="ai-form">
+          <div class="form-group">
+            <label>Add Symptoms</label>
+            <div class="input-group">
+              <input 
+                type="text" 
+                [(ngModel)]="symptomInput" 
+                placeholder="e.g., headache, fever, cough"
+                (keyup.enter)="addSymptom()">
+              <button (click)="addSymptom()" class="btn-add">Add</button>
+            </div>
+          </div>
+
+          @if (symptoms().length > 0) {
+            <div class="tags">
+              @for (symptom of symptoms(); track symptom; let i = $index) {
+                <span class="tag">
+                  {{ symptom }}
+                  <button (click)="removeSymptom(i)" class="tag-remove">×</button>
+                </span>
+              }
+            </div>
+          }
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Age (Optional)</label>
+              <input type="number" [(ngModel)]="age" placeholder="Your age">
+            </div>
+            <div class="form-group">
+              <label>Gender (Optional)</label>
+              <select [(ngModel)]="gender">
+                <option value="">Select</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          </div>
+
+          <button (click)="analyzeSymptoms()" class="btn-analyze" [disabled]="isLoading()">
+            @if (isLoading()) {
+              <i class="fa-solid fa-spinner fa-spin"></i> Analyzing...
+            } @else {
+              <i class="fa-solid fa-wand-magic-sparkles"></i> Analyze Symptoms
+            }
+          </button>
+        </div>
+      </div>
+    }
+
+    <!-- BLOOD TEST ANALYSIS -->
+    @if (activeTab() === 'blood-test') {
+      <div class="ai-section">
+        <h3>Blood Test Analysis</h3>
+        <p class="ai-description">Enter your blood test results for AI analysis</p>
+        
+        <div class="ai-form">
+          <div class="form-group">
+            <label>Add Test Results</label>
+            <div class="input-group">
+              <input 
+                type="text" 
+                [(ngModel)]="testName" 
+                placeholder="Test name (e.g., Hemoglobin)"
+                class="input-half">
+              <input 
+                type="text" 
+                [(ngModel)]="testValue" 
+                placeholder="Value (e.g., 13.5 g/dL)"
+                class="input-half">
+              <button (click)="addTestResult()" class="btn-add">Add</button>
+            </div>
+          </div>
+
+          @if (Object.keys(testResults()).length > 0) {
+            <div class="results-list">
+              @for (key of Object.keys(testResults()); track key) {
+                <div class="result-item">
+                  <span>{{ key }}: {{ testResults()[key] }}</span>
+                  <button (click)="removeTestResult(key)" class="btn-remove">Remove</button>
+                </div>
+              }
+            </div>
+          }
+
+          <button (click)="analyzeBloodTest()" class="btn-analyze" [disabled]="isLoading()">
+            @if (isLoading()) {
+              <i class="fa-solid fa-spinner fa-spin"></i> Analyzing...
+            } @else {
+              <i class="fa-solid fa-wand-magic-sparkles"></i> Analyze Results
+            }
+          </button>
+        </div>
+      </div>
+    }
+
+    <!-- FIRST AID -->
+    @if (activeTab() === 'first-aid') {
+      <div class="ai-section">
+        <h3>🚨 First Aid Guidance</h3>
+        <p class="ai-description">Get emergency first aid instructions</p>
+        
+        <div class="ai-form">
+          <div class="form-group">
+            <label>Describe Emergency</label>
+            <textarea 
+              [(ngModel)]="emergencyDesc" 
+              placeholder="Describe the emergency situation..."
+              rows="4"></textarea>
+          </div>
+
+          <button (click)="getFirstAidGuidance()" class="btn-analyze btn-emergency" [disabled]="isLoading()">
+            @if (isLoading()) {
+              <i class="fa-solid fa-spinner fa-spin"></i> Getting Guidance...
+            } @else {
+              <i class="fa-solid fa-heart-pulse"></i> Get First Aid Help
+            }
+          </button>
+        </div>
+      </div>
+    }
+
+    <!-- PRESCRIPTION ANALYSIS -->
+    @if (activeTab() === 'prescription') {
+      <div class="ai-section">
+        <h3>Medication Analysis</h3>
+        <p class="ai-description">Check for drug interactions and side effects</p>
+        
+        <div class="ai-form">
+          <div class="form-group">
+            <label>Add Medications</label>
+            <div class="input-group">
+              <input 
+                type="text" 
+                [(ngModel)]="medName" 
+                placeholder="Medication name"
+                class="input-half">
+              <input 
+                type="text" 
+                [(ngModel)]="medDosage" 
+                placeholder="Dosage (e.g., 500mg)"
+                class="input-half">
+              <button (click)="addMedication()" class="btn-add">Add</button>
+            </div>
+          </div>
+
+          @if (medications().length > 0) {
+            <div class="med-list">
+              @for (med of medications(); track med; let i = $index) {
+                <div class="med-item">
+                  <span>{{ med.name }} - {{ med.dosage }}</span>
+                  <button (click)="removeMedication(i)" class="btn-remove">Remove</button>
+                </div>
+              }
+            </div>
+          }
+
+          <button (click)="analyzePrescription()" class="btn-analyze" [disabled]="isLoading()">
+            @if (isLoading()) {
+              <i class="fa-solid fa-spinner fa-spin"></i> Analyzing...
+            } @else {
+              <i class="fa-solid fa-wand-magic-sparkles"></i> Check Interactions
+            }
+          </button>
+        </div>
+      </div>
+    }
+
+    <!-- HEALTH MONITORING -->
+    @if (activeTab() === 'health') {
+      <div class="ai-section">
+        <h3>Health Monitoring</h3>
+        <p class="ai-description">Track and analyze your health metrics</p>
+        
+        <div class="ai-form">
+          <div class="form-group">
+            <label>Add Health Metrics</label>
+            <div class="input-group">
+              <input 
+                type="text" 
+                [(ngModel)]="metricName" 
+                placeholder="Metric (e.g., Blood Pressure)"
+                class="input-half">
+              <input 
+                type="text" 
+                [(ngModel)]="metricValue" 
+                placeholder="Value (e.g., 120/80)"
+                class="input-half">
+              <button (click)="addHealthMetric()" class="btn-add">Add</button>
+            </div>
+          </div>
+
+          @if (Object.keys(healthMetrics()).length > 0) {
+            <div class="metrics-list">
+              @for (key of Object.keys(healthMetrics()); track key) {
+                <div class="metric-item">
+                  <span>{{ key }}: {{ healthMetrics()[key] }}</span>
+                  <button (click)="removeHealthMetric(key)" class="btn-remove">Remove</button>
+                </div>
+              }
+            </div>
+          }
+
+          <button (click)="analyzeHealthMetrics()" class="btn-analyze" [disabled]="isLoading()">
+            @if (isLoading()) {
+              <i class="fa-solid fa-spinner fa-spin"></i> Analyzing...
+            } @else {
+              <i class="fa-solid fa-wand-magic-sparkles"></i> Analyze Metrics
+            }
+          </button>
+        </div>
+      </div>
+    }
+
+    <!-- APPOINTMENT ASSISTANT -->
+    @if (activeTab() === 'appointment') {
+      <div class="ai-section">
+        <h3>Appointment Assistant</h3>
+        <p class="ai-description">Get help scheduling the right appointment</p>
+        
+        <div class="ai-form">
+          <div class="form-group">
+            <label>Describe Your Appointment Need</label>
+            <textarea 
+              [(ngModel)]="appointmentRequest" 
+              placeholder="What kind of appointment do you need? (e.g., I have persistent headaches and need to see a neurologist)"
+              rows="4"></textarea>
+          </div>
+
+          <button (click)="getAppointmentAssistance()" class="btn-analyze" [disabled]="isLoading()">
+            @if (isLoading()) {
+              <i class="fa-solid fa-spinner fa-spin"></i> Getting Recommendations...
+            } @else {
+              <i class="fa-solid fa-wand-magic-sparkles"></i> Get Recommendations
+            }
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Results Display -->
+  @if (result()) {
+    <div class="ai-results">
+      <div class="results-header">
+        <h3>📊 Analysis Results</h3>
+        <button (click)="result.set(null)" class="btn-close">×</button>
+      </div>
+      
+      <div class="results-content">
+        @if (result().analysis) {
+          <div class="result-section">
+            <h4>Analysis</h4>
+            <p [innerHTML]="result().analysis | markdownToHtml"></p>
+          </div>
+        }
+        
+        @if (result().guidance) {
+          <div class="result-section">
+            <h4>Guidance</h4>
+            <p [innerHTML]="result().guidance | markdownToHtml"></p>
+          </div>
+        }
+        
+        @if (result().assistance) {
+          <div class="result-section">
+            <h4>Assistance</h4>
+            <p [innerHTML]="result().assistance | markdownToHtml"></p>
+          </div>
+        }
+        
+        @if (result().recommendation) {
+          <div class="result-section">
+            <h4>Recommendation</h4>
+            <p [innerHTML]="result().recommendation | markdownToHtml"></p>
+          </div>
+        }
+
+        @if (result().feature === 'first_aid' && result().critical) {
+          <div class="alert alert-critical">
+            <i class="fa-solid fa-exclamation-triangle"></i>
+            <strong>EMERGENCY:</strong> If this is a life-threatening situation, CALL EMERGENCY SERVICES IMMEDIATELY!
+          </div>
+        }
+
+        <div class="result-footer">
+          <p class="disclaimer">⚠️ This AI analysis is for informational purposes only. Always consult with a qualified healthcare professional for medical advice.</p>
+          <p class="timestamp">Generated: {{ result().timestamp | date:'short' }}</p>
+        </div>
+      </div>
+    </div>
+  }
+</div>

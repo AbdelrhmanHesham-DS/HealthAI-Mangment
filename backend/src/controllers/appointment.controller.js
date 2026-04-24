@@ -195,3 +195,121 @@ exports.updateAppointment = async (req, res) => {
     res.status(400).json({ message: err.message });
   }
 };
+
+// POST /api/appointments/admin — Admin books appointment for themselves
+exports.createAdminAppointment = async (req, res) => {
+  try {
+    // Verify admin is authenticated and has admin role
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({ message: 'Only admins can book appointments for themselves' });
+    }
+
+    const { doctorId, date, time, slotId } = req.body;
+
+    // Verify selected doctor exists
+    const doctor = await Doctor.findById(doctorId);
+    if (!doctor) {
+      return res.status(404).json({ message: 'Doctor not found' });
+    }
+
+    // Verify time slot is within doctor's working hours and available
+    let slotAvailable = false;
+    if (slotId) {
+      for (const day of doctor.availability) {
+        const slot = day.slots.find(s => s.id === slotId);
+        if (slot && slot.available) {
+          slotAvailable = true;
+          break;
+        }
+      }
+      if (!slotAvailable) {
+        return res.status(409).json({ message: 'This time slot is not available. Please choose another.' });
+      }
+    }
+
+    // Prevent double-booking — check if there's already an appointment for this doctor at this date/time
+    const existingAppointment = await Appointment.findOne({
+      doctorId,
+      date,
+      time,
+      status: { $in: ['upcoming', 'pending'] },
+    });
+
+    if (existingAppointment) {
+      return res.status(409).json({ message: 'This time slot has already been booked. Please choose another time.' });
+    }
+
+    // Create appointment with admin as patient
+    const apt = await Appointment.create({
+      doctorId,
+      patientId: req.user.id,
+      date,
+      time,
+      slotId: slotId || '',
+      patientName: req.user.name,
+      doctorName: doctor.name,
+      doctorSpecialty: doctor.specialty,
+      doctorAvatar: doctor.avatar,
+      doctorPhoto: doctor.photo,
+      fee: doctor.consultationFee,
+      type: req.body.type || 'in-person',
+      reason: req.body.reason || '',
+      status: 'upcoming',
+    });
+
+    // Lock the slot — no one else can book it now
+    if (slotId) {
+      await Doctor.updateOne(
+        { _id: doctorId },
+        { $set: { 'availability.$[].slots.$[slot].available': false } },
+        { arrayFilters: [{ 'slot.id': slotId }] }
+      );
+    }
+
+    // Create notification for admin
+    await Notification.create({
+      userId: req.user.id,
+      title: 'Appointment Booked',
+      message: `Your appointment with ${doctor.name} on ${apt.date} at ${apt.time} is confirmed.`,
+      type: 'appointment',
+    });
+
+    // Create notification for doctor
+    if (doctor.userId) {
+      await Notification.create({
+        userId: doctor.userId,
+        title: 'New Appointment',
+        message: `Admin ${req.user.name} has booked an appointment on ${apt.date} at ${apt.time}.`,
+        type: 'appointment',
+      });
+    }
+
+    // Real-time push to admin
+    const io = req.app.get('io');
+    const userSockets = req.app.get('userSockets');
+    const adminSocketId = userSockets?.get(String(req.user.id));
+    if (io && adminSocketId) {
+      io.to(adminSocketId).emit('notification', {
+        title: 'Appointment Booked',
+        message: `Your appointment with ${doctor.name} on ${apt.date} at ${apt.time} is confirmed.`,
+        type: 'appointment',
+      });
+    }
+
+    // Real-time push to doctor
+    if (doctor.userId) {
+      const doctorSocketId = userSockets?.get(String(doctor.userId));
+      if (io && doctorSocketId) {
+        io.to(doctorSocketId).emit('notification', {
+          title: 'New Appointment',
+          message: `Admin ${req.user.name} has booked an appointment on ${apt.date} at ${apt.time}.`,
+          type: 'appointment',
+        });
+      }
+    }
+
+    res.status(201).json(apt);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};

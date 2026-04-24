@@ -260,3 +260,85 @@ exports.healthSummary = async (req, res) => {
     if (!res.headersSent) res.status(500).json({ message: 'Failed to generate report' });
   }
 };
+
+// ========== NEW AI-ENHANCED CONSULTATION REPORT ==========
+
+const { generateConsultationReport } = require('../services/reportBuilder.service');
+const { analyzeTrend } = require('../services/trendAnalysis.service');
+
+/**
+ * POST /api/report/consultation
+ * Generates an AI-enhanced consultation report with patient history and trends
+ * Body: { patientId, doctorId, symptoms, diagnoses, medications, followUp, sections, includeTrends }
+ */
+exports.generateConsultationReport = async (req, res) => {
+  try {
+    const {
+      patientId,
+      doctorId,
+      symptoms,
+      diagnoses,
+      keyFindings,
+      medications,
+      followUp,
+      sections = ['all'],
+      includeTrends = true,
+      aiInsights = []
+    } = req.body;
+
+    if (!patientId) {
+      return res.status(400).json({ message: 'Patient ID is required' });
+    }
+
+    // Authorization check
+    if (req.user.role !== 'doctor' && req.user.id !== patientId) {
+      return res.status(403).json({ message: 'Unauthorized to generate report' });
+    }
+
+    // Build consultation data
+    const consultationData = {
+      patientId,
+      doctorId: doctorId || req.user.id,
+      date: new Date(),
+      symptoms,
+      diagnoses,
+      keyFindings,
+      medications,
+      followUp,
+      aiInsights,
+      startDate: req.body.startDate || new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+      endDate: req.body.endDate || new Date()
+    };
+
+    // Add trend analysis if requested
+    if (includeTrends) {
+      const metricTypes = ['blood_sugar', 'blood_pressure', 'weight'];
+      const trends = [];
+      
+      for (const type of metricTypes) {
+        try {
+          const trend = await analyzeTrend(patientId, type, 6);
+          if (trend.dataPoints >= 2) {
+            trends.push(trend);
+          }
+        } catch (error) {
+          console.error(`Error analyzing trend for ${type}:`, error);
+        }
+      }
+      
+      consultationData.trends = trends;
+    }
+
+    // Generate PDF report
+    const pdfBuffer = await generateConsultationReport(consultationData, patientId, { sections, includeTrends });
+
+    // Send PDF
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename="Consultation-Report-${Date.now()}.pdf"`);
+    res.send(pdfBuffer);
+
+  } catch (err) {
+    console.error('Error generating consultation report:', err);
+    res.status(500).json({ message: err.message || 'Failed to generate consultation report' });
+  }
+};

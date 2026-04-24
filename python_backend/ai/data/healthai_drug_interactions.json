@@ -1,0 +1,252 @@
+{
+  "drugs": {
+    "Aspirin": {
+      "name": "Aspirin",
+      "category": "NSAID",
+      "uses": ["pain relief", "fever reduction", "blood thinner"],
+      "common_dosage": "500mg",
+      "interactions": {
+        "Warfarin": "Increased bleeding risk",
+        "Ibuprofen": "Increased GI bleeding risk",
+        "Methotrexate": "Increased toxicity",
+        "ACE inhibitors": "Reduced effectiveness"
+      },
+      "side_effects": ["stomach upset", "heartburn", "nausea"],
+      "warnings": ["Do not use if allergic", "Avoid with ulcers", "May cause bleeding"]
+    },
+    "Ibuprofen": {
+      "name": "Ibuprofen",
+      "category": "NSAID",
+      "uses": ["pain relief", "fever reduction", "inflammation"],
+      "common_dosage": "400mg",
+      "interactions": {
+        "Aspirin": "Increased GI bleeding risk",
+        "Warfarin": "Increased bleeding risk",
+        "ACE inhibitors": "Reduced effectiveness",
+        "Lithium": "Increased lithium levels"
+      },
+      "side_effects": ["stomach upset", "heartburn", "dizziness"],
+      "warnings": ["Avoid with ulcers", "May cause kidney problems", "Increased heart attack risk"]
+    },
+    "Paracetamol": {
+      "name": "Paracetamol (Acetaminophen)",
+      "category": "Analgesic",
+      "uses": ["pain relief", "fever reduction"],
+      "common_dosage": "500mg",
+      "interactions": {
+        "Warfarin": "Increased bleeding risk",
+        "Alcohol": "Increased liver damage risk",
+        "Methotrexate": "Increased toxicity"
+      },
+      "side_effects": ["rare", "nausea", "rash"],
+      "warnings": ["Do not exceed 4g daily", "Avoid with liver disease", "Caution with alcohol"]
+    },
+    "Metformin": {
+      "name": "Metformin",
+      "category": "Antidiabetic",
+      "uses": ["diabetes management", "blood sugar control"],
+      "common_dosage": "500mg",
+      "interactions": {
+        "Contrast dye": "Risk of kidney damage",
+        "Alcohol": "Increased lactic acidosis risk",
+        "Diuretics": "Increased kidney problems"
+      },
+      "side_effects": ["nausea", "diarrhea", "metallic taste"],
+      "warnings": ["Monitor kidney function", "Avoid with kidney disease", "Hold before surgery"]
+    },
+    "Lisinopril": {
+      "name": "Lisinopril",
+      "category": "ACE inhibitor",
+      "uses": ["blood pressure control", "heart failure"],
+      "common_dosage": "10mg",
+      "interactions": {
+        "Potassium supplements": "Increased potassium levels",
+        "NSAIDs": "Reduced effectiveness",
+        "Diuretics": "Increased blood pressure drop"
+      },
+      "side_effects": ["dry cough", "dizziness", "fatigue"],
+      "warnings": ["Monitor potassium", "Avoid in pregnancy", "Check kidney function"]
+    },
+    "Atorvastatin": {
+      "name": "Atorvastatin",
+      "category": "Statin",
+      "uses": ["cholesterol reduction", "heart disease prevention"],
+      "common_dosage": "20mg",
+      "interactions": {
+        "Erythromycin": "Increased statin levels",
+        "Warfarin": "Increased bleeding risk",
+        "Gemfibrozil": "Increased muscle damage risk"
+      },
+      "side_effects": ["muscle pain", "liver problems", "nausea"],
+      "warnings": ["Monitor liver function", "Avoid grapefruit juice", "Report muscle pain"]
+    },
+    "Warfarin": {
+      "name": "Warfarin",
+      "category": "Anticoagulant",
+      "uses": ["blood clot prevention", "stroke prevention"],
+      "common_dosage": "5mg",
+      "interactions": {
+        "Aspirin": "Increased bleeding risk",
+        "NSAIDs": "Increased bleeding risk",
+        "Vitamin K": "Reduced effectiveness",
+        "Antibiotics": "Increased warfarin levels"
+      },
+      "side_effects": ["bleeding", "bruising", "nausea"],
+      "warnings": ["Regular INR monitoring required", "Avoid vitamin K foods", "Report bleeding"]
+    },
+    "Amoxicillin": {
+      "name": "Amoxicillin",
+      "category": "Antibiotic",
+      "uses": ["bacterial infection treatment"],
+      "common_dosage": "500mg",
+      "interactions": {
+        "Warfarin": "Increased bleeding risk",
+        "Oral contraceptives": "Reduced effectiveness",
+        "Methotrexate": "Increased toxicity"
+      },
+      "side_effects": ["rash", "diarrhea", "nausea"],
+      "warnings": ["Allergic reactions possible", "Complete full course", "May cause yeast infection"]
+    },
+    "Omeprazole": {
+      "name": "Omeprazole",
+      "category": "Proton pump inhibitor",
+      "uses": ["acid reflux treatment", "ulcer prevention"],
+      "common_dosage": "20mg",
+      "interactions": {
+        "Clopidogrel": "Reduced effectiveness",
+        "Methotrexate": "Increased toxicity",
+        "Vitamin B12": "Reduced absorption"
+      },
+      "side_effects": ["headache", "diarrhea", "nausea"],
+      "warnings": ["Long-term use may affect B12", "May mask serious conditions", "Take before meals"]
+    },
+    "Metoprolol": {
+      "name": "Metoprolol",
+      "category": "Beta blocker",
+      "uses": ["blood pressure control", "heart rate control"],
+      "common_dosage": "50mg",
+      "interactions": {
+        "Verapamil": "Increased heart block risk",
+        "Clonidine": "Increased blood pressure drop",
+        "NSAIDs": "Reduced effectiveness"
+      },
+      "side_effects": ["fatigue", "dizziness", "cold extremities"],
+      "warnings": ["Do not stop abruptly", "Monitor heart rate", "Caution with asthma"]
+    },
+    "Levothyroxine": {
+      "name": "Levothyroxine",
+      "category": "Thyroid hormone",
+      "uses": ["hypothyroidism treatment"],
+      "common_dosage": "50mcg",
+      "interactions": {
+        "Calcium supplements": "Reduced absorption",
+        "Iron supplements": "Reduced absorption",
+        "Proton pump inhibitors": "Reduced absorption"
+      },
+      "side_effects": ["tremor", "anxiety", "insomnia"],
+      "warnings": ["Take on empty stomach", "Regular TSH monitoring", "Consistent brand important"]
+    },
+    "Sertraline": {
+      "name": "Sertraline",
+      "category": "SSRI antidepressant",
+      "uses": ["depression treatment", "anxiety treatment"],
+      "common_dosage": "50mg",
+      "interactions": {
+        "MAOIs": "Serotonin syndrome risk",
+        "NSAIDs": "Increased bleeding risk",
+        "Warfarin": "Increased bleeding risk"
+      },
+      "side_effects": ["nausea", "sexual dysfunction", "insomnia"],
+      "warnings": ["Increased suicide risk in young people", "Do not stop abruptly", "May take weeks to work"]
+    },
+    "Loratadine": {
+      "name": "Loratadine",
+      "category": "Antihistamine",
+      "uses": ["allergy relief", "itching relief"],
+      "common_dosage": "10mg",
+      "interactions": {
+        "Ketoconazole": "Increased loratadine levels",
+        "Erythromycin": "Increased loratadine levels"
+      },
+      "side_effects": ["drowsiness", "dry mouth", "headache"],
+      "warnings": ["May cause drowsiness", "Avoid alcohol", "Take as directed"]
+    },
+    "Insulin": {
+      "name": "Insulin",
+      "category": "Antidiabetic",
+      "uses": ["diabetes management", "blood sugar control"],
+      "common_dosage": "varies",
+      "interactions": {
+        "Beta blockers": "Masked hypoglycemia symptoms",
+        "Alcohol": "Increased hypoglycemia risk",
+        "Corticosteroids": "Increased blood sugar"
+      },
+      "side_effects": ["hypoglycemia", "weight gain", "injection site reactions"],
+      "warnings": ["Regular blood sugar monitoring", "Proper injection technique", "Carry glucose tablets"]
+    },
+    "Prednisone": {
+      "name": "Prednisone",
+      "category": "Corticosteroid",
+      "uses": ["inflammation reduction", "immune suppression"],
+      "common_dosage": "5mg",
+      "interactions": {
+        "NSAIDs": "Increased GI bleeding risk",
+        "Warfarin": "Reduced effectiveness",
+        "Antidiabetics": "Increased blood sugar"
+      },
+      "side_effects": ["increased appetite", "insomnia", "mood changes"],
+      "warnings": ["Do not stop abruptly", "Increased infection risk", "Monitor blood sugar"]
+    },
+    "Clopidogrel": {
+      "name": "Clopidogrel",
+      "category": "Antiplatelet",
+      "uses": ["blood clot prevention", "stroke prevention"],
+      "common_dosage": "75mg",
+      "interactions": {
+        "Omeprazole": "Reduced effectiveness",
+        "Aspirin": "Increased bleeding risk",
+        "NSAIDs": "Increased bleeding risk"
+      },
+      "side_effects": ["bleeding", "bruising", "rash"],
+      "warnings": ["Report unusual bleeding", "Do not stop without consulting doctor", "Regular monitoring"]
+    },
+    "Amlodipine": {
+      "name": "Amlodipine",
+      "category": "Calcium channel blocker",
+      "uses": ["blood pressure control", "angina relief"],
+      "common_dosage": "5mg",
+      "interactions": {
+        "Simvastatin": "Increased statin levels",
+        "Beta blockers": "Increased blood pressure drop",
+        "NSAIDs": "Reduced effectiveness"
+      },
+      "side_effects": ["swollen ankles", "headache", "flushing"],
+      "warnings": ["Avoid grapefruit juice", "Monitor blood pressure", "May take weeks to work"]
+    },
+    "Albuterol": {
+      "name": "Albuterol",
+      "category": "Bronchodilator",
+      "uses": ["asthma relief", "COPD relief"],
+      "common_dosage": "varies",
+      "interactions": {
+        "Beta blockers": "Reduced effectiveness",
+        "Tricyclic antidepressants": "Increased heart rate"
+      },
+      "side_effects": ["tremor", "anxiety", "headache"],
+      "warnings": ["Use as directed", "Seek help if not working", "May cause jitteriness"]
+    },
+    "Fluoxetine": {
+      "name": "Fluoxetine",
+      "category": "SSRI antidepressant",
+      "uses": ["depression treatment", "OCD treatment"],
+      "common_dosage": "20mg",
+      "interactions": {
+        "MAOIs": "Serotonin syndrome risk",
+        "Warfarin": "Increased bleeding risk",
+        "NSAIDs": "Increased bleeding risk"
+      },
+      "side_effects": ["nausea", "sexual dysfunction", "insomnia"],
+      "warnings": ["Increased suicide risk in young people", "Do not stop abruptly", "May take weeks to work"]
+    }
+  }
+}

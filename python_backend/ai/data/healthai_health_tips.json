@@ -1,0 +1,160 @@
+{
+  "tips": {
+    "fitness": [
+      "Aim for at least 150 minutes of moderate aerobic activity per week",
+      "Include strength training exercises at least 2 days per week",
+      "Start slowly if you're new to exercise and gradually increase intensity",
+      "Stay hydrated during and after exercise",
+      "Warm up before exercise and cool down after",
+      "Exercise at the same time each day to build a habit",
+      "Mix cardio, strength, and flexibility exercises",
+      "Listen to your body and rest when needed",
+      "Find activities you enjoy to stay motivated",
+      "Consider working with a trainer for proper form"
+    ],
+    "nutrition": [
+      "Eat a variety of colorful fruits and vegetables daily",
+      "Choose whole grains over refined grains",
+      "Include lean proteins like chicken, fish, and legumes",
+      "Limit added sugars and processed foods",
+      "Drink plenty of water throughout the day",
+      "Eat smaller portions and chew slowly",
+      "Include healthy fats like olive oil and nuts",
+      "Limit salt intake to reduce blood pressure",
+      "Eat breakfast to start your day right",
+      "Plan meals ahead to avoid unhealthy choices"
+    ],
+    "sleep": [
+      "Aim for 7-9 hours of sleep per night",
+      "Keep a consistent sleep schedule, even on weekends",
+      "Create a dark, quiet, cool sleeping environment",
+      "Avoid screens 1 hour before bedtime",
+      "Avoid caffeine after 2 PM",
+      "Avoid large meals close to bedtime",
+      "Exercise regularly but not close to bedtime",
+      "Try relaxation techniques like deep breathing",
+      "Keep your bedroom for sleep only",
+      "Consult a doctor if you have persistent sleep problems"
+    ],
+    "stress": [
+      "Practice deep breathing exercises daily",
+      "Try meditation or mindfulness for 10-15 minutes daily",
+      "Exercise regularly to reduce stress hormones",
+      "Maintain social connections with friends and family",
+      "Set realistic goals and priorities",
+      "Take breaks during work to avoid burnout",
+      "Practice yoga or tai chi",
+      "Keep a journal to express your feelings",
+      "Limit caffeine and alcohol",
+      "Seek professional help if stress becomes overwhelming"
+    ],
+    "heart_health": [
+      "Keep blood pressure below 120/80 mmHg",
+      "Maintain cholesterol levels within healthy range",
+      "Exercise regularly for heart health",
+      "Eat a heart-healthy diet rich in fruits and vegetables",
+      "Limit salt intake to less than 2,300mg per day",
+      "Avoid smoking and secondhand smoke",
+      "Maintain a healthy weight",
+      "Manage stress through relaxation techniques",
+      "Limit alcohol consumption",
+      "Get regular health checkups"
+    ],
+    "diabetes": [
+      "Monitor blood sugar levels regularly",
+      "Eat balanced meals with controlled portions",
+      "Choose foods with low glycemic index",
+      "Exercise regularly to improve insulin sensitivity",
+      "Maintain a healthy weight",
+      "Take medications as prescribed",
+      "Stay hydrated with water",
+      "Avoid sugary drinks and processed foods",
+      "Get regular eye and foot checkups",
+      "Manage stress and get adequate sleep"
+    ],
+    "mental_health": [
+      "Practice self-compassion and positive self-talk",
+      "Maintain regular social connections",
+      "Engage in activities you enjoy",
+      "Set boundaries to protect your mental health",
+      "Seek professional help when needed",
+      "Practice gratitude daily",
+      "Limit social media use",
+      "Spend time in nature",
+      "Keep a routine for stability",
+      "Express your emotions in healthy ways"
+    ],
+    "immune_system": [
+      "Get adequate sleep to boost immunity",
+      "Eat foods rich in vitamin C like citrus fruits",
+      "Include zinc-rich foods like nuts and seeds",
+      "Exercise regularly to strengthen immunity",
+      "Manage stress through relaxation",
+      "Wash hands frequently to prevent infections",
+      "Stay hydrated with plenty of water",
+      "Avoid smoking and limit alcohol",
+      "Get vaccinated as recommended",
+      "Maintain good hygiene practices"
+    ],
+    "bone_health": [
+      "Get adequate calcium from dairy or fortified foods",
+      "Get enough vitamin D through sunlight or supplements",
+      "Exercise regularly, especially weight-bearing activities",
+      "Avoid smoking which weakens bones",
+      "Limit alcohol consumption",
+      "Maintain a healthy weight",
+      "Include protein in your diet",
+      "Avoid excessive caffeine",
+      "Get regular bone density checks if at risk",
+      "Consult doctor about osteoporosis prevention"
+    ],
+    "skin_health": [
+      "Wash face twice daily with gentle cleanser",
+      "Use sunscreen with SPF 30 or higher daily",
+      "Moisturize skin regularly",
+      "Avoid smoking which ages skin",
+      "Stay hydrated by drinking water",
+      "Get adequate sleep for skin repair",
+      "Eat antioxidant-rich foods",
+      "Avoid excessive sun exposure",
+      "Don't touch your face frequently",
+      "Consult dermatologist for skin concerns"
+    ],
+    "digestive_health": [
+      "Eat high-fiber foods like whole grains and vegetables",
+      "Drink plenty of water throughout the day",
+      "Eat slowly and chew food thoroughly",
+      "Avoid large meals, eat smaller portions",
+      "Limit fatty and spicy foods",
+      "Exercise regularly to aid digestion",
+      "Manage stress which affects digestion",
+      "Avoid eating close to bedtime",
+      "Include probiotics in your diet",
+      "Consult doctor if you have persistent digestive issues"
+    ],
+    "eye_health": [
+      "Get regular eye exams",
+      "Wear UV-protective sunglasses outdoors",
+      "Take breaks from screens every 20 minutes",
+      "Eat foods rich in lutein and zeaxanthin",
+      "Don't smoke which damages eyes",
+      "Maintain healthy blood pressure and cholesterol",
+      "Protect eyes from injury",
+      "Keep contact lenses clean",
+      "Manage diabetes to prevent eye problems",
+      "Consult eye doctor for vision changes"
+    ],
+    "respiratory_health": [
+      "Avoid smoking and secondhand smoke",
+      "Exercise regularly to strengthen lungs",
+      "Avoid air pollution when possible",
+      "Keep indoor air clean and humid",
+      "Get vaccinated against flu and pneumonia",
+      "Avoid respiratory irritants",
+      "Practice deep breathing exercises",
+      "Maintain healthy weight",
+      "Manage asthma and allergies",
+      "Consult doctor for persistent cough"
+    ]
+  }
+}

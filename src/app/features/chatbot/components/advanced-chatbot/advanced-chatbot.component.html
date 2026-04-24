@@ -1,0 +1,119 @@
+<app-health-navbar></app-health-navbar>
+
+<div class="acb-container">
+  <!-- Sidebar -->
+  <aside class="acb-sidebar" [class.collapsed]="!showSidebar()">
+    <div class="acb-sidebar-header">
+      <h2>💬 MediAI</h2>
+      <button class="acb-toggle-btn" (click)="toggleSidebar()" title="Toggle sidebar">
+        <i class="fa-solid" [class.fa-chevron-left]="showSidebar()" [class.fa-chevron-right]="!showSidebar()"></i>
+      </button>
+    </div>
+
+    @if (showSidebar()) {
+      <div class="acb-sidebar-content">
+        <button class="acb-new-chat-btn" (click)="clearChat()">
+          <i class="fa-solid fa-plus"></i> New Chat
+        </button>
+
+        <div class="acb-sidebar-section">
+          <h3>Quick Actions</h3>
+          <div class="acb-quick-actions">
+            <button class="acb-action-btn" (click)="useSuggestedQuestion('🏥 How do I book an appointment?')">
+              <i class="fa-solid fa-calendar"></i> Book Appointment
+            </button>
+            <button class="acb-action-btn" (click)="useSuggestedQuestion('👨‍⚕️ How do I find a specialist?')">
+              <i class="fa-solid fa-stethoscope"></i> Find Doctor
+            </button>
+            <button class="acb-action-btn" (click)="useSuggestedQuestion('🩺 What should I do about my symptoms?')">
+              <i class="fa-solid fa-heart-pulse"></i> Symptoms
+            </button>
+          </div>
+        </div>
+
+        <div class="acb-sidebar-section">
+          <h3>About MediAI</h3>
+          <p class="acb-about-text">
+            I'm an advanced healthcare assistant powered by AI. I can help you with health information, appointments, and platform features.
+          </p>
+        </div>
+      </div>
+    }
+  </aside>
+
+  <!-- Main Chat Area -->
+  <main class="acb-main">
+    <!-- Messages Container -->
+    <div class="acb-messages" #messagesContainer>
+      @for (message of messages(); track message.id) {
+        <div class="acb-message" [class]="'acb-message-' + message.role" [class.acb-emergency]="message.type === 'emergency'" [class.acb-error]="message.type === 'error'">
+          <div class="acb-message-avatar">
+            @if (message.role === 'user') {
+              <i class="fa-solid fa-user"></i>
+            } @else {
+              <i class="fa-solid fa-robot"></i>
+            }
+          </div>
+          <div class="acb-message-content">
+            <div class="acb-message-text" [innerHTML]="message.content | markdownToHtml"></div>
+            <span class="acb-message-time">{{ message.timestamp | date:'short' }}</span>
+          </div>
+        </div>
+      }
+
+      @if (isLoading()) {
+        <div class="acb-message acb-message-assistant">
+          <div class="acb-message-avatar">
+            <i class="fa-solid fa-robot"></i>
+          </div>
+          <div class="acb-message-content">
+            <div class="acb-typing-indicator">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Suggested Questions (shown when no messages) -->
+    @if (messages().length <= 1) {
+      <div class="acb-suggestions">
+        <h3>Suggested Questions</h3>
+        <div class="acb-suggestions-grid">
+          @for (question of suggestedQuestions; track question) {
+            <button class="acb-suggestion-btn" (click)="useSuggestedQuestion(question)">
+              {{ question }}
+            </button>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- Input Area -->
+    <div class="acb-input-area">
+      <div class="acb-input-wrapper">
+        <textarea
+          class="acb-input"
+          [(ngModel)]="inputMessage"
+          (keydown.enter)="handleKeydown($any($event))"
+          placeholder="Ask me anything about your health or the platform... (Shift+Enter for new line)"
+          [disabled]="isLoading()">
+        </textarea>
+        <button
+          class="acb-send-btn"
+          (click)="sendMessage()"
+          [disabled]="!inputMessage().trim() || isLoading()"
+          title="Send message (Enter)">
+          @if (isLoading()) {
+            <i class="fa-solid fa-spinner fa-spin"></i>
+          } @else {
+            <i class="fa-solid fa-paper-plane"></i>
+          }
+        </button>
+      </div>
+      <p class="acb-input-hint">💡 Tip: I can help with appointments, doctors, health info, and more!</p>
+    </div>
+  </main>
+</div>

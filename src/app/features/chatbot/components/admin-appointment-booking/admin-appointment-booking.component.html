@@ -1,0 +1,199 @@
+<div class="admin-appointment-booking">
+  <div class="booking-container">
+    <h2>Book an Appointment</h2>
+    
+    <!-- Error Message -->
+    <div *ngIf="error()" class="alert alert-error">
+      <i class="fas fa-exclamation-circle"></i>
+      {{ error() }}
+    </div>
+
+    <!-- Success Message -->
+    <div *ngIf="successMessage()" class="alert alert-success">
+      <i class="fas fa-check-circle"></i>
+      {{ successMessage() }}
+    </div>
+
+    <!-- Booking Form -->
+    <div *ngIf="!showConfirmation()" class="booking-form">
+      <!-- Step 1: Select Doctor -->
+      <div class="form-section">
+        <h3>Step 1: Select a Doctor</h3>
+        <div class="doctor-list">
+          <div *ngIf="loading()" class="loading">
+            <i class="fas fa-spinner fa-spin"></i> Loading doctors...
+          </div>
+          <div *ngIf="!loading() && doctors().length === 0" class="no-data">
+            No doctors available
+          </div>
+          <div *ngFor="let doctor of doctors()" 
+               class="doctor-card" 
+               [class.selected]="selectedDoctor()?.id === doctor.id"
+               (click)="onDoctorSelected(doctor)">
+            <div class="doctor-info">
+              <img [src]="doctor.avatar || doctor.photo" [alt]="doctor.name" class="doctor-avatar">
+              <div class="doctor-details">
+                <h4>{{ doctor.name }}</h4>
+                <p class="specialty">{{ doctor.specialty }}</p>
+                <div class="doctor-meta">
+                  <span class="rating">
+                    <i class="fas fa-star"></i> {{ doctor.rating || 'N/A' }}
+                  </span>
+                  <span class="fee">Fee: ${{ doctor.consultationFee }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="selection-indicator">
+              <i class="fas fa-check-circle"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2: Select Date and Time -->
+      <div class="form-section" *ngIf="selectedDoctor()">
+        <h3>Step 2: Select Date and Time</h3>
+        
+        <!-- Date Selection -->
+        <div class="form-group">
+          <label>Date</label>
+          <select [(ngModel)]="selectedDate" (change)="onDateSelected(selectedDate())" class="form-control">
+            <option value="">Select a date</option>
+            <option *ngFor="let date of getAvailableDates()" [value]="date">
+              {{ date }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Time Selection -->
+        <div class="form-group" *ngIf="selectedDate()">
+          <label>Time</label>
+          <div class="time-slots">
+            <div *ngIf="getAvailableTimesForDate(selectedDate()).length === 0" class="no-slots">
+              No available time slots for this date
+            </div>
+            <button *ngFor="let slot of getAvailableTimesForDate(selectedDate())"
+                    type="button"
+                    class="time-slot"
+                    [class.selected]="selectedTime() === slot.time"
+                    (click)="onTimeSelected(slot.time, slot.id)">
+              {{ slot.time }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 3: Appointment Details -->
+      <div class="form-section" *ngIf="selectedDoctor() && selectedDate() && selectedTime()">
+        <h3>Step 3: Appointment Details</h3>
+        
+        <div class="form-group">
+          <label>Appointment Type</label>
+          <select [(ngModel)]="appointmentType" class="form-control">
+            <option value="in-person">In-Person</option>
+            <option value="video">Video Call</option>
+            <option value="chat">Chat</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Reason for Visit (Optional)</label>
+          <textarea [(ngModel)]="reason" 
+                    class="form-control" 
+                    placeholder="Enter reason for appointment"
+                    rows="3"></textarea>
+        </div>
+      </div>
+
+      <!-- Summary and Book Button -->
+      <div class="form-section" *ngIf="selectedDoctor() && selectedDate() && selectedTime()">
+        <h3>Appointment Summary</h3>
+        <div class="summary">
+          <div class="summary-item">
+            <span class="label">Doctor:</span>
+            <span class="value">{{ selectedDoctor()?.name }}</span>
+          </div>
+          <div class="summary-item">
+            <span class="label">Specialty:</span>
+            <span class="value">{{ selectedDoctor()?.specialty }}</span>
+          </div>
+          <div class="summary-item">
+            <span class="label">Date:</span>
+            <span class="value">{{ selectedDate() }}</span>
+          </div>
+          <div class="summary-item">
+            <span class="label">Time:</span>
+            <span class="value">{{ selectedTime() }}</span>
+          </div>
+          <div class="summary-item">
+            <span class="label">Type:</span>
+            <span class="value">{{ appointmentType() }}</span>
+          </div>
+          <div class="summary-item">
+            <span class="label">Fee:</span>
+            <span class="value">${{ selectedDoctor()?.consultationFee }}</span>
+          </div>
+        </div>
+
+        <div class="button-group">
+          <button (click)="bookAppointment()" 
+                  [disabled]="loading() || !isFormValid()"
+                  class="btn btn-primary">
+            <i class="fas fa-calendar-check"></i>
+            {{ loading() ? 'Booking...' : 'Book Appointment' }}
+          </button>
+          <button (click)="resetForm()" class="btn btn-secondary">
+            <i class="fas fa-redo"></i> Reset
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Confirmation Screen -->
+    <div *ngIf="showConfirmation() && bookedAppointment()" class="confirmation-screen">
+      <div class="confirmation-header">
+        <i class="fas fa-check-circle"></i>
+        <h2>Appointment Confirmed!</h2>
+      </div>
+
+      <div class="confirmation-details">
+        <div class="detail-section">
+          <h3>Appointment Details</h3>
+          <div class="detail-item">
+            <span class="label">Doctor:</span>
+            <span class="value">{{ bookedAppointment()?.doctorName }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Date:</span>
+            <span class="value">{{ bookedAppointment()?.date }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Time:</span>
+            <span class="value">{{ bookedAppointment()?.time }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Type:</span>
+            <span class="value">{{ bookedAppointment()?.type }}</span>
+          </div>
+          <div class="detail-item" *ngIf="bookedAppointment()?.address">
+            <span class="label">Location:</span>
+            <span class="value">{{ bookedAppointment()?.address }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Fee:</span>
+            <span class="value">${{ bookedAppointment()?.fee }}</span>
+          </div>
+        </div>
+
+        <div class="confirmation-actions">
+          <button (click)="addToCalendar()" class="btn btn-primary">
+            <i class="fas fa-calendar-plus"></i> Add to Calendar
+          </button>
+          <button (click)="closeConfirmation()" class="btn btn-secondary">
+            <i class="fas fa-times"></i> Close
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

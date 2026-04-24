@@ -2,6 +2,7 @@ import { Component, signal, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { HealthNavbarComponent } from '../../components/health-navbar/health-navbar.component';
+import { HealthAIPanelComponent } from '../../components/healthai-panel/healthai-panel.component';
 import { HealthDataService } from '../../services/health-data.service';
 import { AuthService } from '../../../../core/Auth/services/auth-service.service';
 import { MedicalRecord, Notification } from '../../models/health.models';
@@ -9,12 +10,12 @@ import { MedicalRecord, Notification } from '../../models/health.models';
 @Component({
   selector: 'app-patient-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink, HealthNavbarComponent],
+  imports: [CommonModule, RouterLink, HealthNavbarComponent, HealthAIPanelComponent],
   templateUrl: './patient-dashboard.component.html',
   styleUrl: './patient-dashboard.component.css'
 })
 export class PatientDashboardComponent implements OnInit {
-  activeTab = signal<'appointments' | 'records' | 'notifications' | 'cases'>('appointments');
+  activeTab = signal<'appointments' | 'records' | 'notifications' | 'cases' | 'ai'>('appointments');
   records = signal<MedicalRecord[]>([]);
   notifications = signal<Notification[]>([]);
   cases = signal<any[]>([]);
@@ -30,6 +31,8 @@ export class PatientDashboardComponent implements OnInit {
   );
 
   constructor(public auth: AuthService, public dataService: HealthDataService) {}
+
+  activeCall = signal<any>(null);
 
   ngOnInit() {
     this.dataService.getAppointments().subscribe();
@@ -75,5 +78,16 @@ export class PatientDashboardComponent implements OnInit {
   }
   urgencyLabel(u?: string) {
     return u === 'emergency' ? '🚨 Emergency' : u === 'high' ? '⚠️ Urgent' : u === 'medium' ? '🟡 See Doctor Soon' : '🟢 Non-Urgent';
+  }
+
+  joinCall(apt: any) {
+    this.activeCall.set({
+      apt,
+      url: `https://meet.jit.si/${apt.id}-${this.auth.currentUser?.id}`
+    });
+  }
+
+  endCall() {
+    this.activeCall.set(null);
   }
 }

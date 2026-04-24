@@ -1,4 +1,5 @@
 const Doctor = require('../models/Doctor');
+const Review = require('../models/Review');
 
 // GET /api/doctors
 exports.getDoctors = async (req, res) => {
@@ -92,6 +93,35 @@ exports.symptomCheck = async (req, res) => {
 
     const doctors = await Doctor.find({ specialtyKey }).limit(4);
     res.json({ specialtyKey, doctors });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// GET /api/doctors/:id/availability
+exports.getDoctorAvailability = async (req, res) => {
+  try {
+    const doctor = await Doctor.findById(req.params.id);
+    if (!doctor) return res.status(404).json({ message: 'Doctor not found' });
+    
+    res.json({
+      doctorId: doctor._id,
+      name: doctor.name,
+      availability: doctor.availability || []
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// GET /api/doctors/:id/reviews
+exports.getDoctorReviews = async (req, res) => {
+  try {
+    const reviews = await Review.find({ doctorId: req.params.id })
+      .select('rating comment patientName patientAvatar visitType createdAt')
+      .sort({ createdAt: -1 });
+    
+    res.json(reviews);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

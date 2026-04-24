@@ -96,6 +96,15 @@ export interface AdminStats {
   revenue: number;
   satisfaction: number;
   chartData: number[];
+  completedCount?: number;
+  cancelledCount?: number;
+  upcomingCount?: number;
+  totalReviews?: number;
+  avgRating?: string;
+  newPatientsThisMonth?: number;
+  newDoctorsThisMonth?: number;
+  pendingDoctors?: number;
+  totalChats?: number;
 }
 
 export interface Notification {

@@ -73,6 +73,9 @@
         <i class="fa-solid fa-folder-open"></i> My Cases
         @if (cases().length > 0) { <span class="pd-tab-badge" style="background:rgba(16,185,129,0.2);color:#34d399">{{ cases().length }}</span> }
       </button>
+      <button class="pd-tab" [class.active]="activeTab()==='ai'" (click)="activeTab.set('ai')">
+        <i class="fa-solid fa-robot"></i> AI Assistant
+      </button>
     </div>
 
     <!-- APPOINTMENTS -->
@@ -226,5 +229,37 @@
       </div>
     }
 
+    <!-- AI ASSISTANT -->
+    @if (activeTab() === 'ai') {
+      <app-healthai-panel></app-healthai-panel>
+    }
+
   </div>
 </div>
+
+<!-- Video Call Modal -->
+@if (activeCall()) {
+  <div class="pd-call-overlay">
+    <div class="pd-call-modal">
+      <div class="pd-call-header">
+        <div class="pd-call-info">
+          <div class="pd-call-avatar">{{ activeCall()!.apt.doctorName?.[0] }}</div>
+          <div>
+            <div class="pd-call-name">{{ activeCall()!.apt.doctorName }}</div>
+            <div class="pd-call-spec">{{ activeCall()!.apt.doctorSpecialty }}</div>
+          </div>
+          <div class="pd-call-live"><span class="pd-live-dot"></span> Live</div>
+        </div>
+        <button class="pd-call-end" (click)="endCall()">
+          <i class="fa-solid fa-phone-slash"></i> End Call
+        </button>
+      </div>
+      <iframe
+        [src]="activeCall()!.url"
+        class="pd-call-frame"
+        allow="camera; microphone; fullscreen; display-capture; autoplay"
+        allowfullscreen>
+      </iframe>
+    </div>
+  </div>
+}

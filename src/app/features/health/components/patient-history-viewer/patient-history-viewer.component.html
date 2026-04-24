@@ -1,0 +1,165 @@
+<div class="patient-history-viewer">
+  <div class="history-header">
+    <h2>Patient Health History</h2>
+    
+    <!-- Filters -->
+    <div class="filters-section">
+      <div class="filter-group">
+        <label for="metricType">Metric Type:</label>
+        <select id="metricType" [(ngModel)]="selectedMetricType" (change)="applyFilters()">
+          <option *ngFor="let type of metricTypes" [value]="type.value">
+            {{ type.label }}
+          </option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="startDate">From:</label>
+        <input type="date" id="startDate" [(ngModel)]="startDate" (change)="applyFilters()">
+      </div>
+
+      <div class="filter-group">
+        <label for="endDate">To:</label>
+        <input type="date" id="endDate" [(ngModel)]="endDate" (change)="applyFilters()">
+      </div>
+
+      <button class="btn-clear" (click)="clearFilters()">Clear Filters</button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading patient history...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !loading" class="error-state">
+    <p>{{ error }}</p>
+    <button (click)="loadHistory()">Retry</button>
+  </div>
+
+  <!-- History Data -->
+  <div *ngIf="historyData && !loading" class="history-content">
+    
+    <!-- Summary -->
+    <div class="summary-card">
+      <h3>Summary</h3>
+      <p>Total Records: <strong>{{ historyData.totalRecords }}</strong></p>
+    </div>
+
+    <!-- Blood Levels Section -->
+    <div class="metrics-section" *ngIf="historyData.data.bloodLevels.length > 0">
+      <h3>Blood Levels</h3>
+      <div class="metrics-table-container">
+        <table class="metrics-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Metric</th>
+              <th>Value</th>
+              <th>Unit</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let metric of historyData.data.bloodLevels">
+              <td>{{ formatDate(metric.recordedAt) }}</td>
+              <td>{{ formatMetricName(metric.type) }}</td>
+              <td>{{ metric.value }}</td>
+              <td>{{ metric.unit }}</td>
+              <td>
+                <span [class]="getStatusClass(metric.rangeStatus || 'normal')">
+                  {{ getStatusIcon(metric.rangeStatus || 'normal') }}
+                  {{ metric.rangeStatus || 'Normal' }}
+                </span>
+                <div *ngIf="metric.rangeMessage" class="status-message">
+                  {{ metric.rangeMessage }}
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Sugar Levels Section -->
+    <div class="metrics-section" *ngIf="historyData.data.sugarLevels.length > 0">
+      <h3>Sugar Levels</h3>
+      <div class="metrics-table-container">
+        <table class="metrics-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Metric</th>
+              <th>Value</th>
+              <th>Unit</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let metric of historyData.data.sugarLevels">
+              <td>{{ formatDate(metric.recordedAt) }}</td>
+              <td>{{ formatMetricName(metric.type) }}</td>
+              <td>{{ metric.value }}</td>
+              <td>{{ metric.unit }}</td>
+              <td>
+                <span [class]="getStatusClass(metric.rangeStatus || 'normal')">
+                  {{ getStatusIcon(metric.rangeStatus || 'normal') }}
+                  {{ metric.rangeStatus || 'Normal' }}
+                </span>
+                <div *ngIf="metric.rangeMessage" class="status-message">
+                  {{ metric.rangeMessage }}
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Other Metrics Section -->
+    <div class="metrics-section" *ngIf="historyData.data.otherMetrics.length > 0">
+      <h3>Other Health Metrics</h3>
+      <div class="metrics-table-container">
+        <table class="metrics-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Metric</th>
+              <th>Value</th>
+              <th>Unit</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let metric of historyData.data.otherMetrics">
+              <td>{{ formatDate(metric.recordedAt) }}</td>
+              <td>{{ formatMetricName(metric.type) }}</td>
+              <td>
+                <span *ngIf="!metric.value2">{{ metric.value }}</span>
+                <span *ngIf="metric.value2">{{ metric.value }}/{{ metric.value2 }}</span>
+              </td>
+              <td>{{ metric.unit }}</td>
+              <td>
+                <span [class]="getStatusClass(metric.rangeStatus || 'normal')">
+                  {{ getStatusIcon(metric.rangeStatus || 'normal') }}
+                  {{ metric.rangeStatus || 'Normal' }}
+                </span>
+                <div *ngIf="metric.rangeMessage" class="status-message">
+                  {{ metric.rangeMessage }}
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="historyData.totalRecords === 0" class="empty-state">
+      <p>No health metrics found for this patient.</p>
+      <p class="empty-hint">Health metrics will appear here once they are recorded.</p>
+    </div>
+  </div>
+</div>

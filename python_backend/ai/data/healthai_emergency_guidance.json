@@ -1,0 +1,327 @@
+{
+  "emergencies": {
+    "choking": {
+      "name": "Choking",
+      "severity": "critical",
+      "immediate_actions": [
+        "Encourage coughing if able",
+        "Perform Heimlich maneuver: Stand behind person, place fist above navel",
+        "Quick upward thrusts until object dislodges",
+        "If unconscious, begin CPR"
+      ],
+      "call_ambulance": true,
+      "do_not": [
+        "Do not slap on back if conscious",
+        "Do not leave person alone",
+        "Do not give food or water"
+      ],
+      "recovery": "Monitor breathing, keep person calm, seek medical attention"
+    },
+    "chest pain": {
+      "name": "Chest Pain / Possible Heart Attack",
+      "severity": "critical",
+      "immediate_actions": [
+        "Call ambulance immediately",
+        "Have person sit or lie down",
+        "Loosen tight clothing",
+        "Chew aspirin if available and not allergic",
+        "Keep person calm and reassured"
+      ],
+      "call_ambulance": true,
+      "do_not": [
+        "Do not delay calling ambulance",
+        "Do not have person exert themselves",
+        "Do not give food or water"
+      ],
+      "recovery": "Emergency medical care required"
+    },
+    "difficulty breathing": {
+      "name": "Difficulty Breathing / Shortness of Breath",
+      "severity": "critical",
+      "immediate_actions": [
+        "Call ambulance if severe",
+        "Have person sit upright",
+        "Loosen tight clothing",
+        "If asthma, use inhaler if available",
+        "Keep person calm"
+      ],
+      "call_ambulance": true,
+      "do_not": [
+        "Do not panic",
+        "Do not lay person flat",
+        "Do not delay seeking help"
+      ],
+      "recovery": "Seek immediate medical attention"
+    },
+    "severe bleeding": {
+      "name": "Severe Bleeding",
+      "severity": "critical",
+      "immediate_actions": [
+        "Call ambulance immediately",
+        "Apply direct pressure with clean cloth",
+        "Elevate injured area above heart if possible",
+        "Do not remove embedded objects",
+        "Apply tourniquet if limb bleeding cannot be controlled"
+      ],
+      "call_ambulance": true,
+      "do_not": [
+        "Do not remove embedded objects",
+        "Do not probe the wound",
+        "Do not apply tourniquet unless necessary"
+      ],
+      "recovery": "Emergency medical care required"
+    },
+    "unconsciousness": {
+      "name": "Unconsciousness / Loss of Consciousness",
+      "severity": "critical",
+      "immediate_actions": [
+        "Call ambulance immediately",
+        "Check for responsiveness",
+        "Check breathing and pulse",
+        "Place in recovery position if breathing",
+        "Begin CPR if no pulse"
+      ],
+      "call_ambulance": true,
+      "do_not": [
+        "Do not move person unnecessarily",
+        "Do not give food or water",
+        "Do not leave person alone"
+      ],
+      "recovery": "Emergency medical care required"
+    },
+    "severe allergic reaction": {
+      "name": "Severe Allergic Reaction / Anaphylaxis",
+      "severity": "critical",
+      "immediate_actions": [
+        "Call ambulance immediately",
+        "Use epinephrine auto-injector if available",
+        "Have person lie down with legs elevated",
+        "Loosen tight clothing",
+        "Monitor breathing"
+      ],
+      "call_ambulance": true,
+      "do_not": [
+        "Do not delay using epinephrine",
+        "Do not give food or water",
+        "Do not leave person alone"
+      ],
+      "recovery": "Emergency medical care required"
+    },
+    "poisoning": {
+      "name": "Poisoning / Overdose",
+      "severity": "critical",
+      "immediate_actions": [
+        "Call poison control or ambulance",
+        "Remove person from source if toxic gas",
+        "Do not induce vomiting",
+        "Keep sample of poison if possible",
+        "Monitor breathing and consciousness"
+      ],
+      "call_ambulance": true,
+      "do_not": [
+        "Do not induce vomiting",
+        "Do not give activated charcoal without guidance",
+        "Do not delay seeking help"
+      ],
+      "recovery": "Emergency medical care required"
+    },
+    "severe burns": {
+      "name": "Severe Burns",
+      "severity": "critical",
+      "immediate_actions": [
+        "Call ambulance immediately",
+        "Cool burn with cool (not cold) water for 10-20 minutes",
+        "Remove tight clothing if not stuck",
+        "Cover with clean, dry cloth",
+        "Do not apply ice directly"
+      ],
+      "call_ambulance": true,
+      "do_not": [
+        "Do not apply ice directly",
+        "Do not use butter or oil",
+        "Do not pop blisters"
+      ],
+      "recovery": "Emergency medical care required"
+    },
+    "fracture": {
+      "name": "Fracture / Broken Bone",
+      "severity": "high",
+      "immediate_actions": [
+        "Call ambulance if severe",
+        "Immobilize the injured area",
+        "Apply ice wrapped in cloth",
+        "Elevate if possible",
+        "Do not move the injured area"
+      ],
+      "call_ambulance": true,
+      "do_not": [
+        "Do not move the injured area",
+        "Do not apply ice directly",
+        "Do not attempt to straighten"
+      ],
+      "recovery": "Seek medical attention for X-ray and treatment"
+    },
+    "head injury": {
+      "name": "Head Injury / Concussion",
+      "severity": "high",
+      "immediate_actions": [
+        "Call ambulance if severe",
+        "Keep person still and calm",
+        "Apply ice to reduce swelling",
+        "Monitor for confusion or drowsiness",
+        "Do not move neck if possible"
+      ],
+      "call_ambulance": true,
+      "do_not": [
+        "Do not move person unnecessarily",
+        "Do not apply direct pressure if bleeding",
+        "Do not ignore symptoms"
+      ],
+      "recovery": "Seek medical attention for evaluation"
+    },
+    "stroke": {
+      "name": "Stroke",
+      "severity": "critical",
+      "immediate_actions": [
+        "Call ambulance immediately",
+        "Note time symptoms started",
+        "Keep person calm and still",
+        "Do not give food or water",
+        "Monitor breathing"
+      ],
+      "call_ambulance": true,
+      "do_not": [
+        "Do not delay calling ambulance",
+        "Do not give food or water",
+        "Do not move person unnecessarily"
+      ],
+      "recovery": "Emergency medical care required"
+    },
+    "seizure": {
+      "name": "Seizure",
+      "severity": "high",
+      "immediate_actions": [
+        "Call ambulance if first seizure or prolonged",
+        "Protect from injury, move away sharp objects",
+        "Place on side if possible",
+        "Do not restrain",
+        "Stay with person until fully conscious"
+      ],
+      "call_ambulance": true,
+      "do_not": [
+        "Do not restrain person",
+        "Do not put anything in mouth",
+        "Do not leave person alone"
+      ],
+      "recovery": "Seek medical attention after seizure"
+    },
+    "hypothermia": {
+      "name": "Hypothermia",
+      "severity": "high",
+      "immediate_actions": [
+        "Call ambulance if severe",
+        "Move to warm environment",
+        "Remove wet clothing",
+        "Wrap in blankets",
+        "Give warm (not hot) drinks if conscious"
+      ],
+      "call_ambulance": true,
+      "do_not": [
+        "Do not use direct heat",
+        "Do not give alcohol",
+        "Do not massage limbs"
+      ],
+      "recovery": "Seek medical attention for monitoring"
+    },
+    "heat stroke": {
+      "name": "Heat Stroke",
+      "severity": "critical",
+      "immediate_actions": [
+        "Call ambulance immediately",
+        "Move to cool environment",
+        "Cool body with water or ice packs",
+        "Do not give food or water if confused",
+        "Monitor temperature"
+      ],
+      "call_ambulance": true,
+      "do_not": [
+        "Do not delay cooling",
+        "Do not give food or water if confused",
+        "Do not leave person alone"
+      ],
+      "recovery": "Emergency medical care required"
+    },
+    "electric shock": {
+      "name": "Electric Shock",
+      "severity": "critical",
+      "immediate_actions": [
+        "Turn off power source if safe",
+        "Do not touch person if still in contact",
+        "Call ambulance",
+        "Check breathing and pulse",
+        "Begin CPR if needed"
+      ],
+      "call_ambulance": true,
+      "do_not": [
+        "Do not touch person if still in contact",
+        "Do not delay calling ambulance",
+        "Do not move person unnecessarily"
+      ],
+      "recovery": "Emergency medical care required"
+    },
+    "eye injury": {
+      "name": "Eye Injury",
+      "severity": "high",
+      "immediate_actions": [
+        "Do not rub eye",
+        "Flush with clean water if chemical",
+        "Cover with clean cloth",
+        "Seek medical attention",
+        "Do not remove embedded objects"
+      ],
+      "call_ambulance": false,
+      "do_not": [
+        "Do not rub eye",
+        "Do not remove embedded objects",
+        "Do not apply pressure"
+      ],
+      "recovery": "Seek immediate medical attention"
+    },
+    "abdominal pain": {
+      "name": "Severe Abdominal Pain",
+      "severity": "high",
+      "immediate_actions": [
+        "Call ambulance if severe",
+        "Have person lie down",
+        "Do not give food or water",
+        "Apply heat if not appendicitis",
+        "Monitor symptoms"
+      ],
+      "call_ambulance": true,
+      "do_not": [
+        "Do not give food or water",
+        "Do not apply heat if appendicitis suspected",
+        "Do not delay seeking help"
+      ],
+      "recovery": "Seek medical attention for diagnosis"
+    },
+    "fainting": {
+      "name": "Fainting / Syncope",
+      "severity": "medium",
+      "immediate_actions": [
+        "Lay person flat",
+        "Elevate legs above heart",
+        "Loosen tight clothing",
+        "Keep person calm",
+        "Monitor breathing"
+      ],
+      "call_ambulance": false,
+      "do_not": [
+        "Do not leave person alone",
+        "Do not give food or water immediately",
+        "Do not sit person up too quickly"
+      ],
+      "recovery": "Rest and seek medical attention if repeated"
+    }
+  }
+}

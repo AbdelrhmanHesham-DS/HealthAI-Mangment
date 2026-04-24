@@ -1,0 +1,306 @@
+{
+  "lab_tests": {
+    "Hemoglobin": {
+      "name": "Hemoglobin",
+      "unit": "g/dL",
+      "normal_range": {
+        "male": "13.5-17.5",
+        "female": "12.0-15.5"
+      },
+      "description": "Protein in red blood cells that carries oxygen",
+      "low_indicates": ["anemia", "blood loss", "bone marrow disorders"],
+      "high_indicates": ["dehydration", "polycythemia", "lung disease"],
+      "critical_low": 7.0,
+      "critical_high": 20.0
+    },
+    "Hematocrit": {
+      "name": "Hematocrit",
+      "unit": "%",
+      "normal_range": {
+        "male": "41-53",
+        "female": "36-46"
+      },
+      "description": "Percentage of red blood cells in blood",
+      "low_indicates": ["anemia", "blood loss", "bone marrow disorders"],
+      "high_indicates": ["dehydration", "polycythemia"],
+      "critical_low": 20.0,
+      "critical_high": 60.0
+    },
+    "White Blood Cell Count": {
+      "name": "White Blood Cell (WBC) Count",
+      "unit": "K/uL",
+      "normal_range": "4.5-11.0",
+      "description": "Number of white blood cells that fight infection",
+      "low_indicates": ["bone marrow disorders", "autoimmune disease", "infection"],
+      "high_indicates": ["infection", "leukemia", "inflammation"],
+      "critical_low": 2.0,
+      "critical_high": 30.0
+    },
+    "Platelet Count": {
+      "name": "Platelet Count",
+      "unit": "K/uL",
+      "normal_range": "150-400",
+      "description": "Number of platelets that help with blood clotting",
+      "low_indicates": ["thrombocytopenia", "bone marrow disorders", "autoimmune disease"],
+      "high_indicates": ["thrombocytosis", "inflammation", "cancer"],
+      "critical_low": 50.0,
+      "critical_high": 1000.0
+    },
+    "Glucose (Fasting)": {
+      "name": "Fasting Blood Glucose",
+      "unit": "mg/dL",
+      "normal_range": "70-100",
+      "description": "Blood sugar level after fasting",
+      "low_indicates": ["hypoglycemia", "insulin overdose"],
+      "high_indicates": ["diabetes", "prediabetes", "hyperglycemia"],
+      "critical_low": 40.0,
+      "critical_high": 400.0
+    },
+    "Glucose (Random)": {
+      "name": "Random Blood Glucose",
+      "unit": "mg/dL",
+      "normal_range": "< 140",
+      "description": "Blood sugar level at any time",
+      "low_indicates": ["hypoglycemia"],
+      "high_indicates": ["diabetes", "hyperglycemia"],
+      "critical_low": 40.0,
+      "critical_high": 400.0
+    },
+    "HbA1c": {
+      "name": "Hemoglobin A1c",
+      "unit": "%",
+      "normal_range": "< 5.7",
+      "description": "Average blood sugar over 2-3 months",
+      "low_indicates": ["hypoglycemia"],
+      "high_indicates": ["diabetes", "poor glucose control"],
+      "critical_low": 3.0,
+      "critical_high": 14.0
+    },
+    "Total Cholesterol": {
+      "name": "Total Cholesterol",
+      "unit": "mg/dL",
+      "normal_range": "< 200",
+      "description": "Total amount of cholesterol in blood",
+      "low_indicates": ["malnutrition", "liver disease"],
+      "high_indicates": ["hypercholesterolemia", "heart disease risk"],
+      "critical_low": 50.0,
+      "critical_high": 500.0
+    },
+    "LDL Cholesterol": {
+      "name": "LDL Cholesterol (Bad Cholesterol)",
+      "unit": "mg/dL",
+      "normal_range": "< 100",
+      "description": "Low-density lipoprotein cholesterol",
+      "low_indicates": ["good cardiovascular health"],
+      "high_indicates": ["heart disease risk", "atherosclerosis"],
+      "critical_low": 0.0,
+      "critical_high": 300.0
+    },
+    "HDL Cholesterol": {
+      "name": "HDL Cholesterol (Good Cholesterol)",
+      "unit": "mg/dL",
+      "normal_range": {
+        "male": "> 40",
+        "female": "> 50"
+      },
+      "description": "High-density lipoprotein cholesterol",
+      "low_indicates": ["heart disease risk"],
+      "high_indicates": ["good cardiovascular health"],
+      "critical_low": 0.0,
+      "critical_high": 200.0
+    },
+    "Triglycerides": {
+      "name": "Triglycerides",
+      "unit": "mg/dL",
+      "normal_range": "< 150",
+      "description": "Type of fat in blood",
+      "low_indicates": ["malnutrition"],
+      "high_indicates": ["hypertriglyceridemia", "metabolic syndrome"],
+      "critical_low": 0.0,
+      "critical_high": 1000.0
+    },
+    "Sodium": {
+      "name": "Sodium",
+      "unit": "mEq/L",
+      "normal_range": "136-145",
+      "description": "Electrolyte important for nerve and muscle function",
+      "low_indicates": ["hyponatremia", "dehydration", "kidney disease"],
+      "high_indicates": ["hypernatremia", "dehydration"],
+      "critical_low": 120.0,
+      "critical_high": 160.0
+    },
+    "Potassium": {
+      "name": "Potassium",
+      "unit": "mEq/L",
+      "normal_range": "3.5-5.0",
+      "description": "Electrolyte important for heart and muscle function",
+      "low_indicates": ["hypokalemia", "diarrhea", "diuretics"],
+      "high_indicates": ["hyperkalemia", "kidney disease"],
+      "critical_low": 2.5,
+      "critical_high": 6.5
+    },
+    "Calcium": {
+      "name": "Calcium",
+      "unit": "mg/dL",
+      "normal_range": "8.5-10.2",
+      "description": "Mineral important for bones and muscle function",
+      "low_indicates": ["hypocalcemia", "vitamin D deficiency", "kidney disease"],
+      "high_indicates": ["hypercalcemia", "hyperparathyroidism"],
+      "critical_low": 6.5,
+      "critical_high": 13.0
+    },
+    "Phosphorus": {
+      "name": "Phosphorus",
+      "unit": "mg/dL",
+      "normal_range": "2.5-4.5",
+      "description": "Mineral important for bone health",
+      "low_indicates": ["hypophosphatemia", "malnutrition"],
+      "high_indicates": ["hyperphosphatemia", "kidney disease"],
+      "critical_low": 1.0,
+      "critical_high": 8.0
+    },
+    "Magnesium": {
+      "name": "Magnesium",
+      "unit": "mg/dL",
+      "normal_range": "1.7-2.2",
+      "description": "Mineral important for muscle and nerve function",
+      "low_indicates": ["hypomagnesemia", "diarrhea", "diuretics"],
+      "high_indicates": ["hypermagnesemia", "kidney disease"],
+      "critical_low": 1.0,
+      "critical_high": 4.0
+    },
+    "Creatinine": {
+      "name": "Creatinine",
+      "unit": "mg/dL",
+      "normal_range": {
+        "male": "0.7-1.3",
+        "female": "0.6-1.1"
+      },
+      "description": "Waste product from muscle metabolism, indicator of kidney function",
+      "low_indicates": ["low muscle mass", "malnutrition"],
+      "high_indicates": ["kidney disease", "dehydration"],
+      "critical_low": 0.4,
+      "critical_high": 10.0
+    },
+    "BUN": {
+      "name": "Blood Urea Nitrogen (BUN)",
+      "unit": "mg/dL",
+      "normal_range": "7-20",
+      "description": "Waste product from protein metabolism",
+      "low_indicates": ["liver disease", "malnutrition"],
+      "high_indicates": ["kidney disease", "dehydration"],
+      "critical_low": 2.0,
+      "critical_high": 100.0
+    },
+    "AST": {
+      "name": "Aspartate Aminotransferase (AST)",
+      "unit": "U/L",
+      "normal_range": "10-40",
+      "description": "Enzyme found in liver and heart",
+      "low_indicates": ["good liver health"],
+      "high_indicates": ["liver disease", "heart disease", "muscle injury"],
+      "critical_low": 0.0,
+      "critical_high": 500.0
+    },
+    "ALT": {
+      "name": "Alanine Aminotransferase (ALT)",
+      "unit": "U/L",
+      "normal_range": "7-56",
+      "description": "Enzyme found mainly in liver",
+      "low_indicates": ["good liver health"],
+      "high_indicates": ["liver disease", "hepatitis"],
+      "critical_low": 0.0,
+      "critical_high": 500.0
+    },
+    "Alkaline Phosphatase": {
+      "name": "Alkaline Phosphatase (ALP)",
+      "unit": "U/L",
+      "normal_range": "30-120",
+      "description": "Enzyme found in liver and bones",
+      "low_indicates": ["good liver and bone health"],
+      "high_indicates": ["liver disease", "bone disease"],
+      "critical_low": 10.0,
+      "critical_high": 500.0
+    },
+    "Bilirubin (Total)": {
+      "name": "Total Bilirubin",
+      "unit": "mg/dL",
+      "normal_range": "0.1-1.2",
+      "description": "Breakdown product of hemoglobin",
+      "low_indicates": ["good liver health"],
+      "high_indicates": ["jaundice", "liver disease", "hemolysis"],
+      "critical_low": 0.0,
+      "critical_high": 20.0
+    },
+    "Bilirubin (Direct)": {
+      "name": "Direct Bilirubin",
+      "unit": "mg/dL",
+      "normal_range": "0.0-0.3",
+      "description": "Conjugated bilirubin",
+      "low_indicates": ["good liver health"],
+      "high_indicates": ["liver disease", "biliary obstruction"],
+      "critical_low": 0.0,
+      "critical_high": 10.0
+    },
+    "Albumin": {
+      "name": "Albumin",
+      "unit": "g/dL",
+      "normal_range": "3.5-5.0",
+      "description": "Protein made by liver",
+      "low_indicates": ["liver disease", "malnutrition", "kidney disease"],
+      "high_indicates": ["dehydration"],
+      "critical_low": 2.0,
+      "critical_high": 6.0
+    },
+    "Total Protein": {
+      "name": "Total Protein",
+      "unit": "g/dL",
+      "normal_range": "6.0-8.3",
+      "description": "Total amount of protein in blood",
+      "low_indicates": ["malnutrition", "liver disease", "kidney disease"],
+      "high_indicates": ["dehydration", "multiple myeloma"],
+      "critical_low": 4.0,
+      "critical_high": 10.0
+    },
+    "TSH": {
+      "name": "Thyroid Stimulating Hormone (TSH)",
+      "unit": "mIU/L",
+      "normal_range": "0.4-4.0",
+      "description": "Hormone that stimulates thyroid",
+      "low_indicates": ["hyperthyroidism", "thyroid disease"],
+      "high_indicates": ["hypothyroidism", "thyroid disease"],
+      "critical_low": 0.01,
+      "critical_high": 100.0
+    },
+    "Free T4": {
+      "name": "Free Thyroxine (Free T4)",
+      "unit": "ng/dL",
+      "normal_range": "0.8-1.8",
+      "description": "Active thyroid hormone",
+      "low_indicates": ["hypothyroidism"],
+      "high_indicates": ["hyperthyroidism"],
+      "critical_low": 0.3,
+      "critical_high": 5.0
+    },
+    "Blood Pressure": {
+      "name": "Blood Pressure",
+      "unit": "mmHg",
+      "normal_range": "< 120/80",
+      "description": "Force of blood against artery walls",
+      "low_indicates": ["hypotension", "shock"],
+      "high_indicates": ["hypertension", "heart disease risk"],
+      "critical_low": "< 90/60",
+      "critical_high": "> 180/120"
+    },
+    "Heart Rate": {
+      "name": "Heart Rate",
+      "unit": "bpm",
+      "normal_range": "60-100",
+      "description": "Number of heartbeats per minute",
+      "low_indicates": ["bradycardia", "athletic heart"],
+      "high_indicates": ["tachycardia", "stress", "fever"],
+      "critical_low": 40.0,
+      "critical_high": 150.0
+    }
+  }
+}

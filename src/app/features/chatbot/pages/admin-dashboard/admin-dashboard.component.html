@@ -223,6 +223,11 @@
         </div>
       }
 
+      <!-- APPOINTMENTS -->
+      @if (activeNav() === 'appointments') {
+        <app-admin-appointment-booking></app-admin-appointment-booking>
+      }
+
       <!-- ANALYTICS -->
       @if (activeNav() === 'analytics') {
         <div class="dash-card chart-card">

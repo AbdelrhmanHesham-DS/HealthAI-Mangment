@@ -21,7 +21,7 @@
             @if (doctor()!.avatar) {
               <img [src]="'http://localhost:3000' + doctor()!.avatar" alt="Doctor" class="bp-doc-avatar" />
             } @else {
-              <div class="bp-doc-avatar-placeholder">{{ doctor()!.name?.[0] ?? 'D' }}</div>
+              <div class="bp-doc-avatar-placeholder">{{ doctor()!.name[0] || 'D' }}</div>
             }
             <div class="bp-doc-info">
               <div class="bp-doc-name">{{ doctor()!.name }} <i class="fa-solid fa-circle-check bp-verified"></i></div>

@@ -30,6 +30,11 @@ export const CHATBOT_ROUTES: Routes = [
         data: { role: 'admin' },
         loadComponent: () => import('./pages/admin-dashboard/admin-dashboard.component').then(m => m.AdminDashboardComponent),
       },
+      {
+        path: 'advanced',
+        canActivate: [authGuard],
+        loadComponent: () => import('./components/advanced-chatbot/advanced-chatbot.component').then(m => m.AdvancedChatbotComponent),
+      },
     ],
   },
 ];

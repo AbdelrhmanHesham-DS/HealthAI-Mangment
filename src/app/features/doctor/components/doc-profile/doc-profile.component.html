@@ -20,17 +20,20 @@
   }
 
   <div class="doc-profile-card">
+    <!-- Profile Header with Avatar -->
     <div class="doc-profile-top">
       <div class="doc-avatar-container">
-        @if (doctor.avatar) {
+        @if (avatarPreviewUrl && isEditing) {
+          <img [src]="avatarPreviewUrl" alt="Preview" class="doc-avatar-img" />
+        } @else if (doctor.avatar) {
           <img [src]="'http://localhost:3000' + doctor.avatar" alt="Profile" class="doc-avatar-img" />
         } @else {
-          <div class="doc-profile-avatar">{{ doctor.name?.[0] ?? 'D' }}</div>
+          <div class="doc-profile-avatar">{{ doctor.name?.[0] || 'D' }}</div>
         }
         @if (isEditing) {
           <div class="doc-avatar-upload">
             <input type="file" #avatarInput (change)="onAvatarSelected($event)" accept="image/*" style="display:none" />
-            <button class="doc-avatar-btn" (click)="avatarInput.click()" type="button">
+            <button class="doc-avatar-btn" (click)="avatarInput.click()" type="button" title="Change photo">
               <i class="fa-solid fa-camera"></i>
             </button>
           </div>
@@ -42,15 +45,6 @@
         @if (doctor.experience) {
           <div class="doc-experience"><i class="fa-solid fa-briefcase-medical"></i> {{ doctor.experience }} years experience</div>
         }
-        <div class="doc-profile-meta">
-          <span><i class="fa-solid fa-envelope"></i> {{ doctor.email }}</span>
-          @if (doctor.phone) {
-            <span><i class="fa-solid fa-phone"></i> {{ doctor.phone }}</span>
-          }
-          @if (doctor.address) {
-            <span><i class="fa-solid fa-location-dot"></i> {{ doctor.address }}</span>
-          }
-        </div>
         <div class="doc-approval-badge" [class]="'doc-approval-' + (doctor.approvalStatus || 'pending')">
           <i class="fa-solid" [class]="doctor.approvalStatus==='approved' ? 'fa-circle-check' : doctor.approvalStatus==='rejected' ? 'fa-circle-xmark' : 'fa-clock'"></i>
           {{ doctor.approvalStatus === 'approved' ? 'Verified Doctor' : doctor.approvalStatus === 'rejected' ? 'Application Rejected' : 'Pending Approval' }}
@@ -58,9 +52,13 @@
       </div>
     </div>
 
-    @if (avatarPreviewUrl && isEditing) {
+    <!-- Upload Photo Button (Only in edit mode) -->
+    @if (selectedAvatarFile && isEditing) {
       <div class="doc-upload-preview">
-        <img [src]="avatarPreviewUrl" alt="Preview" />
+        <div class="doc-upload-info">
+          <i class="fa-solid fa-image"></i>
+          <span>New photo selected</span>
+        </div>
         <button class="doc-btn doc-btn-primary" (click)="uploadAvatar()" [disabled]="uploadingAvatar">
           @if (uploadingAvatar) { <i class="fa-solid fa-spinner fa-spin"></i> Uploading... }
           @else { <i class="fa-solid fa-upload"></i> Upload Photo }
@@ -70,28 +68,74 @@
 
     <div class="doc-profile-divider"></div>
 
-    <!-- Phone Number Edit (Only editable field) -->
-    @if (isEditing) {
-      <div class="doc-profile-section">
-        <div class="doc-section-title"><i class="fa-solid fa-phone"></i> Contact Information</div>
-        <div class="doc-form-group">
-          <label>Phone Number (visible to patients)</label>
-          <input [(ngModel)]="editedDoctor.phone" placeholder="+1-555-0123" class="doc-phone-input" />
+    <!-- Contact Information Section -->
+    <div class="doc-profile-section">
+      <div class="doc-section-title"><i class="fa-solid fa-address-card"></i> Contact Information</div>
+      <div class="doc-info-grid">
+        <div class="doc-info-item">
+          <div class="doc-info-label"><i class="fa-solid fa-envelope"></i> Email</div>
+          <div class="doc-info-value">{{ doctor.email || 'Not provided' }}</div>
         </div>
+        <div class="doc-info-item">
+          <div class="doc-info-label"><i class="fa-solid fa-phone"></i> Phone Number</div>
+          @if (isEditing) {
+            <input [(ngModel)]="editedDoctor.phone" placeholder="+20-XXX-XXXX" class="doc-phone-input" />
+          } @else {
+            <div class="doc-info-value">{{ doctor.phone || 'Not provided' }}</div>
+          }
+        </div>
+        @if (doctor.address) {
+          <div class="doc-info-item doc-info-full">
+            <div class="doc-info-label"><i class="fa-solid fa-location-dot"></i> Address</div>
+            <div class="doc-info-value">{{ doctor.address }}</div>
+          </div>
+        }
       </div>
-      <div class="doc-profile-divider"></div>
-    }
+    </div>
 
-    <!-- Bio (Read-only) -->
+    <div class="doc-profile-divider"></div>
+
+    <!-- Professional Information Section -->
+    <div class="doc-profile-section">
+      <div class="doc-section-title"><i class="fa-solid fa-user-doctor"></i> Professional Information</div>
+      <div class="doc-info-grid">
+        <div class="doc-info-item">
+          <div class="doc-info-label"><i class="fa-solid fa-stethoscope"></i> Specialty</div>
+          <div class="doc-info-value">{{ doctor.specialty || 'Not specified' }}</div>
+        </div>
+        @if (doctor.experience) {
+          <div class="doc-info-item">
+            <div class="doc-info-label"><i class="fa-solid fa-briefcase-medical"></i> Experience</div>
+            <div class="doc-info-value">{{ doctor.experience }} years</div>
+          </div>
+        }
+        @if (doctor.consultationFee) {
+          <div class="doc-info-item">
+            <div class="doc-info-label"><i class="fa-solid fa-money-bill"></i> Consultation Fee</div>
+            <div class="doc-info-value">EGP {{ doctor.consultationFee }}</div>
+          </div>
+        }
+        @if (doctor.rating) {
+          <div class="doc-info-item">
+            <div class="doc-info-label"><i class="fa-solid fa-star"></i> Rating</div>
+            <div class="doc-info-value">{{ doctor.rating }} / 5.0</div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Bio Section -->
     @if (doctor.bio) {
+      <div class="doc-profile-divider"></div>
       <div class="doc-profile-section">
-        <div class="doc-section-title"><i class="fa-solid fa-user-doctor"></i> About</div>
+        <div class="doc-section-title"><i class="fa-solid fa-file-lines"></i> About Me</div>
         <p class="doc-bio">{{ doctor.bio }}</p>
       </div>
     }
 
-    <!-- Education (Read-only) -->
+    <!-- Education Section -->
     @if (doctor.education && doctor.education.length > 0) {
+      <div class="doc-profile-divider"></div>
       <div class="doc-profile-section">
         <div class="doc-section-title"><i class="fa-solid fa-graduation-cap"></i> Education</div>
         <ul class="doc-list">
@@ -102,8 +146,9 @@
       </div>
     }
 
-    <!-- Languages (Read-only) -->
+    <!-- Languages Section -->
     @if (doctor.languages && doctor.languages.length > 0) {
+      <div class="doc-profile-divider"></div>
       <div class="doc-profile-section">
         <div class="doc-section-title"><i class="fa-solid fa-language"></i> Languages</div>
         <div class="doc-tags">
@@ -114,34 +159,50 @@
       </div>
     }
 
-    <!-- ID Document (Read-only) -->
-    @if (doctor.idDocument) {
+    <!-- Documents Section -->
+    @if (doctor.idDocument || doctor.certificateUrl) {
+      <div class="doc-profile-divider"></div>
       <div class="doc-profile-section">
-        <div class="doc-section-title"><i class="fa-solid fa-id-card"></i> ID Document</div>
-        <a [href]="'http://localhost:3000' + doctor.idDocument" target="_blank" class="doc-cert-link">
-          <i class="fa-solid fa-file-pdf"></i> View ID Document
-        </a>
-      </div>
-    }
-
-    <!-- Certificate (Read-only) -->
-    @if (doctor.certificateUrl) {
-      <div class="doc-profile-section">
-        <div class="doc-section-title"><i class="fa-solid fa-certificate"></i> Certificate</div>
-        <a [href]="doctor.certificateUrl" target="_blank" class="doc-cert-link">
-          <i class="fa-solid fa-file-certificate"></i> View Certificate
-        </a>
+        <div class="doc-section-title"><i class="fa-solid fa-folder-open"></i> Documents</div>
+        <div class="doc-documents-grid">
+          @if (doctor.idDocument) {
+            <a [href]="'http://localhost:3000' + doctor.idDocument" target="_blank" class="doc-document-card">
+              <i class="fa-solid fa-id-card"></i>
+              <span>ID Document</span>
+              <i class="fa-solid fa-external-link-alt doc-external-icon"></i>
+            </a>
+          }
+          @if (doctor.certificateUrl) {
+            <a [href]="doctor.certificateUrl" target="_blank" class="doc-document-card">
+              <i class="fa-solid fa-certificate"></i>
+              <span>Medical Certificate</span>
+              <i class="fa-solid fa-external-link-alt doc-external-icon"></i>
+            </a>
+          }
+        </div>
       </div>
     }
 
     <!-- Save Button (Only in edit mode) -->
     @if (isEditing) {
-      <div style="display:flex;justify-content:flex-end;margin-top:16px">
+      <div class="doc-profile-divider"></div>
+      <div class="doc-profile-actions">
+        <button class="doc-btn doc-btn-outline" (click)="toggleEdit()">
+          <i class="fa-solid fa-xmark"></i> Cancel
+        </button>
         <button class="doc-btn doc-btn-primary" (click)="saveChanges()" [disabled]="isSaving">
           @if (isSaving) { <i class="fa-solid fa-spinner fa-spin"></i> Saving... }
           @else { <i class="fa-solid fa-floppy-disk"></i> Save Changes }
         </button>
       </div>
     }
+  </div>
+
+  <!-- Info Note -->
+  <div class="doc-info-note">
+    <i class="fa-solid fa-info-circle"></i>
+    <div>
+      <strong>Note:</strong> You can only edit your photo and phone number. To update other information (name, specialty, education, etc.), please contact the administrator.
+    </div>
   </div>
 </div>

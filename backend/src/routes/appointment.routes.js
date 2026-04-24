@@ -6,6 +6,7 @@ router.use(protect);
 
 router.get('/',    ctrl.getAppointments);
 router.post('/',   ctrl.createAppointment);
+router.post('/admin', authorize('admin'), ctrl.createAdminAppointment);
 router.get('/:id', ctrl.getAppointmentById);
 router.put('/:id/status',   authorize('admin', 'doctor'), ctrl.updateStatus);
 router.patch('/:id',        ctrl.updateAppointment); // For general updates

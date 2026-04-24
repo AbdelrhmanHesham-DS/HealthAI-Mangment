@@ -57,7 +57,7 @@ export class DoctorProfileComponent implements OnInit {
       doctorId: this.doctor()!.id,
       rating: this.newRating(),
       comment: this.newComment(),
-      visitType: 'in-person',
+      visitType: 'in-person' as 'in-person' | 'video' | 'chat',
     };
     
     this.dataService.addReview(review).subscribe({
